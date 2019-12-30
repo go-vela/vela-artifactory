@@ -1,5 +1,9 @@
 # vela-artifactory
 
+[![GoDoc](https://godoc.org/github.com/go-vela/vela-artifactory?status.svg)](https://godoc.org/github.com/go-vela/vela-artifactory)
+[![Go Report Card](https://goreportcard.com/badge/go-vela/vela-artifactory)](https://goreportcard.com/report/go-vela/vela-artifactory)
+[![codecov](https://codecov.io/gh/go-vela/vela-artifactory/branch/master/graph/badge.svg)](https://codecov.io/gh/go-vela/vela-artifactory)
+
 Vela plugin designed for publishing artifacts to [Artifactory](https://jfrog.com/artifactory/). Internally, the plugin is a wrapper around the [JFrog](https://www.jfrog.com/confluence/display/CLI/JFrog+CLI) CLI.
 
 ## Documentation
