@@ -25,7 +25,7 @@ clean:
 
 binary-build:
 
-	GOOS=linux CGO_ENABLED=0 go build -o release/vela-artifactory github.com/go-vela/vela-artifactory
+	GOOS=linux CGO_ENABLED=0 go build -o release/vela-artifactory github.com/go-vela/vela-artifactory/cmd/vela-artifactory
 
 #################################
 ######    Docker Build     ######
