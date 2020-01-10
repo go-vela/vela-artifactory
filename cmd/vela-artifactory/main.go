@@ -5,10 +5,8 @@
 package main
 
 import (
-	"encoding/json"
 	"os"
 
-	"github.com/go-vela/vela-artifactory/artifactory"
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli"
 )
@@ -67,63 +65,5 @@ func main() {
 }
 
 func run(c *cli.Context) error {
-	logrus.WithFields(logrus.Fields{
-		"Revision": revision,
-	}).Info("Artifactory Plugin Version")
-
-	if c.Bool("debug") {
-		logrus.SetLevel(logrus.DebugLevel)
-	}
-
-	actions, err := unmarshalActions(c.String("actions"))
-
-	if err != nil {
-		return err
-	}
-
-	plugin := Plugin{
-		Actions: actions,
-		Config: artifactory.Config{
-			APIKey:   c.String("apikey"),
-			Debug:    c.Bool("debug"),
-			Password: c.String("password"),
-			URL:      c.String("url"),
-			Username: c.String("username"),
-		},
-	}
-
-	err = plugin.Exec()
-
-	return err
-}
-
-func unmarshalActions(rawJSON string) ([]Action, error) {
-	logrus.WithFields(logrus.Fields{
-		"raw-actions": rawJSON,
-	}).Debug()
-
-	bytes := []byte(rawJSON)
-	var actions []Action
-	err := json.Unmarshal(bytes, &actions)
-
-	if err != nil {
-		return nil, err
-	}
-
-	var rawActions []json.RawMessage
-	err = json.Unmarshal(bytes, &rawActions)
-
-	if err != nil {
-		return nil, err
-	}
-
-	for idx := range actions {
-		actions[idx].RawArguments = rawActions[idx]
-	}
-
-	logrus.WithFields(logrus.Fields{
-		"actions": actions,
-	}).Debug()
-
-	return actions, nil
+	return nil
 }
