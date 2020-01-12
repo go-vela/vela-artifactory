@@ -20,7 +20,7 @@ func TestArtifactory_Plugin_Exec(t *testing.T) {
 		Copy: &Copy{
 			Flat:      false,
 			Recursive: false,
-			Source:    "foo/bar",
+			Path:      "foo/bar",
 			Target:    "bar/foo",
 		},
 		Delete: &Delete{
@@ -60,6 +60,7 @@ func TestArtifactory_Plugin_Validate(t *testing.T) {
 	// setup types
 	p := &Plugin{
 		Config: &Config{
+			Action:   "copy",
 			APIKey:   "superSecretAPIKey",
 			Password: "superSecretPassword",
 			URL:      "https://myarti.com/artifactory",
@@ -68,7 +69,7 @@ func TestArtifactory_Plugin_Validate(t *testing.T) {
 		Copy: &Copy{
 			Flat:      false,
 			Recursive: false,
-			Source:    "foo/bar",
+			Path:      "foo/bar",
 			Target:    "bar/foo",
 		},
 		Delete: &Delete{
@@ -111,7 +112,7 @@ func TestArtifactory_Plugin_Validate_NoConfig(t *testing.T) {
 		Copy: &Copy{
 			Flat:      false,
 			Recursive: false,
-			Source:    "foo/bar",
+			Path:      "foo/bar",
 			Target:    "bar/foo",
 		},
 		Delete: &Delete{
@@ -151,6 +152,7 @@ func TestArtifactory_Plugin_Validate_NoCopy(t *testing.T) {
 	// setup types
 	p := &Plugin{
 		Config: &Config{
+			Action:   "copy",
 			APIKey:   "superSecretAPIKey",
 			Password: "superSecretPassword",
 			URL:      "https://myarti.com/artifactory",
@@ -194,6 +196,7 @@ func TestArtifactory_Plugin_Validate_NoDelete(t *testing.T) {
 	// setup types
 	p := &Plugin{
 		Config: &Config{
+			Action:   "copy",
 			APIKey:   "superSecretAPIKey",
 			Password: "superSecretPassword",
 			URL:      "https://myarti.com/artifactory",
@@ -202,7 +205,7 @@ func TestArtifactory_Plugin_Validate_NoDelete(t *testing.T) {
 		Copy: &Copy{
 			Flat:      false,
 			Recursive: false,
-			Source:    "foo/bar",
+			Path:      "foo/bar",
 			Target:    "bar/foo",
 		},
 		Delete: &Delete{},
@@ -237,6 +240,7 @@ func TestArtifactory_Plugin_Validate_NoSetProp(t *testing.T) {
 	// setup types
 	p := &Plugin{
 		Config: &Config{
+			Action:   "copy",
 			APIKey:   "superSecretAPIKey",
 			Password: "superSecretPassword",
 			URL:      "https://myarti.com/artifactory",
@@ -245,7 +249,7 @@ func TestArtifactory_Plugin_Validate_NoSetProp(t *testing.T) {
 		Copy: &Copy{
 			Flat:      false,
 			Recursive: false,
-			Source:    "foo/bar",
+			Path:      "foo/bar",
 			Target:    "bar/foo",
 		},
 		Delete: &Delete{
@@ -277,6 +281,7 @@ func TestArtifactory_Plugin_Validate_NoUpload(t *testing.T) {
 	// setup types
 	p := &Plugin{
 		Config: &Config{
+			Action:   "copy",
 			APIKey:   "superSecretAPIKey",
 			Password: "superSecretPassword",
 			URL:      "https://myarti.com/artifactory",
@@ -285,7 +290,7 @@ func TestArtifactory_Plugin_Validate_NoUpload(t *testing.T) {
 		Copy: &Copy{
 			Flat:      false,
 			Recursive: false,
-			Source:    "foo/bar",
+			Path:      "foo/bar",
 			Target:    "bar/foo",
 		},
 		Delete: &Delete{

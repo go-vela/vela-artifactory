@@ -12,6 +12,8 @@ import (
 
 // Config represents the plugin configuration for Artifactory config information.
 type Config struct {
+	// Action to perform against the Artifactory instance
+	Action string
 	// API key for communication with the Artifactory instance
 	APIKey string
 	// password for communication with the Artifactory instance
@@ -25,6 +27,10 @@ type Config struct {
 // Validate verifies the Config is properly configured.
 func (c Config) Validate() error {
 	logrus.Trace("validating config plugin configuration")
+
+	if len(c.Action) == 0 {
+		return fmt.Errorf("no config action provided")
+	}
 
 	if len(c.URL) == 0 {
 		return fmt.Errorf("no config url provided")
