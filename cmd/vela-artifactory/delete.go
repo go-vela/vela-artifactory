@@ -18,7 +18,7 @@ type Delete struct {
 	DryRun bool
 	// enables removing sub-directories for the artifact(s) in the path
 	Recursive bool
-	// file path to artifact(s) to remove
+	// target path to artifact(s) to remove
 	Path string
 }
 

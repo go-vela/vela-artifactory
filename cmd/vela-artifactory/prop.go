@@ -37,7 +37,7 @@ func (p *Prop) Validate() error {
 
 // SetProp represents the plugin configuration for setting property information.
 type SetProp struct {
-	// file path to artifact(s) to set properties
+	// target path to artifact(s) to set properties
 	Path string
 	// properties to set on the artifact(s)
 	Props []*Prop
