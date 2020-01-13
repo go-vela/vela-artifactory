@@ -16,9 +16,9 @@ type Copy struct {
 	Flat bool
 	// enables copying sub-directories from source
 	Recursive bool
-	// file source to copy from
-	Source string
-	// file target to copy source file to
+	// source path to artifact(s) to copy
+	Path string
+	// target path to copy artifact(s) to
 	Target string
 }
 
@@ -26,8 +26,8 @@ type Copy struct {
 func (c *Copy) Validate() error {
 	logrus.Trace("validating copy plugin configuration")
 
-	if len(c.Source) == 0 {
-		return fmt.Errorf("no copy source provided")
+	if len(c.Path) == 0 {
+		return fmt.Errorf("no copy path provided")
 	}
 
 	if len(c.Target) == 0 {

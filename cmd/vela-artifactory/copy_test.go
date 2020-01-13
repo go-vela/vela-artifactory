@@ -11,7 +11,7 @@ func TestArtifactory_Copy_Validate(t *testing.T) {
 	c := &Copy{
 		Flat:      false,
 		Recursive: false,
-		Source:    "foo/bar",
+		Path:      "foo/bar",
 		Target:    "bar/foo",
 	}
 
@@ -21,7 +21,7 @@ func TestArtifactory_Copy_Validate(t *testing.T) {
 	}
 }
 
-func TestArtifactory_Copy_Validate_NoSource(t *testing.T) {
+func TestArtifactory_Copy_Validate_NoPath(t *testing.T) {
 	// setup types
 	c := &Copy{
 		Flat:      false,
@@ -40,7 +40,7 @@ func TestArtifactory_Copy_Validate_NoTarget(t *testing.T) {
 	c := &Copy{
 		Flat:      false,
 		Recursive: false,
-		Source:    "foo/bar",
+		Path:      "foo/bar",
 	}
 
 	err := c.Validate()

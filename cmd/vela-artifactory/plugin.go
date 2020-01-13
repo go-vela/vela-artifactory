@@ -22,6 +22,11 @@ type Plugin struct {
 	Upload *Upload
 }
 
+// Exec formats and runs the commands for managing artifacts in Artifactory.
+func (p *Plugin) Exec() error {
+	return nil
+}
+
 // Validate verifies the plugin is properly configured.
 func (p *Plugin) Validate() error {
 	logrus.Debug("validating plugin configuration")
