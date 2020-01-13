@@ -105,41 +105,36 @@ func TestArtifactory_Plugin_Validate(t *testing.T) {
 	}
 }
 
+func TestArtifactory_Plugin_Validate_InvalidAction(t *testing.T) {
+	// setup types
+	p := &Plugin{
+		Config: &Config{
+			Action:   "foobar",
+			APIKey:   "superSecretAPIKey",
+			Password: "superSecretPassword",
+			URL:      "https://myarti.com/artifactory",
+			Username: "octocat",
+		},
+		Copy:    &Copy{},
+		Delete:  &Delete{},
+		SetProp: &SetProp{},
+		Upload:  &Upload{},
+	}
+
+	err := p.Validate()
+	if err == nil {
+		t.Errorf("Validate should have returned err")
+	}
+}
+
 func TestArtifactory_Plugin_Validate_NoConfig(t *testing.T) {
 	// setup types
 	p := &Plugin{
-		Config: &Config{},
-		Copy: &Copy{
-			Flat:      false,
-			Recursive: false,
-			Path:      "foo/bar",
-			Target:    "bar/foo",
-		},
-		Delete: &Delete{
-			ArgsFile:  "",
-			DryRun:    false,
-			Recursive: false,
-			Path:      "foo/bar",
-		},
-		SetProp: &SetProp{
-			Path: "foo/bar",
-			Props: []*Prop{
-				{
-					Name:  "foo",
-					Value: "bar",
-				},
-			},
-		},
-		Upload: &Upload{
-			ArgsFile:    "",
-			DryRun:      false,
-			Flat:        true,
-			IncludeDirs: false,
-			Recursive:   true,
-			Regexp:      false,
-			Path:        "foo/bar",
-			Sources:     []string{"baz.txt"},
-		},
+		Config:  &Config{},
+		Copy:    &Copy{},
+		Delete:  &Delete{},
+		SetProp: &SetProp{},
+		Upload:  &Upload{},
 	}
 
 	err := p.Validate()
@@ -158,32 +153,10 @@ func TestArtifactory_Plugin_Validate_NoCopy(t *testing.T) {
 			URL:      "https://myarti.com/artifactory",
 			Username: "octocat",
 		},
-		Copy: &Copy{},
-		Delete: &Delete{
-			ArgsFile:  "",
-			DryRun:    false,
-			Recursive: false,
-			Path:      "foo/bar",
-		},
-		SetProp: &SetProp{
-			Path: "foo/bar",
-			Props: []*Prop{
-				{
-					Name:  "foo",
-					Value: "bar",
-				},
-			},
-		},
-		Upload: &Upload{
-			ArgsFile:    "",
-			DryRun:      false,
-			Flat:        true,
-			IncludeDirs: false,
-			Recursive:   true,
-			Regexp:      false,
-			Path:        "foo/bar",
-			Sources:     []string{"baz.txt"},
-		},
+		Copy:    &Copy{},
+		Delete:  &Delete{},
+		SetProp: &SetProp{},
+		Upload:  &Upload{},
 	}
 
 	err := p.Validate()
@@ -196,38 +169,16 @@ func TestArtifactory_Plugin_Validate_NoDelete(t *testing.T) {
 	// setup types
 	p := &Plugin{
 		Config: &Config{
-			Action:   "copy",
+			Action:   "delete",
 			APIKey:   "superSecretAPIKey",
 			Password: "superSecretPassword",
 			URL:      "https://myarti.com/artifactory",
 			Username: "octocat",
 		},
-		Copy: &Copy{
-			Flat:      false,
-			Recursive: false,
-			Path:      "foo/bar",
-			Target:    "bar/foo",
-		},
-		Delete: &Delete{},
-		SetProp: &SetProp{
-			Path: "foo/bar",
-			Props: []*Prop{
-				{
-					Name:  "foo",
-					Value: "bar",
-				},
-			},
-		},
-		Upload: &Upload{
-			ArgsFile:    "",
-			DryRun:      false,
-			Flat:        true,
-			IncludeDirs: false,
-			Recursive:   true,
-			Regexp:      false,
-			Path:        "foo/bar",
-			Sources:     []string{"baz.txt"},
-		},
+		Copy:    &Copy{},
+		Delete:  &Delete{},
+		SetProp: &SetProp{},
+		Upload:  &Upload{},
 	}
 
 	err := p.Validate()
@@ -240,35 +191,16 @@ func TestArtifactory_Plugin_Validate_NoSetProp(t *testing.T) {
 	// setup types
 	p := &Plugin{
 		Config: &Config{
-			Action:   "copy",
+			Action:   "set-prop",
 			APIKey:   "superSecretAPIKey",
 			Password: "superSecretPassword",
 			URL:      "https://myarti.com/artifactory",
 			Username: "octocat",
 		},
-		Copy: &Copy{
-			Flat:      false,
-			Recursive: false,
-			Path:      "foo/bar",
-			Target:    "bar/foo",
-		},
-		Delete: &Delete{
-			ArgsFile:  "",
-			DryRun:    false,
-			Recursive: false,
-			Path:      "foo/bar",
-		},
+		Copy:    &Copy{},
+		Delete:  &Delete{},
 		SetProp: &SetProp{},
-		Upload: &Upload{
-			ArgsFile:    "",
-			DryRun:      false,
-			Flat:        true,
-			IncludeDirs: false,
-			Recursive:   true,
-			Regexp:      false,
-			Path:        "foo/bar",
-			Sources:     []string{"baz.txt"},
-		},
+		Upload:  &Upload{},
 	}
 
 	err := p.Validate()
@@ -281,34 +213,16 @@ func TestArtifactory_Plugin_Validate_NoUpload(t *testing.T) {
 	// setup types
 	p := &Plugin{
 		Config: &Config{
-			Action:   "copy",
+			Action:   "upload",
 			APIKey:   "superSecretAPIKey",
 			Password: "superSecretPassword",
 			URL:      "https://myarti.com/artifactory",
 			Username: "octocat",
 		},
-		Copy: &Copy{
-			Flat:      false,
-			Recursive: false,
-			Path:      "foo/bar",
-			Target:    "bar/foo",
-		},
-		Delete: &Delete{
-			ArgsFile:  "",
-			DryRun:    false,
-			Recursive: false,
-			Path:      "foo/bar",
-		},
-		SetProp: &SetProp{
-			Path: "foo/bar",
-			Props: []*Prop{
-				{
-					Name:  "foo",
-					Value: "bar",
-				},
-			},
-		},
-		Upload: &Upload{},
+		Copy:    &Copy{},
+		Delete:  &Delete{},
+		SetProp: &SetProp{},
+		Upload:  &Upload{},
 	}
 
 	err := p.Validate()

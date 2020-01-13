@@ -10,6 +10,8 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+const copyAction = "copy"
+
 // Copy represents the plugin configuration for copy information.
 type Copy struct {
 	// enables removing source file directory hierarchy

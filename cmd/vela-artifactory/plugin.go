@@ -5,6 +5,8 @@
 package main
 
 import (
+	"fmt"
+
 	"github.com/sirupsen/logrus"
 )
 
@@ -37,29 +39,20 @@ func (p *Plugin) Validate() error {
 		return err
 	}
 
-	// validate copy configuration
-	err = p.Copy.Validate()
-	if err != nil {
-		return err
+	switch p.Config.Action {
+	case copyAction:
+		// validate copy configuration
+		return p.Copy.Validate()
+	case deleteAction:
+		// validate delete configuration
+		return p.Delete.Validate()
+	case setPropAction:
+		// validate set-prop configuration
+		return p.SetProp.Validate()
+	case uploadAction:
+		// validate upload configuration
+		return p.Upload.Validate()
+	default:
+		return fmt.Errorf("invalid action provided: %s (Valid actions: %s, %s, %s, %s)", p.Config.Action, copyAction, deleteAction, setPropAction, uploadAction)
 	}
-
-	// validate delete configuration
-	err = p.Delete.Validate()
-	if err != nil {
-		return err
-	}
-
-	// validate set-prop configuration
-	err = p.SetProp.Validate()
-	if err != nil {
-		return err
-	}
-
-	// validate upload configuration
-	err = p.Upload.Validate()
-	if err != nil {
-		return err
-	}
-
-	return nil
 }

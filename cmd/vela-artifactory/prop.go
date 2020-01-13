@@ -10,6 +10,8 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+const setPropAction = "set-prop"
+
 // Prop represents the plugin configuration for setting a property.
 type Prop struct {
 	// name of the property to set on the artifact(s)
