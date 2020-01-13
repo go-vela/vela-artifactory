@@ -10,6 +10,8 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+const uploadAction = "upload"
+
 // Upload represents the plugin configuration for upload information.
 type Upload struct {
 	// file path to load arguments from

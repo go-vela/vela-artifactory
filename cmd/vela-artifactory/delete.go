@@ -10,6 +10,8 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+const deleteAction = "delete"
+
 // Delete represents the plugin configuration for delete information.
 type Delete struct {
 	// file path to load arguments from
