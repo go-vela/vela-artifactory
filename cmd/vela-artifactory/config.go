@@ -6,6 +6,12 @@ package main
 
 import (
 	"fmt"
+	"os"
+	"strings"
+
+	"github.com/jfrog/jfrog-client-go/artifactory"
+	"github.com/jfrog/jfrog-client-go/artifactory/auth"
+	"github.com/jfrog/jfrog-client-go/utils/log"
 
 	"github.com/sirupsen/logrus"
 )
@@ -24,8 +30,59 @@ type Config struct {
 	Username string
 }
 
+// New creates an Artifactory client for managing artifacts.
+func (c *Config) New() (*artifactory.ArtifactoryServicesManager, error) {
+	// create new Artifactory details
+	details := auth.NewArtifactoryDetails()
+
+	// check if provided URL doesn't have a "/" suffix
+	if !strings.HasSuffix(c.URL, "/") {
+		// add a "/" to the end of the provided URL
+		c.URL = c.URL + "/"
+	}
+
+	// set URL for Artifactory details
+	details.SetUrl(c.URL)
+	// set user name for Artifactory details
+	details.SetUser(c.Username)
+
+	// check if API key is provided
+	if len(c.APIKey) > 0 {
+		// set API key for Artifactory details
+		details.SetApiKey(c.APIKey)
+	}
+
+	// check if password is provided
+	if len(c.Password) > 0 {
+		// set password for Artifactory details
+		details.SetPassword(c.Password)
+	}
+
+	// set logger for Artifactory client
+	log.SetLogger(
+		// create new logger for Artifactory client
+		log.NewLogger(log.INFO, os.Stdout),
+	)
+
+	// create new Artifactory config from details
+	config, err := artifactory.NewConfigBuilder().
+		SetArtDetails(details).
+		Build()
+	if err != nil {
+		return nil, err
+	}
+
+	// create new Artifactory client from config and details
+	client, err := artifactory.New(&details, config)
+	if err != nil {
+		return nil, err
+	}
+
+	return client, nil
+}
+
 // Validate verifies the Config is properly configured.
-func (c Config) Validate() error {
+func (c *Config) Validate() error {
 	logrus.Trace("validating config plugin configuration")
 
 	if len(c.Action) == 0 {
