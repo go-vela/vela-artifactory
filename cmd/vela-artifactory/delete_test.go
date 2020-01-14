@@ -6,6 +6,34 @@ package main
 
 import "testing"
 
+func TestArtifactory_Delete_Exec_Error(t *testing.T) {
+	// setup types
+	config := &Config{
+		Action:   "copy",
+		APIKey:   "superSecretAPIKey",
+		Password: "superSecretPassword",
+		URL:      "http://localhost:8081/artifactory",
+		Username: "octocat",
+	}
+
+	cli, err := config.New()
+	if err != nil {
+		t.Errorf("Unable to create Artifactory client: %v", err)
+	}
+
+	d := &Delete{
+		ArgsFile:  "",
+		DryRun:    false,
+		Recursive: false,
+		Path:      "foo/bar",
+	}
+
+	err = d.Exec(cli)
+	if err == nil {
+		t.Errorf("Exec should have returned err")
+	}
+}
+
 func TestArtifactory_Delete_Validate(t *testing.T) {
 	// setup types
 	d := &Delete{
