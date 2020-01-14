@@ -4,7 +4,29 @@
 
 package main
 
-import "testing"
+import (
+	"testing"
+)
+
+func TestArtifactory_Config_New(t *testing.T) {
+	// setup types
+	c := &Config{
+		Action:   "copy",
+		APIKey:   "superSecretAPIKey",
+		Password: "superSecretPassword",
+		URL:      "https://myarti.com/artifactory",
+		Username: "octocat",
+	}
+
+	got, err := c.New()
+	if err != nil {
+		t.Errorf("New returned err: %v", err)
+	}
+
+	if got == nil {
+		t.Errorf("New is nil")
+	}
+}
 
 func TestArtifactory_Config_Validate(t *testing.T) {
 	// setup types
