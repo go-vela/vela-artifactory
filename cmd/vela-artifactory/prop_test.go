@@ -4,7 +4,44 @@
 
 package main
 
-import "testing"
+import (
+	"reflect"
+	"testing"
+)
+
+func TestArtifactory_Prop_String_Value(t *testing.T) {
+	// setup types
+	p := &Prop{
+		Name:   "foo",
+		Value:  "bar",
+		Values: []string{},
+	}
+
+	want := "foo=bar"
+
+	got := p.String()
+
+	if !reflect.DeepEqual(got, want) {
+		t.Errorf("String is %v, want %v", got, want)
+	}
+}
+
+func TestArtifactory_Prop_String_Values(t *testing.T) {
+	// setup types
+	p := &Prop{
+		Name:   "foo",
+		Value:  "",
+		Values: []string{"baz"},
+	}
+
+	want := "foo=baz"
+
+	got := p.String()
+
+	if !reflect.DeepEqual(got, want) {
+		t.Errorf("String is %v, want %v", got, want)
+	}
+}
 
 func TestArtifactory_Prop_Validate(t *testing.T) {
 	// setup types
@@ -68,6 +105,58 @@ func TestArtifactory_Prop_Validate_NoValueOrValues(t *testing.T) {
 	err := p.Validate()
 	if err == nil {
 		t.Errorf("Validate should have returned err")
+	}
+}
+
+func TestArtifactory_SetProp_Exec_Error(t *testing.T) {
+	// setup types
+	config := &Config{
+		Action:   "set-prop",
+		APIKey:   "superSecretAPIKey",
+		Password: "superSecretPassword",
+		URL:      "http://localhost:8081/artifactory",
+		Username: "octocat",
+	}
+
+	cli, err := config.New()
+	if err != nil {
+		t.Errorf("Unable to create Artifactory client: %v", err)
+	}
+
+	s := &SetProp{
+		Path: "foo/bar",
+		Props: []*Prop{
+			{
+				Name:  "foo",
+				Value: "bar",
+			},
+		},
+	}
+
+	err = s.Exec(cli)
+	if err == nil {
+		t.Errorf("Exec should have returned err")
+	}
+}
+
+func TestArtifactory_SetProp_String(t *testing.T) {
+	// setup types
+	s := &SetProp{
+		Path: "foo/bar",
+		Props: []*Prop{
+			{
+				Name:  "foo",
+				Value: "bar",
+			},
+		},
+	}
+
+	want := "foo=bar"
+
+	got := s.String()
+
+	if !reflect.DeepEqual(got, want) {
+		t.Errorf("String is %v, want %v", got, want)
 	}
 }
 
