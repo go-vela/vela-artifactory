@@ -6,8 +6,13 @@ package main
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/sirupsen/logrus"
+
+	"github.com/jfrog/jfrog-client-go/artifactory"
+	"github.com/jfrog/jfrog-client-go/artifactory/services"
+	"github.com/jfrog/jfrog-client-go/artifactory/services/utils"
 )
 
 const setPropAction = "set-prop"
@@ -20,6 +25,16 @@ type Prop struct {
 	Value string
 	// values of the property to set on the artifact(s)
 	Values []string
+}
+
+// String formats and returns a query string for the property.
+func (p *Prop) String() string {
+	// check if property value is provided
+	if len(p.Value) > 0 {
+		return fmt.Sprintf("%s=%s", p.Name, p.Value)
+	}
+
+	return fmt.Sprintf("%s=%s", p.Name, strings.Join(p.Values, ","))
 }
 
 // Validate verifies the Prop is properly configured.
@@ -43,6 +58,57 @@ type SetProp struct {
 	Path string
 	// properties to set on the artifact(s)
 	Props []*Prop
+	// enables setting properties on sub-directories for the artifact(s) in the path
+	Recursive bool
+}
+
+// Exec formats and runs the commands for setting properties on artifacts in Artifactory.
+func (s *SetProp) Exec(cli *artifactory.ArtifactoryServicesManager) error {
+	logrus.Trace("running set-prop with provided configuration")
+
+	// create new search parameters
+	searchParams := services.NewSearchParams()
+
+	// add search configuration to search parameters
+	searchParams.ArtifactoryCommonParams = &utils.ArtifactoryCommonParams{
+		Pattern:   s.Path,
+		Recursive: s.Recursive,
+	}
+
+	// send API call to search path for artifacts in Artifactory
+	files, err := cli.SearchFiles(searchParams)
+	if err != nil {
+		return err
+	}
+
+	// create new property parameters
+	p := services.NewPropsParams()
+
+	// add property configuration to property parameters
+	p.Items = files
+	p.Props = s.String()
+
+	// send API call to set properties for artifacts in Artifactory
+	_, err = cli.SetProps(p)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// String formats and returns a query string for the properties.
+func (s *SetProp) String() string {
+	// variable to store properties
+	var properties []string
+
+	// iterate through all properties
+	for _, prop := range s.Props {
+		// add string for property from provided properties
+		properties = append(properties, prop.String())
+	}
+
+	return strings.Join(properties, ";")
 }
 
 // Validate verifies the SetProp is properly configured.
