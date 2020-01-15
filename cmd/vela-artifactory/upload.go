@@ -8,6 +8,10 @@ import (
 	"fmt"
 
 	"github.com/sirupsen/logrus"
+
+	"github.com/jfrog/jfrog-client-go/artifactory"
+	"github.com/jfrog/jfrog-client-go/artifactory/services"
+	"github.com/jfrog/jfrog-client-go/artifactory/services/utils"
 )
 
 const uploadAction = "upload"
@@ -30,6 +34,36 @@ type Upload struct {
 	Path string
 	// list of files to upload
 	Sources []string
+}
+
+// Exec formats and runs the commands for uploading artifacts in Artifactory.
+func (u *Upload) Exec(cli *artifactory.ArtifactoryServicesManager) error {
+	logrus.Trace("running upload with provided configuration")
+
+	// iterate through all sources
+	for _, source := range u.Sources {
+		// create new upload parameters
+		p := services.NewUploadParams()
+
+		// add upload configuration to upload parameters
+		p.ArtifactoryCommonParams = &utils.ArtifactoryCommonParams{
+			IncludeDirs: u.IncludeDirs,
+			Pattern:     source,
+			Recursive:   u.Recursive,
+			Regexp:      u.Regexp,
+			Target:      u.Path,
+		}
+		p.Flat = u.Flat
+		p.Retries = 3
+
+		// send API call to upload artifacts in Artifactory
+		_, _, _, err := cli.UploadFiles(p)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 // Validate verifies the Upload is properly configured.
