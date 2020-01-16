@@ -11,6 +11,7 @@ func TestArtifactory_Delete_Exec_Error(t *testing.T) {
 	config := &Config{
 		Action:   "copy",
 		APIKey:   "superSecretAPIKey",
+		DryRun:   false,
 		Password: "superSecretPassword",
 		URL:      "http://localhost:8081/artifactory",
 		Username: "octocat",
@@ -22,8 +23,6 @@ func TestArtifactory_Delete_Exec_Error(t *testing.T) {
 	}
 
 	d := &Delete{
-		ArgsFile:  "",
-		DryRun:    false,
 		Recursive: false,
 		Path:      "foo/bar",
 	}
@@ -37,8 +36,6 @@ func TestArtifactory_Delete_Exec_Error(t *testing.T) {
 func TestArtifactory_Delete_Validate(t *testing.T) {
 	// setup types
 	d := &Delete{
-		ArgsFile:  "",
-		DryRun:    false,
 		Recursive: false,
 		Path:      "foo/bar",
 	}
@@ -52,8 +49,6 @@ func TestArtifactory_Delete_Validate(t *testing.T) {
 func TestArtifactory_Delete_Validate_NoPath(t *testing.T) {
 	// setup types
 	d := &Delete{
-		ArgsFile:  "",
-		DryRun:    false,
 		Recursive: false,
 	}
 

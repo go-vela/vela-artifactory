@@ -18,10 +18,6 @@ const deleteAction = "delete"
 
 // Delete represents the plugin configuration for delete information.
 type Delete struct {
-	// file path to load arguments from
-	ArgsFile string
-	// enables pretending to remove the artifact(s) in the path
-	DryRun bool
 	// enables removing sub-directories for the artifact(s) in the path
 	Recursive bool
 	// target path to artifact(s) to remove
