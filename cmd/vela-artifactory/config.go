@@ -18,10 +18,12 @@ import (
 
 // Config represents the plugin configuration for Artifactory config information.
 type Config struct {
-	// Action to perform against the Artifactory instance
+	// action to perform against the Artifactory instance
 	Action string
 	// API key for communication with the Artifactory instance
 	APIKey string
+	// enables pretending to perform the action against the Artifactory instance
+	DryRun bool
 	// password for communication with the Artifactory instance
 	Password string
 	// full url to Artifactory instance
@@ -67,6 +69,7 @@ func (c *Config) New() (*artifactory.ArtifactoryServicesManager, error) {
 	// create new Artifactory config from details
 	config, err := artifactory.NewConfigBuilder().
 		SetArtDetails(details).
+		SetDryRun(c.DryRun).
 		Build()
 	if err != nil {
 		return nil, err
@@ -93,12 +96,14 @@ func (c *Config) Validate() error {
 		return fmt.Errorf("no config url provided")
 	}
 
-	if len(c.Username) == 0 {
-		return fmt.Errorf("no config username provided")
-	}
+	if !c.DryRun {
+		if len(c.Username) == 0 {
+			return fmt.Errorf("no config username provided")
+		}
 
-	if len(c.Password) == 0 && len(c.APIKey) == 0 {
-		return fmt.Errorf("no config api-key or password provided")
+		if len(c.Password) == 0 && len(c.APIKey) == 0 {
+			return fmt.Errorf("no config api-key or password provided")
+		}
 	}
 
 	return nil

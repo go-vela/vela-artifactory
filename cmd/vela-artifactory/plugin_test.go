@@ -14,6 +14,7 @@ func TestArtifactory_Plugin_Exec_Copy(t *testing.T) {
 		Config: &Config{
 			Action:   "copy",
 			APIKey:   "superSecretAPIKey",
+			DryRun:   false,
 			Password: "superSecretPassword",
 			URL:      "https://myarti.com/artifactory",
 			Username: "octocat",
@@ -41,14 +42,13 @@ func TestArtifactory_Plugin_Exec_Delete(t *testing.T) {
 		Config: &Config{
 			Action:   "delete",
 			APIKey:   "superSecretAPIKey",
+			DryRun:   false,
 			Password: "superSecretPassword",
 			URL:      "https://myarti.com/artifactory",
 			Username: "octocat",
 		},
 		Copy: &Copy{},
 		Delete: &Delete{
-			ArgsFile:  "",
-			DryRun:    false,
 			Recursive: false,
 			Path:      "foo/bar",
 		},
@@ -68,6 +68,7 @@ func TestArtifactory_Plugin_Exec_InvalidAction(t *testing.T) {
 		Config: &Config{
 			Action:   "foobar",
 			APIKey:   "superSecretAPIKey",
+			DryRun:   false,
 			Password: "superSecretPassword",
 			URL:      "https://myarti.com/artifactory",
 			Username: "octocat",
@@ -90,6 +91,7 @@ func TestArtifactory_Plugin_Exec_SetProp(t *testing.T) {
 		Config: &Config{
 			Action:   "set-prop",
 			APIKey:   "superSecretAPIKey",
+			DryRun:   false,
 			Password: "superSecretPassword",
 			URL:      "https://myarti.com/artifactory",
 			Username: "octocat",
@@ -120,6 +122,7 @@ func TestArtifactory_Plugin_Exec_Upload(t *testing.T) {
 		Config: &Config{
 			Action:   "upload",
 			APIKey:   "superSecretAPIKey",
+			DryRun:   false,
 			Password: "superSecretPassword",
 			URL:      "https://myarti.com/artifactory",
 			Username: "octocat",
@@ -128,8 +131,6 @@ func TestArtifactory_Plugin_Exec_Upload(t *testing.T) {
 		Delete:  &Delete{},
 		SetProp: &SetProp{},
 		Upload: &Upload{
-			ArgsFile:    "",
-			DryRun:      false,
 			Flat:        true,
 			IncludeDirs: false,
 			Recursive:   true,
@@ -151,6 +152,7 @@ func TestArtifactory_Plugin_Validate(t *testing.T) {
 		Config: &Config{
 			Action:   "copy",
 			APIKey:   "superSecretAPIKey",
+			DryRun:   false,
 			Password: "superSecretPassword",
 			URL:      "https://myarti.com/artifactory",
 			Username: "octocat",
@@ -162,8 +164,6 @@ func TestArtifactory_Plugin_Validate(t *testing.T) {
 			Target:    "bar/foo",
 		},
 		Delete: &Delete{
-			ArgsFile:  "",
-			DryRun:    false,
 			Recursive: false,
 			Path:      "foo/bar",
 		},
@@ -177,8 +177,6 @@ func TestArtifactory_Plugin_Validate(t *testing.T) {
 			},
 		},
 		Upload: &Upload{
-			ArgsFile:    "",
-			DryRun:      false,
 			Flat:        true,
 			IncludeDirs: false,
 			Recursive:   true,
@@ -200,6 +198,7 @@ func TestArtifactory_Plugin_Validate_InvalidAction(t *testing.T) {
 		Config: &Config{
 			Action:   "foobar",
 			APIKey:   "superSecretAPIKey",
+			DryRun:   false,
 			Password: "superSecretPassword",
 			URL:      "https://myarti.com/artifactory",
 			Username: "octocat",
@@ -238,6 +237,7 @@ func TestArtifactory_Plugin_Validate_NoCopy(t *testing.T) {
 		Config: &Config{
 			Action:   "copy",
 			APIKey:   "superSecretAPIKey",
+			DryRun:   false,
 			Password: "superSecretPassword",
 			URL:      "https://myarti.com/artifactory",
 			Username: "octocat",
@@ -260,6 +260,7 @@ func TestArtifactory_Plugin_Validate_NoDelete(t *testing.T) {
 		Config: &Config{
 			Action:   "delete",
 			APIKey:   "superSecretAPIKey",
+			DryRun:   false,
 			Password: "superSecretPassword",
 			URL:      "https://myarti.com/artifactory",
 			Username: "octocat",
@@ -282,6 +283,7 @@ func TestArtifactory_Plugin_Validate_NoSetProp(t *testing.T) {
 		Config: &Config{
 			Action:   "set-prop",
 			APIKey:   "superSecretAPIKey",
+			DryRun:   false,
 			Password: "superSecretPassword",
 			URL:      "https://myarti.com/artifactory",
 			Username: "octocat",
@@ -304,6 +306,7 @@ func TestArtifactory_Plugin_Validate_NoUpload(t *testing.T) {
 		Config: &Config{
 			Action:   "upload",
 			APIKey:   "superSecretAPIKey",
+			DryRun:   false,
 			Password: "superSecretPassword",
 			URL:      "https://myarti.com/artifactory",
 			Username: "octocat",

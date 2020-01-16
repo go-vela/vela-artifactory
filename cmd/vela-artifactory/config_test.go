@@ -13,6 +13,7 @@ func TestArtifactory_Config_New(t *testing.T) {
 	c := &Config{
 		Action:   "copy",
 		APIKey:   "superSecretAPIKey",
+		DryRun:   false,
 		Password: "superSecretPassword",
 		URL:      "https://myarti.com/artifactory",
 		Username: "octocat",
@@ -33,6 +34,7 @@ func TestArtifactory_Config_Validate(t *testing.T) {
 	c := &Config{
 		Action:   "copy",
 		APIKey:   "superSecretAPIKey",
+		DryRun:   false,
 		Password: "superSecretPassword",
 		URL:      "https://myarti.com/artifactory",
 		Username: "octocat",
@@ -48,6 +50,7 @@ func TestArtifactory_Config_Validate_NoAction(t *testing.T) {
 	// setup types
 	c := &Config{
 		APIKey:   "superSecretAPIKey",
+		DryRun:   false,
 		Password: "superSecretPassword",
 		URL:      "https://myarti.com/artifactory",
 		Username: "octocat",
@@ -63,6 +66,7 @@ func TestArtifactory_Config_Validate_NoAPIKeyOrPassword(t *testing.T) {
 	// setup types
 	c := &Config{
 		Action:   "copy",
+		DryRun:   false,
 		URL:      "https://myarti.com/artifactory",
 		Username: "octocat",
 	}
@@ -77,6 +81,7 @@ func TestArtifactory_Config_Validate_NoAPIKey(t *testing.T) {
 	// setup types
 	c := &Config{
 		Action:   "copy",
+		DryRun:   false,
 		Password: "superSecretPassword",
 		URL:      "https://myarti.com/artifactory",
 		Username: "octocat",
@@ -92,6 +97,7 @@ func TestArtifactory_Config_Validate_NoPassword(t *testing.T) {
 	// setup types
 	c := &Config{
 		Action:   "copy",
+		DryRun:   false,
 		APIKey:   "superSecretAPIKey",
 		URL:      "https://myarti.com/artifactory",
 		Username: "octocat",
@@ -107,6 +113,7 @@ func TestArtifactory_Config_Validate_NoUrl(t *testing.T) {
 	// setup types
 	c := &Config{
 		Action:   "copy",
+		DryRun:   false,
 		APIKey:   "superSecretAPIKey",
 		Password: "superSecretPassword",
 		Username: "octocat",
@@ -122,6 +129,7 @@ func TestArtifactory_Config_Validate_NoUsername(t *testing.T) {
 	// setup types
 	c := &Config{
 		Action:   "copy",
+		DryRun:   false,
 		APIKey:   "superSecretAPIKey",
 		Password: "superSecretPassword",
 		URL:      "https://myarti.com/artifactory",

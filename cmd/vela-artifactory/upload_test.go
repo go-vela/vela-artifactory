@@ -11,6 +11,7 @@ func TestArtifactory_Upload_Exec_Error(t *testing.T) {
 	config := &Config{
 		Action:   "upload",
 		APIKey:   "superSecretAPIKey",
+		DryRun:   false,
 		Password: "superSecretPassword",
 		URL:      "http://localhost:8081/artifactory",
 		Username: "octocat",
@@ -22,8 +23,6 @@ func TestArtifactory_Upload_Exec_Error(t *testing.T) {
 	}
 
 	u := &Upload{
-		ArgsFile:    "",
-		DryRun:      false,
 		Flat:        true,
 		IncludeDirs: false,
 		Recursive:   true,
@@ -41,8 +40,6 @@ func TestArtifactory_Upload_Exec_Error(t *testing.T) {
 func TestArtifactory_Upload_Validate(t *testing.T) {
 	// setup types
 	u := &Upload{
-		ArgsFile:    "",
-		DryRun:      false,
 		Flat:        true,
 		IncludeDirs: false,
 		Recursive:   true,
@@ -60,8 +57,6 @@ func TestArtifactory_Upload_Validate(t *testing.T) {
 func TestArtifactory_Upload_Validate_NoPath(t *testing.T) {
 	// setup types
 	u := &Upload{
-		ArgsFile:    "",
-		DryRun:      false,
 		Flat:        true,
 		IncludeDirs: false,
 		Recursive:   true,
@@ -78,8 +73,6 @@ func TestArtifactory_Upload_Validate_NoPath(t *testing.T) {
 func TestArtifactory_Upload_Validate_NoSources(t *testing.T) {
 	// setup types
 	u := &Upload{
-		ArgsFile:    "",
-		DryRun:      false,
 		Flat:        true,
 		IncludeDirs: false,
 		Recursive:   true,
