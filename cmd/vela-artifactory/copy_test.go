@@ -11,6 +11,7 @@ func TestArtifactory_Copy_Exec_Error(t *testing.T) {
 	config := &Config{
 		Action:   "copy",
 		APIKey:   "superSecretAPIKey",
+		DryRun:   false,
 		Password: "superSecretPassword",
 		URL:      "http://localhost:8081/artifactory",
 		Username: "octocat",

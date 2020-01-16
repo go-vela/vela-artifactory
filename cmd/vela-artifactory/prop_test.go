@@ -113,6 +113,7 @@ func TestArtifactory_SetProp_Exec_Error(t *testing.T) {
 	config := &Config{
 		Action:   "set-prop",
 		APIKey:   "superSecretAPIKey",
+		DryRun:   false,
 		Password: "superSecretPassword",
 		URL:      "http://localhost:8081/artifactory",
 		Username: "octocat",

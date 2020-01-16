@@ -46,7 +46,7 @@ func main() {
 			Value:  "info",
 		},
 		cli.StringFlag{
-			EnvVar: "PARAMETER_PATH,COPY_PATH,DELETE_PATH,SET_PROP_PATH,UPLOAD_PATH,ARTIFACTORY_PATH",
+			EnvVar: "PARAMETER_PATH,ARTIFACTORY_PATH",
 			Name:   "path",
 			Usage:  "source/target path to artifact(s) for action",
 		},
@@ -57,6 +57,11 @@ func main() {
 			EnvVar: "PARAMETER_ACTION,CONFIG_ACTION,ARTIFACTORY_ACTION",
 			Name:   "config.action",
 			Usage:  "action to perform against the Artifactory instance",
+		},
+		cli.BoolFlag{
+			EnvVar: "PARAMETER_DRY_RUN,CONFIG_DRY_RUN,ARTIFACTORY_DRY_RUN",
+			Name:   "config.dry_run",
+			Usage:  "enables pretending to perform the action",
 		},
 		cli.StringFlag{
 			EnvVar: "PARAMETER_API_KEY,CONFIG_API_KEY,ARTIFACTORY_API_KEY",
@@ -84,12 +89,12 @@ func main() {
 		cli.BoolFlag{
 			EnvVar: "PARAMETER_FLAT,COPY_FLAT",
 			Name:   "copy.flat",
-			Usage:  "enables removing source file directory hierarchy",
+			Usage:  "enables removing source directory hierarchy",
 		},
 		cli.BoolFlag{
 			EnvVar: "PARAMETER_RECURSIVE,COPY_RECURSIVE",
 			Name:   "copy.recursive",
-			Usage:  "enables copying sub-directories from source",
+			Usage:  "enables copying sub-directories for the artifact(s)",
 		},
 		cli.StringFlag{
 			EnvVar: "PARAMETER_TARGET,COPY_TARGET",
@@ -99,16 +104,6 @@ func main() {
 
 		// Delete Flags
 
-		cli.StringFlag{
-			EnvVar: "PARAMETER_ARGS_FILE,DELETE_ARGS_FILE",
-			Name:   "delete.args_file",
-			Usage:  "source path to load arguments from",
-		},
-		cli.BoolFlag{
-			EnvVar: "PARAMETER_DRY_RUN,DELETE_DRY_RUN",
-			Name:   "delete.dry_run",
-			Usage:  "enables pretending to remove the artifact(s)",
-		},
 		cli.BoolFlag{
 			EnvVar: "PARAMETER_RECURSIVE,DELETE_RECURSIVE",
 			Name:   "delete.recursive",
@@ -125,16 +120,6 @@ func main() {
 
 		// Upload Flags
 
-		cli.StringFlag{
-			EnvVar: "PARAMETER_ARGS_FILE,UPLOAD_ARGS_FILE",
-			Name:   "upload.args_file",
-			Usage:  "source path to load arguments from",
-		},
-		cli.BoolFlag{
-			EnvVar: "PARAMETER_DRY_RUN,UPLOAD_DRY_RUN",
-			Name:   "upload.dry_run",
-			Usage:  "enables pretending to upload the artifact(s)",
-		},
 		cli.BoolFlag{
 			EnvVar: "PARAMETER_FLAT,UPLOAD_FLAT",
 			Name:   "upload.flat",
@@ -143,7 +128,7 @@ func main() {
 		cli.BoolFlag{
 			EnvVar: "PARAMETER_INCLUDE_DIRS,UPLOAD_INCLUDE_DIRS",
 			Name:   "upload.include_dirs",
-			Usage:  "enables including directories and files from sources",
+			Usage:  "enables including directories from sources",
 		},
 		cli.BoolFlag{
 			EnvVar: "PARAMETER_REGEXP,UPLOAD_REGEXP",
@@ -158,7 +143,7 @@ func main() {
 		cli.StringSliceFlag{
 			EnvVar: "PARAMETER_SOURCES,UPLOAD_SOURCES",
 			Name:   "upload.sources",
-			Usage:  "list of files to upload",
+			Usage:  "list of artifact(s) to upload",
 		},
 	}
 
@@ -196,6 +181,7 @@ func run(c *cli.Context) error {
 		Config: &Config{
 			Action:   c.String("config.action"),
 			APIKey:   c.String("config.api_key"),
+			DryRun:   c.Bool("config.dry_run"),
 			Password: c.String("config.password"),
 			URL:      c.String("config.url"),
 			Username: c.String("config.username"),
@@ -209,8 +195,6 @@ func run(c *cli.Context) error {
 		},
 		// delete configuration
 		Delete: &Delete{
-			ArgsFile:  c.String("delete.args_file"),
-			DryRun:    c.Bool("delete.dry_run"),
 			Path:      c.String("path"),
 			Recursive: c.Bool("delete.recursive"),
 		},
@@ -220,8 +204,6 @@ func run(c *cli.Context) error {
 		},
 		// upload configuration
 		Upload: &Upload{
-			ArgsFile:    c.String("upload.args_file"),
-			DryRun:      c.Bool("upload.dry_run"),
 			Flat:        c.Bool("upload.flat"),
 			IncludeDirs: c.Bool("upload.include_dirs"),
 			Recursive:   c.Bool("upload.recursive"),
