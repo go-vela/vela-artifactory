@@ -5,9 +5,16 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/sirupsen/logrus"
+)
+
+var (
+	// ErrInvalidAction defines the error type when the
+	// Action provided to the Plugin is unsupported.
+	ErrInvalidAction = errors.New("invalid action provided")
 )
 
 // Plugin represents the configuration loaded for the plugin.
@@ -26,7 +33,39 @@ type Plugin struct {
 
 // Exec formats and runs the commands for managing artifacts in Artifactory.
 func (p *Plugin) Exec() error {
-	return nil
+	logrus.Debug("running plugin with provided configuration")
+
+	// create new Artifactory client from config configuration
+	cli, err := p.Config.New()
+	if err != nil {
+		return err
+	}
+
+	// execute action specific configuration
+	switch p.Config.Action {
+	case copyAction:
+		// execute copy action
+		return p.Copy.Exec(cli)
+	case deleteAction:
+		// execute delete action
+		return p.Delete.Exec(cli)
+	case setPropAction:
+		// execute set-prop action
+		return p.SetProp.Exec(cli)
+	case uploadAction:
+		// execute upload action
+		return p.Upload.Exec(cli)
+	default:
+		return fmt.Errorf(
+			"%s: %s (Valid actions: %s, %s, %s, %s)",
+			ErrInvalidAction,
+			p.Config.Action,
+			copyAction,
+			deleteAction,
+			setPropAction,
+			uploadAction,
+		)
+	}
 }
 
 // Validate verifies the plugin is properly configured.
@@ -39,6 +78,7 @@ func (p *Plugin) Validate() error {
 		return err
 	}
 
+	// validate action specific configuration
 	switch p.Config.Action {
 	case copyAction:
 		// validate copy configuration
@@ -53,6 +93,14 @@ func (p *Plugin) Validate() error {
 		// validate upload configuration
 		return p.Upload.Validate()
 	default:
-		return fmt.Errorf("invalid action provided: %s (Valid actions: %s, %s, %s, %s)", p.Config.Action, copyAction, deleteAction, setPropAction, uploadAction)
+		return fmt.Errorf(
+			"%s: %s (Valid actions: %s, %s, %s, %s)",
+			ErrInvalidAction,
+			p.Config.Action,
+			copyAction,
+			deleteAction,
+			setPropAction,
+			uploadAction,
+		)
 	}
 }
