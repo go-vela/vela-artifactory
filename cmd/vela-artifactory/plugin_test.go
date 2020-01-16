@@ -8,10 +8,11 @@ import (
 	"testing"
 )
 
-func TestArtifactory_Plugin_Exec(t *testing.T) {
+func TestArtifactory_Plugin_Exec_Copy(t *testing.T) {
 	// setup types
 	p := &Plugin{
 		Config: &Config{
+			Action:   "copy",
 			APIKey:   "superSecretAPIKey",
 			Password: "superSecretPassword",
 			URL:      "https://myarti.com/artifactory",
@@ -23,12 +24,78 @@ func TestArtifactory_Plugin_Exec(t *testing.T) {
 			Path:      "foo/bar",
 			Target:    "bar/foo",
 		},
+		Delete:  &Delete{},
+		SetProp: &SetProp{},
+		Upload:  &Upload{},
+	}
+
+	err := p.Exec()
+	if err == nil {
+		t.Errorf("Exec should have returned err")
+	}
+}
+
+func TestArtifactory_Plugin_Exec_Delete(t *testing.T) {
+	// setup types
+	p := &Plugin{
+		Config: &Config{
+			Action:   "delete",
+			APIKey:   "superSecretAPIKey",
+			Password: "superSecretPassword",
+			URL:      "https://myarti.com/artifactory",
+			Username: "octocat",
+		},
+		Copy: &Copy{},
 		Delete: &Delete{
 			ArgsFile:  "",
 			DryRun:    false,
 			Recursive: false,
 			Path:      "foo/bar",
 		},
+		SetProp: &SetProp{},
+		Upload:  &Upload{},
+	}
+
+	err := p.Exec()
+	if err == nil {
+		t.Errorf("Exec should have returned err")
+	}
+}
+
+func TestArtifactory_Plugin_Exec_InvalidAction(t *testing.T) {
+	// setup types
+	p := &Plugin{
+		Config: &Config{
+			Action:   "foobar",
+			APIKey:   "superSecretAPIKey",
+			Password: "superSecretPassword",
+			URL:      "https://myarti.com/artifactory",
+			Username: "octocat",
+		},
+		Copy:    &Copy{},
+		Delete:  &Delete{},
+		SetProp: &SetProp{},
+		Upload:  &Upload{},
+	}
+
+	err := p.Exec()
+	if err == nil {
+		t.Errorf("Exec should have returned err")
+	}
+}
+
+func TestArtifactory_Plugin_Exec_SetProp(t *testing.T) {
+	// setup types
+	p := &Plugin{
+		Config: &Config{
+			Action:   "set-prop",
+			APIKey:   "superSecretAPIKey",
+			Password: "superSecretPassword",
+			URL:      "https://myarti.com/artifactory",
+			Username: "octocat",
+		},
+		Copy:   &Copy{},
+		Delete: &Delete{},
 		SetProp: &SetProp{
 			Path: "foo/bar",
 			Props: []*Prop{
@@ -38,6 +105,28 @@ func TestArtifactory_Plugin_Exec(t *testing.T) {
 				},
 			},
 		},
+		Upload: &Upload{},
+	}
+
+	err := p.Exec()
+	if err == nil {
+		t.Errorf("Exec should have returned err")
+	}
+}
+
+func TestArtifactory_Plugin_Exec_Upload(t *testing.T) {
+	// setup types
+	p := &Plugin{
+		Config: &Config{
+			Action:   "upload",
+			APIKey:   "superSecretAPIKey",
+			Password: "superSecretPassword",
+			URL:      "https://myarti.com/artifactory",
+			Username: "octocat",
+		},
+		Copy:    &Copy{},
+		Delete:  &Delete{},
+		SetProp: &SetProp{},
 		Upload: &Upload{
 			ArgsFile:    "",
 			DryRun:      false,
@@ -51,8 +140,8 @@ func TestArtifactory_Plugin_Exec(t *testing.T) {
 	}
 
 	err := p.Exec()
-	if err != nil {
-		t.Errorf("Exec returned err: %v", err)
+	if err == nil {
+		t.Errorf("Exec should have returned err")
 	}
 }
 
