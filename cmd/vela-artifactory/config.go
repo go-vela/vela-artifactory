@@ -88,20 +88,25 @@ func (c *Config) New() (*artifactory.ArtifactoryServicesManager, error) {
 func (c *Config) Validate() error {
 	logrus.Trace("validating config plugin configuration")
 
+	// verify action is provided
 	if len(c.Action) == 0 {
 		return fmt.Errorf("no config action provided")
 	}
 
+	// verify URL is provided
 	if len(c.URL) == 0 {
 		return fmt.Errorf("no config url provided")
 	}
 
+	// check if dry run is disabled
 	if !c.DryRun {
+		// verify username is provided
 		if len(c.Username) == 0 {
 			return fmt.Errorf("no config username provided")
 		}
 
-		if len(c.Password) == 0 && len(c.APIKey) == 0 {
+		// verify API key or password are provided
+		if len(c.APIKey) == 0 && len(c.Password) == 0 {
 			return fmt.Errorf("no config api-key or password provided")
 		}
 	}

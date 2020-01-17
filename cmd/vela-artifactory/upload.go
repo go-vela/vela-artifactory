@@ -66,10 +66,12 @@ func (u *Upload) Exec(cli *artifactory.ArtifactoryServicesManager) error {
 func (u *Upload) Validate() error {
 	logrus.Trace("validating upload plugin configuration")
 
+	// verify path is provided
 	if len(u.Path) == 0 {
 		return fmt.Errorf("no upload path provided")
 	}
 
+	// verify sources are provided
 	if len(u.Sources) == 0 {
 		return fmt.Errorf("no upload sources provided")
 	}

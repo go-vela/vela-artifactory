@@ -44,12 +44,14 @@ func (p *Prop) String() string {
 func (p *Prop) Validate() error {
 	logrus.Trace("validating prop configuration")
 
+	// verify name is provided
 	if len(p.Name) == 0 {
 		return fmt.Errorf("no prop name provided")
 	}
 
+	// verify value or values are provided
 	if len(p.Value) == 0 && len(p.Values) == 0 {
-		return fmt.Errorf("no prop value(s) provided")
+		return fmt.Errorf("no prop value or values provided")
 	}
 
 	return nil
@@ -144,6 +146,7 @@ func (s *SetProp) Unmarshal() error {
 func (s *SetProp) Validate() error {
 	logrus.Trace("validating set prop plugin configuration")
 
+	// verify path is provided
 	if len(s.Path) == 0 {
 		return fmt.Errorf("no set-prop path provided")
 	}
@@ -154,11 +157,14 @@ func (s *SetProp) Validate() error {
 		return fmt.Errorf("unable to unmarshal set-prop props: %v", err)
 	}
 
+	// verify properties are provided
 	if len(s.Props) == 0 {
 		return fmt.Errorf("no set-prop props provided")
 	}
 
+	// iterate through all propeties
 	for _, prop := range s.Props {
+		// verify the property is valid
 		err := prop.Validate()
 		if err != nil {
 			return fmt.Errorf("invalid set-prop prop provided: %v", err)
