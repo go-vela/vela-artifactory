@@ -162,7 +162,7 @@ func (s *SetProp) Validate() error {
 		return fmt.Errorf("no set-prop props provided")
 	}
 
-	// iterate through all propeties
+	// iterate through all properties
 	for _, prop := range s.Props {
 		// verify the property is valid
 		err := prop.Validate()
