@@ -1,0 +1,59 @@
+# Copyright (c) 2020 Target Brands, Inc. All rights reserved.
+#
+# Use of this source code is governed by the LICENSE file in this repository.
+
+## Template Variables
+# - .image        (default: "target/vela-artifactory:latest")
+# - .pull         (default: true)
+# - .log_level    (default: "info")
+# - .action       (default: "")
+# - .api_key      (default: "")
+# - .dry_run      (default: false)
+# - .flat         (default: false)
+# - .include_dirs (default: false)
+# - .path         (default: "")
+# - .props        (default: "")
+# - .recursive    (default: false)
+# - .regexp       (default: false)
+# - .sources      (default: "")
+# - .target       (default: "")
+# - .url          (default: "")
+
+## Set Default Template Variables
+{{ default "target/vela-artifactory:latest" .image }}
+{{ default "true" .pull }}
+{{ default "info" .log_level }}
+{{ default "" .action }}
+{{ default "" .api_key }}
+{{ default "false" .dry_run }}
+{{ default "false" .flat }}
+{{ default "false" .include_dirs }}
+{{ default "" .path }}
+{{ default "" .props }}
+{{ default "false" .recursive }}
+{{ default "false" .regexp }}
+{{ default "" .sources }}
+{{ default "" .target }}
+{{ default "" .url }}
+
+metadata:
+  template: true
+
+steps:
+  - name: artifactory_plugin
+    image: {{ .image }}
+    pull: {{ .pull }}
+    parameters:
+      log_level: {{ .log_level }}
+      action: {{ .action }}
+      api_key: {{ .api_key }}
+      dry_run: {{ .dry_run }}
+      flat: {{ .flat }}
+      include_dirs: {{ .include_dirs }}
+      path: {{ .path }}
+      props: {{ .props }}
+      recursive: {{ .recursive }}
+      regexp: {{ .regexp }}
+      sources: {{ .sources }}
+      target: {{ .target }}
+      url: {{ .url }}
