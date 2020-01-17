@@ -32,6 +32,8 @@ type Prop struct {
 
 // String formats and returns a query string for the property.
 func (p *Prop) String() string {
+	logrus.Tracef("creating prop string for %s", p.Name)
+
 	// check if property value is provided
 	if len(p.Value) > 0 {
 		return fmt.Sprintf("%s=%s", p.Name, p.Value)
@@ -42,7 +44,7 @@ func (p *Prop) String() string {
 
 // Validate verifies the Prop is properly configured.
 func (p *Prop) Validate() error {
-	logrus.Trace("validating prop configuration")
+	logrus.Tracef("validating prop configuration for %s", p.Name)
 
 	// verify name is provided
 	if len(p.Name) == 0 {
@@ -106,6 +108,8 @@ func (s *SetProp) Exec(cli *artifactory.ArtifactoryServicesManager) error {
 
 // String formats and returns a query string for the properties.
 func (s *SetProp) String() string {
+	logrus.Trace("creating string for props")
+
 	// variable to store properties
 	var properties []string
 
@@ -121,6 +125,8 @@ func (s *SetProp) String() string {
 // Unmarshal captures the provided properties and
 // serializes them into their expected form.
 func (s *SetProp) Unmarshal() error {
+	logrus.Trace("unmarshaling raw props")
+
 	// capture raw properties provided to plugin
 	raw, err := yaml.Marshal(s.RawProps)
 	if err != nil {
