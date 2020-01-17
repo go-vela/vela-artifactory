@@ -125,7 +125,7 @@ func (s *SetProp) Unmarshal() error {
 		return err
 	}
 
-	// convert YAML to JSON for compatiblity purposes
+	// convert YAML to JSON for compatibility purposes
 	bytes, err := json.YAMLToJSON(raw)
 	if err != nil {
 		return err
