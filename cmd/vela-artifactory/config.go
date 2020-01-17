@@ -34,6 +34,8 @@ type Config struct {
 
 // New creates an Artifactory client for managing artifacts.
 func (c *Config) New() (*artifactory.ArtifactoryServicesManager, error) {
+	logrus.Trace("creating new Artifactory client from plugin configuration")
+
 	// create new Artifactory details
 	details := auth.NewArtifactoryDetails()
 
