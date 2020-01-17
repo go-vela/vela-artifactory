@@ -112,7 +112,7 @@ func main() {
 
 		// Set Prop Flags
 
-		cli.StringSliceFlag{
+		cli.GenericFlag{
 			EnvVar: "PARAMETER_PROPS,SET_PROP_PROPS",
 			Name:   "set_prop.props",
 			Usage:  "properties to set on the artifact(s)",
@@ -200,7 +200,8 @@ func run(c *cli.Context) error {
 		},
 		// set-prop configuration
 		SetProp: &SetProp{
-			Path: c.String("path"),
+			Path:     c.String("path"),
+			RawProps: c.Generic("set_prop.props"),
 		},
 		// upload configuration
 		Upload: &Upload{
