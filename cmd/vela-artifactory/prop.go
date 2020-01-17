@@ -8,11 +8,14 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/sirupsen/logrus"
-
 	"github.com/jfrog/jfrog-client-go/artifactory"
 	"github.com/jfrog/jfrog-client-go/artifactory/services"
 	"github.com/jfrog/jfrog-client-go/artifactory/services/utils"
+
+	"github.com/sirupsen/logrus"
+
+	json "github.com/ghodss/yaml"
+	yaml "gopkg.in/yaml.v2"
 )
 
 const setPropAction = "set-prop"
@@ -58,6 +61,8 @@ type SetProp struct {
 	Path string
 	// properties to set on the artifact(s)
 	Props []*Prop
+	// raw input of properties provided for plugin
+	RawProps interface{}
 	// enables setting properties on sub-directories for the artifact(s) in the path
 	Recursive bool
 }
@@ -111,12 +116,42 @@ func (s *SetProp) String() string {
 	return strings.Join(properties, ";")
 }
 
+// Unmarshal captures the provided properties and
+// serializes them into their expected form.
+func (s *SetProp) Unmarshal() error {
+	// capture raw properties provided to plugin
+	raw, err := yaml.Marshal(s.RawProps)
+	if err != nil {
+		return err
+	}
+
+	// convert YAML to JSON for compatiblity purposes
+	bytes, err := json.YAMLToJSON(raw)
+	if err != nil {
+		return err
+	}
+
+	// serialize raw properties into expected Props type
+	err = json.Unmarshal(bytes, &s.Props)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // Validate verifies the SetProp is properly configured.
 func (s *SetProp) Validate() error {
 	logrus.Trace("validating set prop plugin configuration")
 
 	if len(s.Path) == 0 {
 		return fmt.Errorf("no set-prop path provided")
+	}
+
+	// serialize provided properties into expected type
+	err := s.Unmarshal()
+	if err != nil {
+		return fmt.Errorf("unable to unmarshal set-prop props: %v", err)
 	}
 
 	if len(s.Props) == 0 {
