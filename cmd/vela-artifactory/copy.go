@@ -56,10 +56,12 @@ func (c *Copy) Exec(cli *artifactory.ArtifactoryServicesManager) error {
 func (c *Copy) Validate() error {
 	logrus.Trace("validating copy plugin configuration")
 
+	// verify path is provided
 	if len(c.Path) == 0 {
 		return fmt.Errorf("no copy path provided")
 	}
 
+	// verify target is provided
 	if len(c.Target) == 0 {
 		return fmt.Errorf("no copy target provided")
 	}

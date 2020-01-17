@@ -56,6 +56,7 @@ func (d *Delete) Exec(cli *artifactory.ArtifactoryServicesManager) error {
 func (d *Delete) Validate() error {
 	logrus.Trace("validating delete plugin configuration")
 
+	// verify path is provided
 	if len(d.Path) == 0 {
 		return fmt.Errorf("no delete path provided")
 	}
