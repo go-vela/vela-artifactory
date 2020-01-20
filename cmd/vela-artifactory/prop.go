@@ -15,7 +15,6 @@ import (
 	"github.com/sirupsen/logrus"
 
 	json "github.com/ghodss/yaml"
-	yaml "gopkg.in/yaml.v2"
 )
 
 const setPropAction = "set-prop"
@@ -66,7 +65,7 @@ type SetProp struct {
 	// properties to set on the artifact(s)
 	Props []*Prop
 	// raw input of properties provided for plugin
-	RawProps interface{}
+	RawProps string
 	// enables setting properties on sub-directories for the artifact(s) in the path
 	Recursive bool
 }
@@ -127,20 +126,11 @@ func (s *SetProp) String() string {
 func (s *SetProp) Unmarshal() error {
 	logrus.Trace("unmarshaling raw props")
 
-	// capture raw properties provided to plugin
-	raw, err := yaml.Marshal(s.RawProps)
-	if err != nil {
-		return err
-	}
-
-	// convert YAML to JSON for compatibility purposes
-	bytes, err := json.YAMLToJSON(raw)
-	if err != nil {
-		return err
-	}
+	// cast raw properties into bytes
+	bytes := []byte(s.RawProps)
 
 	// serialize raw properties into expected Props type
-	err = json.Unmarshal(bytes, &s.Props)
+	err := json.Unmarshal(bytes, &s.Props)
 	if err != nil {
 		return err
 	}
