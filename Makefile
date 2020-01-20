@@ -42,23 +42,31 @@ docker-build:
 docker-run:
 
 	docker run --rm \
-		-e PARAMETER_ACTIONS \
-		-e PARAMETER_DEBUG \
-		-e PARAMETER_PASSWORD \
-		-e PARAMETER_APIKEY \
+		-e ARTIFACTORY_API_KEY \
+		-e ARTIFACTORY_PASSWORD \
+		-e ARTIFACTORY_USERNAME \
+		-e PARAMETER_ACTION \
+		-e PARAMETER_DRY_RUN \
+		-e PARAMETER_FLAT \
+		-e PARAMETER_INCLUDE_DIRS \
+		-e PARAMETER_PROPS \
+		-e PARAMETER_RECURSIVE \
+		-e PARAMETER_REGEXP \
+		-e PARAMETER_SOURCES \
+		-e PARAMETER_TARGET \
 		-e PARAMETER_URL \
-		-e PARAMETER_USERNAME \
-		-v $(pwd)/README.md:/README.md \
 		vela-artifactory:local
 
 docker-example:
 
 	docker run --rm \
-		-e PARAMETER_ACTIONS \
-		-e PARAMETER_DEBUG \
-		-e PARAMETER_PASSWORD \
-		-e PARAMETER_APIKEY \
+		-e PARAMETER_ACTION=upload \
+		-e PARAMETER_DRY_RUN=true \
+		-e PARAMETER_FLAT=false \
+		-e PARAMETER_INCLUDE_DIRS=false \
+		-e PARAMETER_PATH \
+		-e PARAMETER_RECURSIVE=false \
+		-e PARAMETER_REGEXP=false \
+		-e PARAMETER_SOURCES=LICENSE \
 		-e PARAMETER_URL \
-		-e PARAMETER_USERNAME \
-		-v $(pwd)/README.md:/README.md \
 		vela-artifactory:local
