@@ -106,12 +106,7 @@ func TestArtifactory_Plugin_Exec_SetProp(t *testing.T) {
 					Value: "bar",
 				},
 			},
-			RawProps: []interface{}{
-				map[interface{}]interface{}{
-					"name":  "foo",
-					"value": "bar",
-				},
-			},
+			RawProps: `[{"name": "single", "value": "foo"}]`,
 		},
 		Upload: &Upload{},
 	}
@@ -181,12 +176,7 @@ func TestArtifactory_Plugin_Validate(t *testing.T) {
 					Value: "bar",
 				},
 			},
-			RawProps: []interface{}{
-				map[interface{}]interface{}{
-					"name":  "foo",
-					"value": "bar",
-				},
-			},
+			RawProps: `[{"name": "single", "value": "foo"}]`,
 		},
 		Upload: &Upload{
 			Flat:        true,

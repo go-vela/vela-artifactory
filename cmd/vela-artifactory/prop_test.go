@@ -5,7 +5,6 @@
 package main
 
 import (
-	"errors"
 	"reflect"
 	"testing"
 )
@@ -129,10 +128,11 @@ func TestArtifactory_SetProp_Exec_Error(t *testing.T) {
 		Path: "foo/bar",
 		Props: []*Prop{
 			{
-				Name:  "foo",
-				Value: "bar",
+				Name:  "single",
+				Value: "foo",
 			},
 		},
+		RawProps: `[{"name": "single", "value": "foo"}]`,
 	}
 
 	err = s.Exec(cli)
@@ -147,13 +147,14 @@ func TestArtifactory_SetProp_String(t *testing.T) {
 		Path: "foo/bar",
 		Props: []*Prop{
 			{
-				Name:  "foo",
-				Value: "bar",
+				Name:  "single",
+				Value: "foo",
 			},
 		},
+		RawProps: `[{"name": "single", "value": "foo"}]`,
 	}
 
-	want := "foo=bar"
+	want := "single=foo"
 
 	got := s.String()
 
@@ -165,13 +166,8 @@ func TestArtifactory_SetProp_String(t *testing.T) {
 func TestArtifactory_SetProp_Validate(t *testing.T) {
 	// setup types
 	s := &SetProp{
-		Path: "foo/bar",
-		RawProps: []interface{}{
-			map[interface{}]interface{}{
-				"name":  "foo",
-				"value": "bar",
-			},
-		},
+		Path:     "foo/bar",
+		RawProps: `[{"name": "single", "value": "foo"}]`,
 	}
 
 	err := s.Validate()
@@ -196,12 +192,7 @@ func TestArtifactory_SetProp_Validate_Invalid(t *testing.T) {
 func TestArtifactory_SetProp_Validate_NoPath(t *testing.T) {
 	// setup types
 	s := &SetProp{
-		RawProps: []interface{}{
-			map[interface{}]interface{}{
-				"name":  "foo",
-				"value": "bar",
-			},
-		},
+		RawProps: `[{"name": "single", "value": "foo"}]`,
 	}
 
 	err := s.Validate()
@@ -225,12 +216,8 @@ func TestArtifactory_SetProp_Validate_NoProps(t *testing.T) {
 func TestArtifactory_SetProp_Validate_NoPropValue(t *testing.T) {
 	// setup types
 	s := &SetProp{
-		Path: "foo/bar",
-		RawProps: []interface{}{
-			map[interface{}]interface{}{
-				"name": "foo",
-			},
-		},
+		Path:     "foo/bar",
+		RawProps: `[{"name": "single"}]`,
 	}
 
 	err := s.Validate()
@@ -243,17 +230,12 @@ func TestArtifactory_SetProp_Unmarshal(t *testing.T) {
 	// setup types
 	s := &SetProp{
 		Path: "foo/bar",
-		RawProps: []interface{}{
-			map[interface{}]interface{}{
-				"name":  "single",
-				"value": "foo",
-			},
-			map[interface{}]interface{}{
-				"name":   "multiple",
-				"values": []interface{}{"bar", "baz"},
-			},
-		},
-	}
+		RawProps: `
+[
+  {"name": "single", "value": "foo"},
+  {"name": "multiple", "values": ["bar", "baz"]}
+]
+`}
 
 	want := []*Prop{
 		{
@@ -276,44 +258,11 @@ func TestArtifactory_SetProp_Unmarshal(t *testing.T) {
 	}
 }
 
-type FailMarshaler struct{}
-
-func (f *FailMarshaler) MarshalJSON() ([]byte, error) {
-	return nil, errors.New("This is a struct that fails when you try to marshal.")
-}
-
-func (f *FailMarshaler) MarshalYAML() (interface{}, error) {
-	return nil, errors.New("This is a struct that fails when you try to marshal.")
-}
-
-func TestArtifactory_SetProp_Unmarshal_FailMarshal(t *testing.T) {
-	// setup types
-	s := &SetProp{
-		Path:     "foo/bar",
-		RawProps: &FailMarshaler{},
-	}
-
-	err := s.Unmarshal()
-	if err == nil {
-		t.Errorf("Unmarshal should have returned err")
-	}
-}
-
-type FailUnmarshaler struct{}
-
-func (f *FailUnmarshaler) UnmarshalJSON([]byte) error {
-	return errors.New("This is a struct that fails when you try to unmarshal.")
-}
-
-func (f *FailUnmarshaler) UnmarshalYAML(unmarshal func(interface{}) error) error {
-	return errors.New("This is a struct that fails when you try to unmarshal.")
-}
-
 func TestArtifactory_SetProp_Unmarshal_FailUnmarshal(t *testing.T) {
 	// setup types
 	s := &SetProp{
 		Path:     "foo/bar",
-		RawProps: &FailUnmarshaler{},
+		RawProps: "!@#$%^&*()",
 	}
 
 	err := s.Unmarshal()
