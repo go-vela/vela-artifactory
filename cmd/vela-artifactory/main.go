@@ -175,6 +175,12 @@ func run(c *cli.Context) error {
 		logrus.SetLevel(logrus.InfoLevel)
 	}
 
+	logrus.WithFields(logrus.Fields{
+		"code": "https://github.com/go-vela/vela-artifactory",
+		"docs": "https://go-vela.github.io/docs/plugins/registry/artifactory",
+		"time": time.Now(),
+	}).Info("Vela Artifactory Plugin")
+
 	// create the plugin
 	p := &Plugin{
 		// config configuration
