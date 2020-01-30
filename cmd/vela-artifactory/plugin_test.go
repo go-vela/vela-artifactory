@@ -5,7 +5,10 @@
 package main
 
 import (
+	"net/http/httptest"
 	"testing"
+
+	"github.com/target/go-arty/artifactory/fixtures/docker"
 )
 
 func TestArtifactory_Plugin_Exec_Copy(t *testing.T) {
@@ -62,25 +65,32 @@ func TestArtifactory_Plugin_Exec_Delete(t *testing.T) {
 	}
 }
 
-func TestArtifactory_Plugin_Exec_InvalidAction(t *testing.T) {
+func TestArtifactory_Plugin_Exec_DockerPromote(t *testing.T) {
+	// Create http test server from our fake API handler
+	s := httptest.NewServer(docker.FakeHandler())
+
 	// setup types
 	p := &Plugin{
 		Config: &Config{
-			Action:   "foobar",
+			Action:   "docker-promote",
 			APIKey:   "superSecretAPIKey",
 			DryRun:   false,
 			Password: "superSecretPassword",
-			URL:      "https://myarti.com/artifactory",
+			URL:      s.URL,
 			Username: "octocat",
 		},
-		Copy:    &Copy{},
-		Delete:  &Delete{},
+		Copy:   &Copy{},
+		Delete: &Delete{},
+		DockerPromote: &DockerPromote{
+			TargetRepo: "github/octocat",
+			DockerRepo: "latest",
+		},
 		SetProp: &SetProp{},
 		Upload:  &Upload{},
 	}
 
 	err := p.Exec()
-	if err == nil {
+	if err != nil {
 		t.Errorf("Exec should have returned err")
 	}
 }
@@ -147,6 +157,29 @@ func TestArtifactory_Plugin_Exec_Upload(t *testing.T) {
 	}
 }
 
+func TestArtifactory_Plugin_Exec_InvalidAction(t *testing.T) {
+	// setup types
+	p := &Plugin{
+		Config: &Config{
+			Action:   "foobar",
+			APIKey:   "superSecretAPIKey",
+			DryRun:   false,
+			Password: "superSecretPassword",
+			URL:      "https://myarti.com/artifactory",
+			Username: "octocat",
+		},
+		Copy:    &Copy{},
+		Delete:  &Delete{},
+		SetProp: &SetProp{},
+		Upload:  &Upload{},
+	}
+
+	err := p.Exec()
+	if err == nil {
+		t.Errorf("Exec should have returned err")
+	}
+}
+
 func TestArtifactory_Plugin_Validate(t *testing.T) {
 	// setup types
 	p := &Plugin{
@@ -167,6 +200,10 @@ func TestArtifactory_Plugin_Validate(t *testing.T) {
 		Delete: &Delete{
 			Recursive: false,
 			Path:      "foo/bar",
+		},
+		DockerPromote: &DockerPromote{
+			TargetRepo: "github/octocat",
+			DockerRepo: "latest",
 		},
 		SetProp: &SetProp{
 			Path: "foo/bar",
@@ -205,10 +242,11 @@ func TestArtifactory_Plugin_Validate_InvalidAction(t *testing.T) {
 			URL:      "https://myarti.com/artifactory",
 			Username: "octocat",
 		},
-		Copy:    &Copy{},
-		Delete:  &Delete{},
-		SetProp: &SetProp{},
-		Upload:  &Upload{},
+		Copy:          &Copy{},
+		Delete:        &Delete{},
+		DockerPromote: &DockerPromote{},
+		SetProp:       &SetProp{},
+		Upload:        &Upload{},
 	}
 
 	err := p.Validate()
@@ -244,10 +282,11 @@ func TestArtifactory_Plugin_Validate_NoCopy(t *testing.T) {
 			URL:      "https://myarti.com/artifactory",
 			Username: "octocat",
 		},
-		Copy:    &Copy{},
-		Delete:  &Delete{},
-		SetProp: &SetProp{},
-		Upload:  &Upload{},
+		Copy:          &Copy{},
+		Delete:        &Delete{},
+		DockerPromote: &DockerPromote{},
+		SetProp:       &SetProp{},
+		Upload:        &Upload{},
 	}
 
 	err := p.Validate()
@@ -267,10 +306,35 @@ func TestArtifactory_Plugin_Validate_NoDelete(t *testing.T) {
 			URL:      "https://myarti.com/artifactory",
 			Username: "octocat",
 		},
-		Copy:    &Copy{},
-		Delete:  &Delete{},
-		SetProp: &SetProp{},
-		Upload:  &Upload{},
+		Copy:          &Copy{},
+		Delete:        &Delete{},
+		DockerPromote: &DockerPromote{},
+		SetProp:       &SetProp{},
+		Upload:        &Upload{},
+	}
+
+	err := p.Validate()
+	if err == nil {
+		t.Errorf("Validate should have returned err")
+	}
+}
+
+func TestArtifactory_Plugin_Validate_NoDockerPromote(t *testing.T) {
+	// setup types
+	p := &Plugin{
+		Config: &Config{
+			Action:   "docker-promote",
+			APIKey:   "superSecretAPIKey",
+			DryRun:   false,
+			Password: "superSecretPassword",
+			URL:      "https://myarti.com/artifactory",
+			Username: "octocat",
+		},
+		Copy:          &Copy{},
+		Delete:        &Delete{},
+		DockerPromote: &DockerPromote{},
+		SetProp:       &SetProp{},
+		Upload:        &Upload{},
 	}
 
 	err := p.Validate()
@@ -290,10 +354,11 @@ func TestArtifactory_Plugin_Validate_NoSetProp(t *testing.T) {
 			URL:      "https://myarti.com/artifactory",
 			Username: "octocat",
 		},
-		Copy:    &Copy{},
-		Delete:  &Delete{},
-		SetProp: &SetProp{},
-		Upload:  &Upload{},
+		Copy:          &Copy{},
+		Delete:        &Delete{},
+		DockerPromote: &DockerPromote{},
+		SetProp:       &SetProp{},
+		Upload:        &Upload{},
 	}
 
 	err := p.Validate()
@@ -313,10 +378,11 @@ func TestArtifactory_Plugin_Validate_NoUpload(t *testing.T) {
 			URL:      "https://myarti.com/artifactory",
 			Username: "octocat",
 		},
-		Copy:    &Copy{},
-		Delete:  &Delete{},
-		SetProp: &SetProp{},
-		Upload:  &Upload{},
+		Copy:          &Copy{},
+		Delete:        &Delete{},
+		DockerPromote: &DockerPromote{},
+		SetProp:       &SetProp{},
+		Upload:        &Upload{},
 	}
 
 	err := p.Validate()

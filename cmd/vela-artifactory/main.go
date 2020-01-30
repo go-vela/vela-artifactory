@@ -110,6 +110,39 @@ func main() {
 			Usage:  "enables removing sub-directories for the artifact(s)",
 		},
 
+		// Docker promote Flags
+
+		cli.StringFlag{
+			EnvVar: "PARAMETER_TARGET_REPO,DOCKER_PROMOTE_TARGET_REPO",
+			Name:   "docker_promote.target_repo",
+			Usage:  "enables setting the target repo to be promoted",
+		},
+		cli.StringFlag{
+			EnvVar: "PARAMETER_DOCKER_REPO,DOCKER_PROMOTE_DOCKER_REPO",
+			Name:   "docker_promote.docker_repo",
+			Usage:  "enables setting the docker repo to be promoted",
+		},
+		cli.StringFlag{
+			EnvVar: "PARAMETER_TARGET_DOCKER_REPO,DOCKER_PROMOTE_TARGET_DOCKER_REPO",
+			Name:   "docker_promote.target_docker_repo",
+			Usage:  "enables setting the target docker repo to be promoted",
+		},
+		cli.StringFlag{
+			EnvVar: "PARAMETER_TAG,DOCKER_PROMOTE_TAG",
+			Name:   "docker_promote.tag",
+			Usage:  "enables setting the source tag to be promoted",
+		},
+		cli.StringSliceFlag{
+			EnvVar: "PARAMETER_TARGET_TAGS,DOCKER_PROMOTE_TARGET_TAGS",
+			Name:   "docker_promote.target_tags",
+			Usage:  "enables setting the target tags to be promoted",
+		},
+		cli.BoolTFlag{
+			EnvVar: "PARAMETER_COPY,DOCKER_PROMOTE_COPY",
+			Name:   "docker_promote.copy",
+			Usage:  "enables moving the existing image/tag (default is copy)",
+		},
+
 		// Set Prop Flags
 
 		cli.StringFlag{
@@ -203,6 +236,15 @@ func run(c *cli.Context) error {
 		Delete: &Delete{
 			Path:      c.String("path"),
 			Recursive: c.Bool("delete.recursive"),
+		},
+		// docker-promote configuration
+		DockerPromote: &DockerPromote{
+			TargetRepo:       c.String("docker_promote.target_repo"),
+			DockerRepo:       c.String("docker_promote.docker_repo"),
+			TargetDockerRepo: c.String("docker_promote.target_docker_repo"),
+			Tag:              c.String("docker_promote.tag"),
+			TargetTags:       c.StringSlice("docker_promote.target_tags"),
+			Copy:             c.Bool("docker_promote.copy"),
 		},
 		// set-prop configuration
 		SetProp: &SetProp{
