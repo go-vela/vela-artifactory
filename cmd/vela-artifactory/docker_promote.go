@@ -8,7 +8,6 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/jfrog/jfrog-client-go/artifactory"
 	"github.com/sirupsen/logrus"
 	goarty "github.com/target/go-arty/artifactory"
 )
@@ -19,10 +18,10 @@ const dockerPromoteAction = "docker-promote"
 type DockerPromote struct {
 	// target repo is the target repository for the move or copy
 	TargetRepo string
-	// docker repo it the docker repository name to promote
-	DockerRepo string
-	// target docker repo An optional docker repository name, if null, will use the same name as 'dockerRepository'
-	TargetDockerRepo string
+	// docker registry is the name of the registry promote
+	DockerRegistry string
+	// target docker registry is an optional target registry, if null, will use the same name as 'DockerRegistry'
+	TargetDockerRegistry string
 	// tag is an optional tag name to promote, if null - the entire docker repository will be promoted. Available from v4.10.
 	Tag string
 	// target tag is an optional target tag to assign the image after promotion, if null - will use the same tag
@@ -32,26 +31,31 @@ type DockerPromote struct {
 }
 
 // Exec formats and runs the commands for uploading artifacts in Artifactory.
-func (p *DockerPromote) Exec(cli *artifactory.ArtifactoryServicesManager) error {
+func (p *DockerPromote) Exec(c *Config) error {
 	logrus.Trace("running docker-promote with provided configuration")
-
-	// get client information
-	username := cli.GetConfig().GetArtDetails().GetUser()
-	password := cli.GetConfig().GetArtDetails().GetPassword()
-	url := cli.GetConfig().GetArtDetails().GetUrl()
 
 	// create go-arty client for interacting with Docker promotion
 	// https://github.com/target/go-arty
-	client, _ := goarty.NewClient(url, nil)
-	client.Authentication.SetBasicAuth(username, password)
+	client, err := goarty.NewClient(c.URL, nil)
+	if err != nil {
+		return err
+	}
+
+	// set basic authentication on client
+	client.Authentication.SetBasicAuth(c.Username, c.Password)
+
+	// set the auth token if user passed token
+	if len(c.APIKey) != 0 {
+		client.Authentication.SetTokenAuth(c.APIKey)
+	}
 
 	var payloads []*goarty.ImagePromotion
 
 	for _, t := range p.TargetTags {
 		payload := &goarty.ImagePromotion{
 			TargetRepo:             goarty.String(p.TargetRepo),
-			DockerRepository:       goarty.String(p.DockerRepo),
-			TargetDockerRepository: goarty.String(p.TargetDockerRepo),
+			DockerRepository:       goarty.String(p.DockerRegistry),
+			TargetDockerRepository: goarty.String(p.TargetDockerRegistry),
 			Tag:                    goarty.String(p.Tag),
 			TargetTag:              goarty.String(t),
 			Copy:                   goarty.Bool(p.Copy),
@@ -83,13 +87,13 @@ func (p *DockerPromote) Exec(cli *artifactory.ArtifactoryServicesManager) error 
 
 // Validate verifies the Promote is properly configured.
 func (p *DockerPromote) Validate() error {
-	// verify a target tags are provided
+	// verify a target repo is provided
 	if len(p.TargetRepo) == 0 {
 		return fmt.Errorf("no target repository provided")
 	}
 
-	// verify a target tags are provided
-	if len(p.DockerRepo) == 0 {
+	// verify a docker registry is provided
+	if len(p.DockerRegistry) == 0 {
 		return fmt.Errorf("no docker repository provided")
 	}
 

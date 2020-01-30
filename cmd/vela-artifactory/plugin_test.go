@@ -82,8 +82,8 @@ func TestArtifactory_Plugin_Exec_DockerPromote(t *testing.T) {
 		Copy:   &Copy{},
 		Delete: &Delete{},
 		DockerPromote: &DockerPromote{
-			TargetRepo: "github/octocat",
-			DockerRepo: "latest",
+			TargetRepo:     "docker",
+			DockerRegistry: "github/octocat",
 		},
 		SetProp: &SetProp{},
 		Upload:  &Upload{},
@@ -202,8 +202,8 @@ func TestArtifactory_Plugin_Validate(t *testing.T) {
 			Path:      "foo/bar",
 		},
 		DockerPromote: &DockerPromote{
-			TargetRepo: "github/octocat",
-			DockerRepo: "latest",
+			TargetRepo:     "docker",
+			DockerRegistry: "github/octocat",
 		},
 		SetProp: &SetProp{
 			Path: "foo/bar",

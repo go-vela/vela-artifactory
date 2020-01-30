@@ -118,14 +118,14 @@ func main() {
 			Usage:  "target repository is the repository for the move or copy",
 		},
 		cli.StringFlag{
-			EnvVar: "PARAMETER_DOCKER_REPO,DOCKER_PROMOTE_DOCKER_REPO",
-			Name:   "docker_promote.docker_repo",
-			Usage:  "docker repository is the repository to promote",
+			EnvVar: "PARAMETER_DOCKER_REGISTRY,DOCKER_PROMOTE_DOCKER_REGISTRY",
+			Name:   "docker_promote.docker_registry",
+			Usage:  "docker registry is the registry to promote",
 		},
 		cli.StringFlag{
-			EnvVar: "PARAMETER_TARGET_DOCKER_REPO,DOCKER_PROMOTE_TARGET_DOCKER_REPO",
-			Name:   "docker_promote.target_docker_repo",
-			Usage:  "docker repository target name if null, will use the same name as 'docker_repo'",
+			EnvVar: "PARAMETER_TARGET_DOCKER_REGISTRY,DOCKER_PROMOTE_TARGET_DOCKER_REGISTRY",
+			Name:   "docker_promote.target_docker_registry",
+			Usage:  "target docker registry is an optional target registry, if null, will use the same name as 'docker_registry'",
 		},
 		cli.StringFlag{
 			EnvVar: "PARAMETER_TAG,DOCKER_PROMOTE_TAG",
@@ -239,12 +239,12 @@ func run(c *cli.Context) error {
 		},
 		// docker-promote configuration
 		DockerPromote: &DockerPromote{
-			TargetRepo:       c.String("docker_promote.target_repo"),
-			DockerRepo:       c.String("docker_promote.docker_repo"),
-			TargetDockerRepo: c.String("docker_promote.target_docker_repo"),
-			Tag:              c.String("docker_promote.tag"),
-			TargetTags:       c.StringSlice("docker_promote.target_tags"),
-			Copy:             c.Bool("docker_promote.copy"),
+			TargetRepo:           c.String("docker_promote.target_repo"),
+			DockerRegistry:       c.String("docker_promote.docker_registry"),
+			TargetDockerRegistry: c.String("docker_promote.target_docker_registry"),
+			Tag:                  c.String("docker_promote.tag"),
+			TargetTags:           c.StringSlice("docker_promote.target_tags"),
+			Copy:                 c.Bool("docker_promote.copy"),
 		},
 		// set-prop configuration
 		SetProp: &SetProp{

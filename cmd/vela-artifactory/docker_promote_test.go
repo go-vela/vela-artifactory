@@ -25,18 +25,13 @@ func TestArtifactory_DockerPromote_Exec(t *testing.T) {
 		Username: "octocat",
 	}
 
-	cli, err := config.New()
-	if err != nil {
-		t.Errorf("Unable to create Artifactory client: %v", err)
-	}
-
 	// setup types
 	p := &DockerPromote{
-		TargetRepo: "github/octocat",
-		DockerRepo: "github/octocat",
+		TargetRepo:     "docker",
+		DockerRegistry: "github/octocat",
 	}
 
-	err = p.Exec(cli)
+	err := p.Exec(config)
 	if err != nil {
 		t.Errorf("Exec should have returned err: %w", err)
 	}
@@ -45,8 +40,8 @@ func TestArtifactory_DockerPromote_Exec(t *testing.T) {
 func TestArtifactory_DockerPromote_Validate(t *testing.T) {
 	// setup types
 	p := &DockerPromote{
-		TargetRepo: "github/octocat",
-		DockerRepo: "github/octocat",
+		TargetRepo:     "docker",
+		DockerRegistry: "github/octocat",
 	}
 
 	err := p.Validate()
@@ -58,7 +53,7 @@ func TestArtifactory_DockerPromote_Validate(t *testing.T) {
 func TestArtifactory_DockerPromote_Validate_TargetRepo(t *testing.T) {
 	// setup types
 	p := &DockerPromote{
-		DockerRepo: "github/octocat",
+		DockerRegistry: "github/octocat",
 	}
 
 	err := p.Validate()
@@ -70,7 +65,7 @@ func TestArtifactory_DockerPromote_Validate_TargetRepo(t *testing.T) {
 func TestArtifactory_DockerPromote_Validate_DockerRepo(t *testing.T) {
 	// setup types
 	p := &DockerPromote{
-		TargetRepo: "github/octocat",
+		TargetRepo: "docker",
 	}
 
 	err := p.Validate()

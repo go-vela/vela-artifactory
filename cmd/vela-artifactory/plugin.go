@@ -53,7 +53,7 @@ func (p *Plugin) Exec() error {
 		return p.Delete.Exec(cli)
 	case dockerPromoteAction:
 		// execute docker-promote action
-		return p.DockerPromote.Exec(cli)
+		return p.DockerPromote.Exec(p.Config)
 	case setPropAction:
 		// execute set-prop action
 		return p.SetProp.Exec(cli)
