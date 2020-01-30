@@ -115,32 +115,32 @@ func main() {
 		cli.StringFlag{
 			EnvVar: "PARAMETER_TARGET_REPO,DOCKER_PROMOTE_TARGET_REPO",
 			Name:   "docker_promote.target_repo",
-			Usage:  "enables setting the target repo to be promoted",
+			Usage:  "target repository is the repository for the move or copy",
 		},
 		cli.StringFlag{
 			EnvVar: "PARAMETER_DOCKER_REPO,DOCKER_PROMOTE_DOCKER_REPO",
 			Name:   "docker_promote.docker_repo",
-			Usage:  "enables setting the docker repo to be promoted",
+			Usage:  "docker repository is the repository to promote",
 		},
 		cli.StringFlag{
 			EnvVar: "PARAMETER_TARGET_DOCKER_REPO,DOCKER_PROMOTE_TARGET_DOCKER_REPO",
 			Name:   "docker_promote.target_docker_repo",
-			Usage:  "enables setting the target docker repo to be promoted",
+			Usage:  "docker repository target name if null, will use the same name as 'docker_repo'",
 		},
 		cli.StringFlag{
 			EnvVar: "PARAMETER_TAG,DOCKER_PROMOTE_TAG",
 			Name:   "docker_promote.tag",
-			Usage:  "enables setting the source tag to be promoted",
+			Usage:  "tag name to promote if null the entire docker repository will be promoted.",
 		},
 		cli.StringSliceFlag{
 			EnvVar: "PARAMETER_TARGET_TAGS,DOCKER_PROMOTE_TARGET_TAGS",
 			Name:   "docker_promote.target_tags",
-			Usage:  "enables setting the target tags to be promoted",
+			Usage:  "target tag to assign the image after promotion",
 		},
 		cli.BoolTFlag{
 			EnvVar: "PARAMETER_COPY,DOCKER_PROMOTE_COPY",
 			Name:   "docker_promote.copy",
-			Usage:  "enables moving the existing image/tag (default is copy)",
+			Usage:  "enables ability to set whether to move instead of copy",
 		},
 
 		// Set Prop Flags
