@@ -110,6 +110,39 @@ func main() {
 			Usage:  "enables removing sub-directories for the artifact(s)",
 		},
 
+		// Docker promote Flags
+
+		cli.StringFlag{
+			EnvVar: "PARAMETER_TARGET_REPO,DOCKER_PROMOTE_TARGET_REPO",
+			Name:   "docker_promote.target_repo",
+			Usage:  "target repository is the repository for the move or copy",
+		},
+		cli.StringFlag{
+			EnvVar: "PARAMETER_DOCKER_REGISTRY,DOCKER_PROMOTE_DOCKER_REGISTRY",
+			Name:   "docker_promote.docker_registry",
+			Usage:  "docker registry is the registry to promote",
+		},
+		cli.StringFlag{
+			EnvVar: "PARAMETER_TARGET_DOCKER_REGISTRY,DOCKER_PROMOTE_TARGET_DOCKER_REGISTRY",
+			Name:   "docker_promote.target_docker_registry",
+			Usage:  "target docker registry is an optional target registry, if null, will use the same name as 'docker_registry'",
+		},
+		cli.StringFlag{
+			EnvVar: "PARAMETER_TAG,DOCKER_PROMOTE_TAG",
+			Name:   "docker_promote.tag",
+			Usage:  "tag name to promote if null the entire docker repository will be promoted.",
+		},
+		cli.StringSliceFlag{
+			EnvVar: "PARAMETER_TARGET_TAGS,DOCKER_PROMOTE_TARGET_TAGS",
+			Name:   "docker_promote.target_tags",
+			Usage:  "target tag to assign the image after promotion",
+		},
+		cli.BoolTFlag{
+			EnvVar: "PARAMETER_COPY,DOCKER_PROMOTE_COPY",
+			Name:   "docker_promote.copy",
+			Usage:  "enables ability to set whether to move instead of copy",
+		},
+
 		// Set Prop Flags
 
 		cli.StringFlag{
@@ -203,6 +236,15 @@ func run(c *cli.Context) error {
 		Delete: &Delete{
 			Path:      c.String("path"),
 			Recursive: c.Bool("delete.recursive"),
+		},
+		// docker-promote configuration
+		DockerPromote: &DockerPromote{
+			TargetRepo:           c.String("docker_promote.target_repo"),
+			DockerRegistry:       c.String("docker_promote.docker_registry"),
+			TargetDockerRegistry: c.String("docker_promote.target_docker_registry"),
+			Tag:                  c.String("docker_promote.tag"),
+			TargetTags:           c.StringSlice("docker_promote.target_tags"),
+			Copy:                 c.Bool("docker_promote.copy"),
 		},
 		// set-prop configuration
 		SetProp: &SetProp{

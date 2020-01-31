@@ -25,6 +25,8 @@ type Plugin struct {
 	Copy *Copy
 	// delete arguments loaded for the plugin
 	Delete *Delete
+	// docker-promote arguments loaded for the plugin
+	DockerPromote *DockerPromote
 	// set-prop arguments loaded for the plugin
 	SetProp *SetProp
 	// upload arguments loaded for the plugin
@@ -49,6 +51,9 @@ func (p *Plugin) Exec() error {
 	case deleteAction:
 		// execute delete action
 		return p.Delete.Exec(cli)
+	case dockerPromoteAction:
+		// execute docker-promote action
+		return p.DockerPromote.Exec(p.Config)
 	case setPropAction:
 		// execute set-prop action
 		return p.SetProp.Exec(cli)
@@ -57,11 +62,12 @@ func (p *Plugin) Exec() error {
 		return p.Upload.Exec(cli)
 	default:
 		return fmt.Errorf(
-			"%s: %s (Valid actions: %s, %s, %s, %s)",
+			"%s: %s (Valid actions: %s, %s, %s, %s, %s)",
 			ErrInvalidAction,
 			p.Config.Action,
 			copyAction,
 			deleteAction,
+			dockerPromoteAction,
 			setPropAction,
 			uploadAction,
 		)
@@ -86,6 +92,9 @@ func (p *Plugin) Validate() error {
 	case deleteAction:
 		// validate delete configuration
 		return p.Delete.Validate()
+	case dockerPromoteAction:
+		// validate docker-promote configuration
+		return p.DockerPromote.Validate()
 	case setPropAction:
 		// validate set-prop configuration
 		return p.SetProp.Validate()
