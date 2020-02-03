@@ -19,41 +19,24 @@
 # - .target       (default: "")
 # - .url          (default: "")
 
-## Set Default Template Variables
-{{ default "target/vela-artifactory:latest" .image }}
-{{ default "true" .pull }}
-{{ default "info" .log_level }}
-{{ default "" .action }}
-{{ default "" .api_key }}
-{{ default "false" .dry_run }}
-{{ default "false" .flat }}
-{{ default "false" .include_dirs }}
-{{ default "" .path }}
-{{ default "" .props }}
-{{ default "false" .recursive }}
-{{ default "false" .regexp }}
-{{ default "" .sources }}
-{{ default "" .target }}
-{{ default "" .url }}
-
 metadata:
   template: true
 
 steps:
-  - name: artifactory_plugin
-    image: {{ .image }}
-    pull: {{ .pull }}
+  - name: artifactory_plugin_template
+    image: {{ default "target/vela-artifactory:latest" .image }}
+    pull: {{ default "true" .pull }}
     parameters:
-      log_level: {{ .log_level }}
-      action: {{ .action }}
-      api_key: {{ .api_key }}
-      dry_run: {{ .dry_run }}
-      flat: {{ .flat }}
-      include_dirs: {{ .include_dirs }}
-      path: {{ .path }}
-      props: {{ .props }}
-      recursive: {{ .recursive }}
-      regexp: {{ .regexp }}
-      sources: {{ .sources }}
-      target: {{ .target }}
-      url: {{ .url }}
+      log_level: {{ default "info" .log_level }}
+      action: {{ default "" .action }}
+      api_key: {{ default "" .api_key }}
+      dry_run: {{ default "false" .dry_run }}
+      flat: {{ default "false" .flat }}
+      include_dirs: {{ default "false" .include_dirs }}
+      path: {{ default "" .path }}
+      props: {{ default "" .props }}
+      recursive: {{ default "false" .recursive }}
+      regexp: {{ default "false" .regexp }}
+      sources: {{ default "" .sources }}
+      target: {{ default "" .target }}
+      url: {{ default "" .url }}
