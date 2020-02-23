@@ -2,6 +2,18 @@
 #
 # Use of this source code is governed by the LICENSE file in this repository.
 
+################################################################################
+##    docker build --no-cache --target binary -t vela-artifactory:binary .    ##
+################################################################################
+
+FROM alpine as binary
+
+ARG JFROG_VERSION=1.33.2
+
+ADD https://api.bintray.com/content/jfrog/jfrog-cli-go/${JFROG_VERSION}/jfrog-cli-linux-amd64/jfrog?bt_package=jfrog-cli-linux-amd64 /bin/jfrog
+
+RUN chmod a+x /bin/jfrog
+
 ##############################################################################
 ##    docker build --no-cache --target certs -t vela-artifactory:certs .    ##
 ##############################################################################
@@ -16,10 +28,10 @@ RUN apk add --update --no-cache ca-certificates
 
 FROM scratch
 
+COPY --from=binary /bin/jfrog /bin/jfrog
+
 COPY --from=certs /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
 
 COPY release/vela-artifactory /bin/vela-artifactory
-
-ADD https://api.bintray.com/content/jfrog/jfrog-cli-go/\$latest/jfrog-cli-linux-amd64/jfrog?bt_package=jfrog-cli-linux-amd64 /bin/jfrog
 
 ENTRYPOINT ["/bin/vela-artifactory"]
