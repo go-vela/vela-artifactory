@@ -209,9 +209,9 @@ func run(c *cli.Context) error {
 	}
 
 	logrus.WithFields(logrus.Fields{
-		"code": "https://github.com/go-vela/vela-artifactory",
-		"docs": "https://go-vela.github.io/docs/plugins/registry/artifactory",
-		"time": time.Now(),
+		"code":     "https://github.com/go-vela/vela-artifactory",
+		"docs":     "https://go-vela.github.io/docs/plugins/registry/artifactory",
+		"registry": "https://hub.docker.com/r/target/vela-artifactory",
 	}).Info("Vela Artifactory Plugin")
 
 	// create the plugin
