@@ -140,7 +140,7 @@ func main() {
 		cli.BoolTFlag{
 			EnvVar: "PARAMETER_COPY,DOCKER_PROMOTE_COPY",
 			Name:   "docker_promote.copy",
-			Usage:  "enables ability to set whether to move instead of copy",
+			Usage:  "set to copy instead of moving the image",
 		},
 
 		// Set Prop Flags
