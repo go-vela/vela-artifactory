@@ -9,7 +9,7 @@ import (
 	"time"
 
 	"github.com/sirupsen/logrus"
-	"github.com/urfave/cli"
+	"github.com/urfave/cli/v2"
 
 	_ "github.com/joho/godotenv/autoload"
 )
@@ -23,7 +23,7 @@ func main() {
 	app.HelpName = "vela-artifactory"
 	app.Usage = "Vela Artifactory plugin for managing artifacts"
 	app.Copyright = "Copyright (c) 2020 Target Brands, Inc. All rights reserved."
-	app.Authors = []cli.Author{
+	app.Authors = []*cli.Author{
 		{
 			Name:  "Vela Admins",
 			Email: "vela@target.com",
@@ -39,144 +39,144 @@ func main() {
 
 	app.Flags = []cli.Flag{
 
-		cli.StringFlag{
-			EnvVar: "PARAMETER_LOG_LEVEL,VELA_LOG_LEVEL,ARTIFACTORY_LOG_LEVEL",
-			Name:   "log.level",
-			Usage:  "set log level - options: (trace|debug|info|warn|error|fatal|panic)",
-			Value:  "info",
+		&cli.StringFlag{
+			EnvVars: []string{"PARAMETER_LOG_LEVEL", "VELA_LOG_LEVEL", "ARTIFACTORY_LOG_LEVEL"},
+			Name:    "log.level",
+			Usage:   "set log level - options: (trace|debug|info|warn|error|fatal|panic)",
+			Value:   "info",
 		},
-		cli.StringFlag{
-			EnvVar: "PARAMETER_PATH,ARTIFACTORY_PATH",
-			Name:   "path",
-			Usage:  "source/target path to artifact(s) for action",
+		&cli.StringFlag{
+			EnvVars: []string{"PARAMETER_PATH", "ARTIFACTORY_PATH"},
+			Name:    "path",
+			Usage:   "source/target path to artifact(s) for action",
 		},
 
 		// Config Flags
 
-		cli.StringFlag{
-			EnvVar: "PARAMETER_ACTION,CONFIG_ACTION,ARTIFACTORY_ACTION",
-			Name:   "config.action",
-			Usage:  "action to perform against the Artifactory instance",
+		&cli.StringFlag{
+			EnvVars: []string{"PARAMETER_ACTION", "CONFIG_ACTION", "ARTIFACTORY_ACTION"},
+			Name:    "config.action",
+			Usage:   "action to perform against the Artifactory instance",
 		},
-		cli.BoolFlag{
-			EnvVar: "PARAMETER_DRY_RUN,CONFIG_DRY_RUN,ARTIFACTORY_DRY_RUN",
-			Name:   "config.dry_run",
-			Usage:  "enables pretending to perform the action",
+		&cli.BoolFlag{
+			EnvVars: []string{"PARAMETER_DRY_RUN", "CONFIG_DRY_RUN", "ARTIFACTORY_DRY_RUN"},
+			Name:    "config.dry_run",
+			Usage:   "enables pretending to perform the action",
 		},
-		cli.StringFlag{
-			EnvVar: "PARAMETER_API_KEY,CONFIG_API_KEY,ARTIFACTORY_API_KEY",
-			Name:   "config.api_key",
-			Usage:  "API key for communication with the Artifactory instance",
+		&cli.StringFlag{
+			EnvVars: []string{"PARAMETER_API_KEY", "CONFIG_API_KEY", "ARTIFACTORY_API_KEY"},
+			Name:    "config.api_key",
+			Usage:   "API key for communication with the Artifactory instance",
 		},
-		cli.StringFlag{
-			EnvVar: "PARAMETER_PASSWORD,CONFIG_PASSWORD,ARTIFACTORY_PASSWORD",
-			Name:   "config.password",
-			Usage:  "password for communication with the Artifactory instance",
+		&cli.StringFlag{
+			EnvVars: []string{"PARAMETER_PASSWORD", "CONFIG_PASSWORD", "ARTIFACTORY_PASSWORD"},
+			Name:    "config.password",
+			Usage:   "password for communication with the Artifactory instance",
 		},
-		cli.StringFlag{
-			EnvVar: "PARAMETER_URL,CONFIG_URL,ARTIFACTORY_URL",
-			Name:   "config.url",
-			Usage:  "Artifactory instance to communicate with",
+		&cli.StringFlag{
+			EnvVars: []string{"PARAMETER_URL", "CONFIG_URL", "ARTIFACTORY_URL"},
+			Name:    "config.url",
+			Usage:   "Artifactory instance to communicate with",
 		},
-		cli.StringFlag{
-			EnvVar: "PARAMETER_USERNAME,CONFIG_USERNAME,ARTIFACTORY_USERNAME",
-			Name:   "config.username",
-			Usage:  "user name for communication with the Artifactory instance",
+		&cli.StringFlag{
+			EnvVars: []string{"PARAMETER_USERNAME", "CONFIG_USERNAME", "ARTIFACTORY_USERNAME"},
+			Name:    "config.username",
+			Usage:   "user name for communication with the Artifactory instance",
 		},
 
 		// Copy Flags
 
-		cli.BoolFlag{
-			EnvVar: "PARAMETER_FLAT,COPY_FLAT",
-			Name:   "copy.flat",
-			Usage:  "enables removing source directory hierarchy",
+		&cli.BoolFlag{
+			EnvVars: []string{"PARAMETER_FLAT", "COPY_FLAT"},
+			Name:    "copy.flat",
+			Usage:   "enables removing source directory hierarchy",
 		},
-		cli.BoolFlag{
-			EnvVar: "PARAMETER_RECURSIVE,COPY_RECURSIVE",
-			Name:   "copy.recursive",
-			Usage:  "enables copying sub-directories for the artifact(s)",
+		&cli.BoolFlag{
+			EnvVars: []string{"PARAMETER_RECURSIVE", "COPY_RECURSIVE"},
+			Name:    "copy.recursive",
+			Usage:   "enables copying sub-directories for the artifact(s)",
 		},
-		cli.StringFlag{
-			EnvVar: "PARAMETER_TARGET,COPY_TARGET",
-			Name:   "copy.target",
-			Usage:  "target path to copy artifact(s) to",
+		&cli.StringFlag{
+			EnvVars: []string{"PARAMETER_TARGET", "COPY_TARGET"},
+			Name:    "copy.target",
+			Usage:   "target path to copy artifact(s) to",
 		},
 
 		// Delete Flags
 
-		cli.BoolFlag{
-			EnvVar: "PARAMETER_RECURSIVE,DELETE_RECURSIVE",
-			Name:   "delete.recursive",
-			Usage:  "enables removing sub-directories for the artifact(s)",
+		&cli.BoolFlag{
+			EnvVars: []string{"PARAMETER_RECURSIVE", "DELETE_RECURSIVE"},
+			Name:    "delete.recursive",
+			Usage:   "enables removing sub-directories for the artifact(s)",
 		},
 
 		// Docker promote Flags
 
-		cli.StringFlag{
-			EnvVar: "PARAMETER_TARGET_REPO,DOCKER_PROMOTE_TARGET_REPO",
-			Name:   "docker_promote.target_repo",
-			Usage:  "target repository is the repository for the move or copy",
+		&cli.StringFlag{
+			EnvVars: []string{"PARAMETER_TARGET_REPO", "DOCKER_PROMOTE_TARGET_REPO"},
+			Name:    "docker_promote.target_repo",
+			Usage:   "target repository is the repository for the move or copy",
 		},
-		cli.StringFlag{
-			EnvVar: "PARAMETER_DOCKER_REGISTRY,DOCKER_PROMOTE_DOCKER_REGISTRY",
-			Name:   "docker_promote.docker_registry",
-			Usage:  "docker registry is the registry to promote",
+		&cli.StringFlag{
+			EnvVars: []string{"PARAMETER_DOCKER_REGISTRY", "DOCKER_PROMOTE_DOCKER_REGISTRY"},
+			Name:    "docker_promote.docker_registry",
+			Usage:   "docker registry is the registry to promote",
 		},
-		cli.StringFlag{
-			EnvVar: "PARAMETER_TARGET_DOCKER_REGISTRY,DOCKER_PROMOTE_TARGET_DOCKER_REGISTRY",
-			Name:   "docker_promote.target_docker_registry",
-			Usage:  "target docker registry is an optional target registry, if null, will use the same name as 'docker_registry'",
+		&cli.StringFlag{
+			EnvVars: []string{"PARAMETER_TARGET_DOCKER_REGISTRY", "DOCKER_PROMOTE_TARGET_DOCKER_REGISTRY"},
+			Name:    "docker_promote.target_docker_registry",
+			Usage:   "target docker registry is an optional target registry, if null, will use the same name as 'docker_registry'",
 		},
-		cli.StringFlag{
-			EnvVar: "PARAMETER_TAG,DOCKER_PROMOTE_TAG",
-			Name:   "docker_promote.tag",
-			Usage:  "tag name to promote if null the entire docker repository will be promoted.",
+		&cli.StringFlag{
+			EnvVars: []string{"PARAMETER_TAG", "DOCKER_PROMOTE_TAG"},
+			Name:    "docker_promote.tag",
+			Usage:   "tag name to promote if null the entire docker repository will be promoted.",
 		},
-		cli.StringSliceFlag{
-			EnvVar: "PARAMETER_TARGET_TAGS,DOCKER_PROMOTE_TARGET_TAGS",
-			Name:   "docker_promote.target_tags",
-			Usage:  "target tag to assign the image after promotion",
+		&cli.StringSliceFlag{
+			EnvVars: []string{"PARAMETER_TARGET_TAGS", "DOCKER_PROMOTE_TARGET_TAGS"},
+			Name:    "docker_promote.target_tags",
+			Usage:   "target tag to assign the image after promotion",
 		},
-		cli.BoolTFlag{
-			EnvVar: "PARAMETER_COPY,DOCKER_PROMOTE_COPY",
-			Name:   "docker_promote.copy",
-			Usage:  "set to copy instead of moving the image",
+		&cli.BoolFlag{
+			EnvVars: []string{"PARAMETER_COPY", "DOCKER_PROMOTE_COPY"},
+			Name:    "docker_promote.copy",
+			Usage:   "set to copy instead of moving the image",
 		},
 
 		// Set Prop Flags
 
-		cli.StringFlag{
-			EnvVar: "PARAMETER_PROPS,SET_PROP_PROPS",
-			Name:   "set_prop.props",
-			Usage:  "properties to set on the artifact(s)",
+		&cli.StringFlag{
+			EnvVars: []string{"PARAMETER_PROPS", "SET_PROP_PROPS"},
+			Name:    "set_prop.props",
+			Usage:   "properties to set on the artifact(s)",
 		},
 
 		// Upload Flags
 
-		cli.BoolFlag{
-			EnvVar: "PARAMETER_FLAT,UPLOAD_FLAT",
-			Name:   "upload.flat",
-			Usage:  "enables uploading artifacts to exact target path (excludes source file hierarchy)",
+		&cli.BoolFlag{
+			EnvVars: []string{"PARAMETER_FLAT", "UPLOAD_FLAT"},
+			Name:    "upload.flat",
+			Usage:   "enables uploading artifacts to exact target path (excludes source file hierarchy)",
 		},
-		cli.BoolFlag{
-			EnvVar: "PARAMETER_INCLUDE_DIRS,UPLOAD_INCLUDE_DIRS",
-			Name:   "upload.include_dirs",
-			Usage:  "enables including directories from sources",
+		&cli.BoolFlag{
+			EnvVars: []string{"PARAMETER_INCLUDE_DIRS", "UPLOAD_INCLUDE_DIRS"},
+			Name:    "upload.include_dirs",
+			Usage:   "enables including directories from sources",
 		},
-		cli.BoolFlag{
-			EnvVar: "PARAMETER_REGEXP,UPLOAD_REGEXP",
-			Name:   "upload.regexp",
-			Usage:  "enables reading the sources as a regular expression",
+		&cli.BoolFlag{
+			EnvVars: []string{"PARAMETER_REGEXP", "UPLOAD_REGEXP"},
+			Name:    "upload.regexp",
+			Usage:   "enables reading the sources as a regular expression",
 		},
-		cli.BoolFlag{
-			EnvVar: "PARAMETER_RECURSIVE,UPLOAD_RECURSIVE",
-			Name:   "upload.recursive",
-			Usage:  "enables uploading sub-directories for the sources",
+		&cli.BoolFlag{
+			EnvVars: []string{"PARAMETER_RECURSIVE", "UPLOAD_RECURSIVE"},
+			Name:    "upload.recursive",
+			Usage:   "enables uploading sub-directories for the sources",
 		},
-		cli.StringSliceFlag{
-			EnvVar: "PARAMETER_SOURCES,UPLOAD_SOURCES",
-			Name:   "upload.sources",
-			Usage:  "list of artifact(s) to upload",
+		&cli.StringSliceFlag{
+			EnvVars: []string{"PARAMETER_SOURCES", "UPLOAD_SOURCES"},
+			Name:    "upload.sources",
+			Usage:   "list of artifact(s) to upload",
 		},
 	}
 
