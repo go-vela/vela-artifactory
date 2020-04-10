@@ -14,6 +14,6 @@ require (
 	github.com/sirupsen/logrus v1.4.2
 	github.com/target/go-arty v0.0.0-20200107214715-c758a289fb50
 	github.com/tidwall/gjson v1.4.0 // indirect
-	github.com/urfave/cli v1.22.2
+	github.com/urfave/cli/v2 v2.2.0
 	golang.org/x/net v0.0.0-20190213061140-3a22650c66bd // indirect
 )
