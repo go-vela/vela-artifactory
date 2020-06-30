@@ -250,7 +250,7 @@ func run(c *cli.Context) error {
 			Tag:                  c.String("docker_promote.tag"),
 			TargetTags:           c.StringSlice("docker_promote.target_tags"),
 			Copy:                 c.Bool("docker_promote.copy"),
-			PromoteProperty:      c.Bool("set_prop.promote"),
+			PromoteProperty:      c.Bool("docker_prop.promote"),
 		},
 		// set-prop configuration
 		SetProp: &SetProp{
