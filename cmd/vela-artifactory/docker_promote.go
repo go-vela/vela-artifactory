@@ -29,10 +29,8 @@ type DockerPromote struct {
 	TargetTags []string
 	// An optional value to set whether to copy instead of move. Default: true
 	Copy bool
-	//An optional value to set an the name of the property.
-	ItemProperty string
-	//An optional value to set an item property to add a promoted date.
-	PromotedImageFlag bool
+	// An optional value to set an item property to add a promoted date.
+	PromoteProperty bool
 }
 
 // Exec formats and runs the commands for uploading artifacts in Artifactory.
@@ -83,11 +81,12 @@ func (p *DockerPromote) Exec(c *Config) error {
 		if err != nil {
 			return err
 		}
-		if p.PromotedImageFlag {
+
+		if p.PromoteProperty {
 			promotedImagePath := fmt.Sprintf("%s/%s", payload.GetTargetRepo(), payload.GetTargetTag())
 
 			properties := make(map[string][]string)
-			properties[p.ItemProperty] = append(properties[p.ItemProperty], time.Now().UTC().Format(time.RFC3339))
+			properties["promoted_on"] = append(properties["promoted_on"], time.Now().UTC().Format(time.RFC3339))
 
 			_, err = client.Storage.SetItemProperties(payload.GetDockerRepository(), promotedImagePath, properties)
 			if err != nil {

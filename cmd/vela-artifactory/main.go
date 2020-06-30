@@ -142,6 +142,11 @@ func main() {
 			Name:    "docker_promote.copy",
 			Usage:   "set to copy instead of moving the image",
 		},
+		&cli.BoolFlag{
+			EnvVars: []string{"PARAMETER_PROPS_PROMOTE", "SET_PROP_PROMOTE"},
+			Name:    "docker_prop.promote",
+			Usage:   "propety to be set on the artifact when it is being promoted",
+		},
 
 		// Set Prop Flags
 
@@ -245,6 +250,7 @@ func run(c *cli.Context) error {
 			Tag:                  c.String("docker_promote.tag"),
 			TargetTags:           c.StringSlice("docker_promote.target_tags"),
 			Copy:                 c.Bool("docker_promote.copy"),
+			PromoteProperty:      c.Bool("set_prop.promote"),
 		},
 		// set-prop configuration
 		SetProp: &SetProp{
