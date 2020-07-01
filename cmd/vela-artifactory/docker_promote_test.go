@@ -25,15 +25,41 @@ func TestArtifactory_DockerPromote_Exec(t *testing.T) {
 		Username: "octocat",
 	}
 
-	// setup types
-	p := &DockerPromote{
-		TargetRepo:     "docker",
-		DockerRegistry: "github/octocat",
+	tests := []struct {
+		dockerPromote *DockerPromote
+		want          *error
+	}{
+		{ // dockerPromote that does not have a promoteProperty
+			dockerPromote: &DockerPromote{
+				TargetRepo:      "docker",
+				DockerRegistry:  "github/octocat",
+				TargetTags:      []string{"test"},
+				PromoteProperty: false,
+			},
+			want: nil,
+		},
+		//TODO: investigate ways of combining handlers
+		//
+		// Go-Arty API docs for handlers:
+		//	"github.com/target/go-arty/artifactory/fixtures/docker"
+		//	"github.com/target/go-arty/artifactory/fixtures/storage"
+		//
+		// 	{ // dockerPromote that does have a promoteProperty
+		// 		dockerPromote: &DockerPromote{
+		// 			TargetRepo:      "docker",
+		// 			DockerRegistry:  "github/octocat",
+		// 			TargetTags:      []string{"test"},
+		// 			PromoteProperty: true,
+		// 		},
+		// 		want: nil,
+		// 	},
 	}
 
-	err := p.Exec(config)
-	if err != nil {
-		t.Errorf("Exec should have returned err: %w", err)
+	for _, test := range tests {
+		err := test.dockerPromote.Exec(config)
+		if err != nil {
+			t.Errorf("Exec should have returned err: %w", err)
+		}
 	}
 }
 

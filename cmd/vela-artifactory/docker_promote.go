@@ -7,6 +7,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"time"
 
 	"github.com/sirupsen/logrus"
 	goarty "github.com/target/go-arty/artifactory"
@@ -28,6 +29,8 @@ type DockerPromote struct {
 	TargetTags []string
 	// An optional value to set whether to copy instead of move. Default: true
 	Copy bool
+	// An optional value to set an item property to add a promoted date.
+	PromoteProperty bool
 }
 
 // Exec formats and runs the commands for uploading artifacts in Artifactory.
@@ -72,14 +75,26 @@ func (p *DockerPromote) Exec(c *Config) error {
 	}
 
 	for _, payload := range payloads {
-		logrus.Debugf("Promoting target tag %s", *payload.TargetTag)
+		logrus.Debugf("Promoting target tag %s", payload.GetTargetTag())
 
 		_, _, err := client.Docker.PromoteImage(p.TargetRepo, payload)
 		if err != nil {
 			return err
 		}
 
-		logrus.Infof("Promotion ended successfully for target tag %s", *payload.TargetTag)
+		if p.PromoteProperty {
+			promotedImagePath := fmt.Sprintf("%s/%s", payload.GetDockerRepository(), payload.GetTargetTag())
+
+			properties := make(map[string][]string)
+			properties["promoted_on"] = append(properties["promoted_on"], time.Now().UTC().Format(time.RFC3339))
+
+			_, err = client.Storage.SetItemProperties(payload.GetTargetRepo(), promotedImagePath, properties)
+			if err != nil {
+				return err
+			}
+		}
+
+		logrus.Infof("Promotion ended successfully for target tag %s", payload.GetTargetTag())
 	}
 
 	return nil
