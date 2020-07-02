@@ -87,11 +87,11 @@ test-cover:
 .PHONY: build
 build:
 	@echo
-	@echo "### Building release/vela-worker binary"
+	@echo "### Building release/vela-artifactory binary"
 	GOOS=linux CGO_ENABLED=0 \
 		go build -a \
-		-o release/vela-worker \
-		github.com/go-vela/worker/cmd/vela-worker
+		-o release/vela-artifactory \
+		github.com/go-vela/vela-artifactory/cmd/vela-artifactory
 
 # The `build-static` target is intended to compile
 # the Go source code into a statically linked binary.
@@ -100,12 +100,12 @@ build:
 .PHONY: build-static
 build-static:
 	@echo
-	@echo "### Building static release/vela-worker binary"
+	@echo "### Building static release/vela-artifactory binary"
 	GOOS=linux CGO_ENABLED=0 \
 		go build -a \
 		-ldflags '-s -w -extldflags "-static"' \
-		-o release/vela-worker \
-		github.com/go-vela/worker/cmd/vela-worker
+		-o release/vela-artifactory \
+		github.com/go-vela/vela-artifactory/cmd/vela-artifactory
 
 # The `check` target is intended to output all
 # dependencies from the Go module that need updates.
