@@ -13,7 +13,7 @@ Sample of copying an artifact:
 ```yaml
 steps:
   - name: copy_artifacts
-    image: target/vela-artifactory:v0.1.0
+    image: target/vela-artifactory:v0.2.0
     pull: true
     parameters:
       action: copy
@@ -27,7 +27,7 @@ Sample of deleting an artifact:
 ```yaml
 steps:
   - name: delete_artifacts
-    image: target/vela-artifactory:v0.1.0
+    image: target/vela-artifactory:v0.2.0
     pull: true
     parameters:
       action: delete
@@ -40,7 +40,7 @@ Sample of setting properties on an artifact:
 ```yaml
 steps:
   - name: set_properties_artifacts
-    image: target/vela-artifactory:v0.1.0
+    image: target/vela-artifactory:v0.2.0
     pull: true
     parameters:
       action: set-prop
@@ -60,7 +60,7 @@ Sample of uploading an artifact:
 ```yaml
 steps:
   - name: upload_artifacts
-    image: target/vela-artifactory:v0.1.0
+    image: target/vela-artifactory:v0.2.0
     pull: true
     parameters:
       action: upload
@@ -77,7 +77,7 @@ Sample of pretending to upload an artifact:
 ```diff
 steps:
   - name: upload_artifacts
-    image: target/vela-artifactory:v0.1.0
+    image: target/vela-artifactory:v0.2.0
     pull: true
     parameters:
       action: upload
@@ -115,7 +115,7 @@ You can use Vela secrets to substitute sensitive values at runtime:
 ```diff
 steps:
   - name: copy_artifacts
-    image: target/vela-artifactory:v0.1.0
+    image: target/vela-artifactory:v0.2.0
     pull: true
 +   secrets: [ artifactory_username, artifactory_password ]
     parameters:
