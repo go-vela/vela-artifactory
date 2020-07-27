@@ -96,19 +96,19 @@ func main() {
 
 		&cli.BoolFlag{
 			EnvVars:  []string{"PARAMETER_FLAT", "COPY_FLAT"},
-			FilePath: string("/vela/secrets/artifactory/copy_flat,/vela/secrets/parameter/copy_flat"),
+			FilePath: string("/vela/secrets/artifactory/copy/flat,/vela/secrets/parameter/copy/flat"),
 			Name:     "copy.flat",
 			Usage:    "enables removing source directory hierarchy",
 		},
 		&cli.BoolFlag{
 			EnvVars:  []string{"PARAMETER_RECURSIVE", "COPY_RECURSIVE"},
-			FilePath: string("/vela/secrets/artifactory/copy_recursive,/vela/secrets/parameter/copy_recursive"),
+			FilePath: string("/vela/secrets/artifactory/copy/recursive,/vela/secrets/parameter/copy/recursive"),
 			Name:     "copy.recursive",
 			Usage:    "enables copying sub-directories for the artifact(s)",
 		},
 		&cli.StringFlag{
 			EnvVars:  []string{"PARAMETER_TARGET", "COPY_TARGET"},
-			FilePath: string("/vela/secrets/artifactory/copy_target,/vela/secrets/parameter/copy_target"),
+			FilePath: string("/vela/secrets/artifactory/copy/target,/vela/secrets/parameter/copy/target"),
 			Name:     "copy.target",
 			Usage:    "target path to copy artifact(s) to",
 		},
@@ -117,7 +117,7 @@ func main() {
 
 		&cli.BoolFlag{
 			EnvVars:  []string{"PARAMETER_RECURSIVE", "DELETE_RECURSIVE"},
-			FilePath: string("/vela/secrets/artifactory/delete_recursive,/vela/secrets/parameter/delete_recursive"),
+			FilePath: string("/vela/secrets/artifactory/delete/recursive,/vela/secrets/parameter/delete/recursive"),
 			Name:     "delete.recursive",
 			Usage:    "enables removing sub-directories for the artifact(s)",
 		},
@@ -126,43 +126,43 @@ func main() {
 
 		&cli.StringFlag{
 			EnvVars:  []string{"PARAMETER_TARGET_REPO", "DOCKER_PROMOTE_TARGET_REPO"},
-			FilePath: string("/vela/secrets/artifactory/docker_promote_target_repo,/vela/secrets/parameter/docker_promote_target_repo"),
+			FilePath: string("/vela/secrets/artifactory/docker_promote/target_repo,/vela/secrets/parameter/docker_promote/target_repo"),
 			Name:     "docker_promote.target_repo",
 			Usage:    "target repository is the repository for the move or copy",
 		},
 		&cli.StringFlag{
 			EnvVars:  []string{"PARAMETER_DOCKER_REGISTRY", "DOCKER_PROMOTE_DOCKER_REGISTRY"},
-			FilePath: string("/vela/secrets/artifactory/docker_registry,/vela/secrets/parameter/docker_registry"),
+			FilePath: string("/vela/secrets/artifactory/docker_promote/docker_registry,/vela/secrets/parameter/docker_promote/docker_registry"),
 			Name:     "docker_promote.docker_registry",
 			Usage:    "docker registry is the registry to promote",
 		},
 		&cli.StringFlag{
 			EnvVars:  []string{"PARAMETER_TARGET_DOCKER_REGISTRY", "DOCKER_PROMOTE_TARGET_DOCKER_REGISTRY"},
-			FilePath: string("/vela/secrets/artifactory/docker_promote_target_docker_registry,/vela/secrets/parameter/docker_promote_target_docker_registry"),
+			FilePath: string("/vela/secrets/artifactory/docker_promote/target_docker_registry,/vela/secrets/parameter/docker_promote/target_docker_registry"),
 			Name:     "docker_promote.target_docker_registry",
 			Usage:    "target docker registry is an optional target registry, if null, will use the same name as 'docker_registry'",
 		},
 		&cli.StringFlag{
 			EnvVars:  []string{"PARAMETER_TAG", "DOCKER_PROMOTE_TAG"},
-			FilePath: string("/vela/secrets/artifactory/docker_promote_tag,/vela/secrets/parameter/docker_promote_tag"),
+			FilePath: string("/vela/secrets/artifactory/docker_promote/tag,/vela/secrets/parameter/docker_promote/tag"),
 			Name:     "docker_promote.tag",
 			Usage:    "tag name to promote if null the entire docker repository will be promoted.",
 		},
 		&cli.StringSliceFlag{
 			EnvVars:  []string{"PARAMETER_TARGET_TAGS", "DOCKER_PROMOTE_TARGET_TAGS"},
-			FilePath: string("/vela/secrets/artifactory/docker_promote_target_tags,/vela/secrets/parameter/docker_promote_target_tags"),
+			FilePath: string("/vela/secrets/artifactory/docker_promote/target_tags,/vela/secrets/parameter/docker_promote/target_tags"),
 			Name:     "docker_promote.target_tags",
 			Usage:    "target tag to assign the image after promotion",
 		},
 		&cli.BoolFlag{
 			EnvVars:  []string{"PARAMETER_COPY", "DOCKER_PROMOTE_COPY"},
-			FilePath: string("/vela/secrets/artifactory/docker_promote_copy,/vela/secrets/parameter/docker_promote_copy"),
+			FilePath: string("/vela/secrets/artifactory/docker_promote/copy,/vela/secrets/parameter/docker_promote/copy"),
 			Name:     "docker_promote.copy",
 			Usage:    "set to copy instead of moving the image",
 		},
 		&cli.BoolFlag{
 			EnvVars:  []string{"PARAMETER_PROPS_PROMOTE", "DOCKER_PROMOTE_SET_PROP_PROMOTE"},
-			FilePath: string("/vela/secrets/artifactory/docker_promote_promote,/vela/secrets/parameter/docker_promote_promote"),
+			FilePath: string("/vela/secrets/artifactory/docker_promote/promote,/vela/secrets/parameter/docker_promote/promote"),
 			Name:     "docker_prop.promote",
 			Usage:    "property to be set on the artifact when it is being promoted",
 		},
@@ -171,7 +171,7 @@ func main() {
 
 		&cli.StringFlag{
 			EnvVars:  []string{"PARAMETER_PROPS", "SET_PROP_PROPS"},
-			FilePath: string("/vela/secrets/artifactory/props,/vela/secrets/parameter/set_prop_props"),
+			FilePath: string("/vela/secrets/artifactory/set_prop/props,/vela/secrets/parameter/set_prop/props"),
 			Name:     "set_prop.props",
 			Usage:    "properties to set on the artifact(s)",
 		},
@@ -180,31 +180,31 @@ func main() {
 
 		&cli.BoolFlag{
 			EnvVars:  []string{"PARAMETER_FLAT", "UPLOAD_FLAT"},
-			FilePath: string("/vela/secrets/artifactory/upload_flat,/vela/secrets/parameter/upload_flat"),
+			FilePath: string("/vela/secrets/artifactory/upload/flat,/vela/secrets/parameter/upload/flat"),
 			Name:     "upload.flat",
 			Usage:    "enables uploading artifacts to exact target path (excludes source file hierarchy)",
 		},
 		&cli.BoolFlag{
 			EnvVars:  []string{"PARAMETER_INCLUDE_DIRS", "UPLOAD_INCLUDE_DIRS"},
-			FilePath: string("/vela/secrets/artifactory/upload_include_dirs,/vela/secrets/parameter/upload_include_dirs"),
+			FilePath: string("/vela/secrets/artifactory/upload/include_dirs,/vela/secrets/parameter/upload/include_dirs"),
 			Name:     "upload.include_dirs",
 			Usage:    "enables including directories from sources",
 		},
 		&cli.BoolFlag{
 			EnvVars:  []string{"PARAMETER_REGEXP", "UPLOAD_REGEXP"},
-			FilePath: string("/vela/secrets/artifactory/upload_regexp,/vela/secrets/parameter/upload_regexp"),
+			FilePath: string("/vela/secrets/artifactory/upload/regexp,/vela/secrets/parameter/upload/regexp"),
 			Name:     "upload.regexp",
 			Usage:    "enables reading the sources as a regular expression",
 		},
 		&cli.BoolFlag{
 			EnvVars:  []string{"PARAMETER_RECURSIVE", "UPLOAD_RECURSIVE"},
-			FilePath: string("/vela/secrets/artifactory/upload_recursive,/vela/secrets/parameter/upload_recursive"),
+			FilePath: string("/vela/secrets/artifactory/upload/recursive,/vela/secrets/parameter/upload/recursive"),
 			Name:     "upload.recursive",
 			Usage:    "enables uploading sub-directories for the sources",
 		},
 		&cli.StringSliceFlag{
 			EnvVars:  []string{"PARAMETER_SOURCES", "UPLOAD_SOURCES"},
-			FilePath: string("/vela/secrets/artifactory/upload_sources,/vela/secrets/parameter/upload_sources"),
+			FilePath: string("/vela/secrets/artifactory/upload/sources,/vela/secrets/parameter/upload/sources"),
 			Name:     "upload.sources",
 			Usage:    "list of artifact(s) to upload",
 		},
