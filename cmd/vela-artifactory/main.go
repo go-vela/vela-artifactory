@@ -57,37 +57,37 @@ func main() {
 
 		&cli.StringFlag{
 			EnvVars:  []string{"PARAMETER_ACTION", "CONFIG_ACTION", "ARTIFACTORY_ACTION"},
-			FilePath: string("/vela/parameters/artifactory/action,/vela/secrets/artifactory/action"),
+			FilePath: string("/vela/parameters/config/artifactory/action,/vela/secrets/artifactory/action"),
 			Name:     "config.action",
 			Usage:    "action to perform against the Artifactory instance",
 		},
 		&cli.BoolFlag{
 			EnvVars:  []string{"PARAMETER_DRY_RUN", "CONFIG_DRY_RUN", "ARTIFACTORY_DRY_RUN"},
-			FilePath: string("/vela/parameters/artifactory/dry_run,/vela/secrets/artifactory/dry_run"),
+			FilePath: string("/vela/parameters/config/artifactory/dry_run,/vela/secrets/artifactory/dry_run"),
 			Name:     "config.dry_run",
 			Usage:    "enables pretending to perform the action",
 		},
 		&cli.StringFlag{
 			EnvVars:  []string{"PARAMETER_API_KEY", "CONFIG_API_KEY", "ARTIFACTORY_API_KEY"},
-			FilePath: string("/vela/parameters/artifactory/api_key,/vela/secrets/artifactory/api_key"),
+			FilePath: string("/vela/parameters/config/artifactory/api_key,/vela/secrets/artifactory/api_key"),
 			Name:     "config.api_key",
 			Usage:    "API key for communication with the Artifactory instance",
 		},
 		&cli.StringFlag{
 			EnvVars:  []string{"PARAMETER_PASSWORD", "CONFIG_PASSWORD", "ARTIFACTORY_PASSWORD"},
-			FilePath: string("/vela/parameters/artifactory/password,/vela/secrets/artifactory/password"),
+			FilePath: string("/vela/parameters/config/artifactory/password,/vela/secrets/artifactory/password"),
 			Name:     "config.password",
 			Usage:    "password for communication with the Artifactory instance",
 		},
 		&cli.StringFlag{
 			EnvVars:  []string{"PARAMETER_URL", "CONFIG_URL", "ARTIFACTORY_URL"},
-			FilePath: string("/vela/parameters/artifactory/url,/vela/secrets/artifactory/url"),
+			FilePath: string("/vela/parameters/config/artifactory/url,/vela/secrets/artifactory/url"),
 			Name:     "config.url",
 			Usage:    "Artifactory instance to communicate with",
 		},
 		&cli.StringFlag{
 			EnvVars:  []string{"PARAMETER_USERNAME", "CONFIG_USERNAME", "ARTIFACTORY_USERNAME"},
-			FilePath: string("/vela/parameters/artifactory/username,/vela/secrets/artifactory/username"),
+			FilePath: string("/vela/parameters/config/artifactory/username,/vela/secrets/artifactory/username"),
 			Name:     "config.username",
 			Usage:    "user name for communication with the Artifactory instance",
 		},
