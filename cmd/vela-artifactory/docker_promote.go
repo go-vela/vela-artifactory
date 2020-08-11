@@ -83,7 +83,13 @@ func (p *DockerPromote) Exec(c *Config) error {
 		}
 
 		if p.PromoteProperty {
-			promotedImagePath := fmt.Sprintf("%s/%s", payload.GetDockerRepository(), payload.GetTargetTag())
+			var promotedImagePath string
+
+			if payload.GetTargetDockerRepository() != "" {
+				promotedImagePath = fmt.Sprintf("%s/%s", payload.GetTargetDockerRepository(), payload.GetTargetTag())
+			} else {
+				promotedImagePath = fmt.Sprintf("%s/%s", payload.GetDockerRepository(), payload.GetTargetTag())
+			}
 
 			properties := make(map[string][]string)
 			properties["promoted_on"] = append(properties["promoted_on"], time.Now().UTC().Format(time.RFC3339))
