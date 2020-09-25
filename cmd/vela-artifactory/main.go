@@ -159,6 +159,7 @@ func main() {
 			FilePath: string("/vela/parameters/artifactory/docker_promote/copy,/vela/secrets/artifactory/docker_promote/copy"),
 			Name:     "docker_promote.copy",
 			Usage:    "set to copy instead of moving the image",
+			Value:    true,
 		},
 		&cli.BoolFlag{
 			EnvVars:  []string{"PARAMETER_PROPS_PROMOTE", "DOCKER_PROMOTE_SET_PROP_PROMOTE"},
