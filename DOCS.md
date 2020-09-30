@@ -8,15 +8,15 @@ Registry: https://hub.docker.com/r/target/vela-artifactory
 
 ## Usage
 
-_The plugin supports reading all parameters via environment variables or files. Values set as a file take precedence over default values set from the environment._
+**NOTE: It is not recommended to use `latest` as the tag for the Docker image. Users should use a semantically versioned tag instead.**
 
 Sample of copying an artifact:
 
 ```yaml
 steps:
   - name: copy_artifacts
-    image: target/vela-artifactory:v0.2.0
-    pull: true
+    image: target/vela-artifactory:latest
+    pull: always
     parameters:
       action: copy
       path: libs-snapshot-local/foo.txt
@@ -29,8 +29,8 @@ Sample of deleting an artifact:
 ```yaml
 steps:
   - name: delete_artifacts
-    image: target/vela-artifactory:v0.2.0
-    pull: true
+    image: target/vela-artifactory:latest
+    pull: always
     parameters:
       action: delete
       path: libs-snapshot-local/foo.txt
@@ -42,8 +42,8 @@ Sample of setting properties on an artifact:
 ```yaml
 steps:
   - name: set_properties_artifacts
-    image: target/vela-artifactory:v0.2.0
-    pull: true
+    image: target/vela-artifactory:latest
+    pull: always
     parameters:
       action: set-prop
       path: libs-snapshot-local/foo.txt
@@ -62,8 +62,8 @@ Sample of uploading an artifact:
 ```yaml
 steps:
   - name: upload_artifacts
-    image: target/vela-artifactory:v0.2.0
-    pull: true
+    image: target/vela-artifactory:latest
+    pull: always
     parameters:
       action: upload
       path: libs-snapshot-local/
@@ -79,8 +79,8 @@ Sample of pretending to upload an artifact:
 ```diff
 steps:
   - name: upload_artifacts
-    image: target/vela-artifactory:v0.2.0
-    pull: true
+    image: target/vela-artifactory:latest
+    pull: always
     parameters:
       action: upload
 +     dry_run: true
@@ -97,8 +97,8 @@ Sample of using docker-promote on an artifact:
 ```yaml
 steps:
   - name: docker_promote_artifacts
-    image: target/vela-artifactory:v0.2.0
-    pull: true
+    image: target/vela-artifactory:latest
+    pull: always
     parameters:
       action: docker-promote
       target_repo: libs-snapshot-local
@@ -117,8 +117,8 @@ You can use Vela secrets to substitute sensitive values at runtime:
 ```diff
 steps:
   - name: copy_artifacts
-    image: target/vela-artifactory:v0.2.0
-    pull: true
+    image: target/vela-artifactory:latest
+    pull: always
 +   secrets: [ artifactory_username, artifactory_password ]
     parameters:
       action: copy
@@ -130,6 +130,11 @@ steps:
 ```
 
 ## Parameters
+
+**NOTE:**
+
+* the plugin supports reading all parameters via environment variables or files
+* values set from a file take precedence over values set from the environment
 
 The following parameters are used to configure the image:
 
@@ -153,7 +158,6 @@ The following parameters are used to configure the `copy` action:
 | `flat`      | enables removing source directory hierarchy         | `false`  | `false` |
 | `recursive` | enables copying sub-directories for the artifact(s) | `false`  | `false` |
 | `target`    | target path to copy artifact(s) to                  | `true`   | `N/A`   |
-
 
 #### Delete
 
