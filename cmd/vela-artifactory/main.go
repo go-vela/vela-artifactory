@@ -45,15 +45,15 @@ func main() {
 	app.Flags = []cli.Flag{
 
 		&cli.StringFlag{
-			EnvVars:  []string{"PARAMETER_LOG_LEVEL", "VELA_LOG_LEVEL", "ARTIFACTORY_LOG_LEVEL"},
-			FilePath: string("/vela/parameters/artifactory/log_level,/vela/secrets/artifactory/log_level"),
+			EnvVars:  []string{"PARAMETER_LOG_LEVEL", "ARTIFACTORY_LOG_LEVEL"},
+			FilePath: "/vela/parameters/artifactory/log_level,/vela/secrets/artifactory/log_level",
 			Name:     "log.level",
 			Usage:    "set log level - options: (trace|debug|info|warn|error|fatal|panic)",
 			Value:    "info",
 		},
 		&cli.StringFlag{
 			EnvVars:  []string{"PARAMETER_PATH", "ARTIFACTORY_PATH"},
-			FilePath: string("/vela/parameters/artifactory/path,/vela/secrets/artifactory/path"),
+			FilePath: "/vela/parameters/artifactory/path,/vela/secrets/artifactory/path",
 			Name:     "path",
 			Usage:    "source/target path to artifact(s) for action",
 		},
@@ -61,38 +61,38 @@ func main() {
 		// Config Flags
 
 		&cli.StringFlag{
-			EnvVars:  []string{"PARAMETER_ACTION", "CONFIG_ACTION", "ARTIFACTORY_ACTION"},
-			FilePath: string("/vela/parameters/config/artifactory/action,/vela/secrets/artifactory/action"),
+			EnvVars:  []string{"PARAMETER_ACTION", "ARTIFACTORY_ACTION"},
+			FilePath: "/vela/parameters/artifactory/action,/vela/secrets/artifactory/action",
 			Name:     "config.action",
 			Usage:    "action to perform against the Artifactory instance",
 		},
 		&cli.BoolFlag{
-			EnvVars:  []string{"PARAMETER_DRY_RUN", "CONFIG_DRY_RUN", "ARTIFACTORY_DRY_RUN"},
-			FilePath: string("/vela/parameters/config/artifactory/dry_run,/vela/secrets/artifactory/dry_run"),
+			EnvVars:  []string{"PARAMETER_DRY_RUN", "ARTIFACTORY_DRY_RUN"},
+			FilePath: "/vela/parameters/artifactory/dry_run,/vela/secrets/artifactory/dry_run",
 			Name:     "config.dry_run",
 			Usage:    "enables pretending to perform the action",
 		},
 		&cli.StringFlag{
-			EnvVars:  []string{"PARAMETER_API_KEY", "CONFIG_API_KEY", "ARTIFACTORY_API_KEY"},
-			FilePath: string("/vela/parameters/config/artifactory/api_key,/vela/secrets/artifactory/api_key"),
+			EnvVars:  []string{"PARAMETER_API_KEY", "ARTIFACTORY_API_KEY"},
+			FilePath: "/vela/parameters/artifactory/api_key,/vela/secrets/artifactory/api_key",
 			Name:     "config.api_key",
 			Usage:    "API key for communication with the Artifactory instance",
 		},
 		&cli.StringFlag{
-			EnvVars:  []string{"PARAMETER_PASSWORD", "CONFIG_PASSWORD", "ARTIFACTORY_PASSWORD"},
-			FilePath: string("/vela/parameters/config/artifactory/password,/vela/secrets/artifactory/password"),
+			EnvVars:  []string{"PARAMETER_PASSWORD", "ARTIFACTORY_PASSWORD"},
+			FilePath: "/vela/parameters/artifactory/password,/vela/secrets/artifactory/password",
 			Name:     "config.password",
 			Usage:    "password for communication with the Artifactory instance",
 		},
 		&cli.StringFlag{
-			EnvVars:  []string{"PARAMETER_URL", "CONFIG_URL", "ARTIFACTORY_URL"},
-			FilePath: string("/vela/parameters/config/artifactory/url,/vela/secrets/artifactory/url"),
+			EnvVars:  []string{"PARAMETER_URL", "ARTIFACTORY_URL"},
+			FilePath: "/vela/parameters/artifactory/url,/vela/secrets/artifactory/url",
 			Name:     "config.url",
 			Usage:    "Artifactory instance to communicate with",
 		},
 		&cli.StringFlag{
-			EnvVars:  []string{"PARAMETER_USERNAME", "CONFIG_USERNAME", "ARTIFACTORY_USERNAME"},
-			FilePath: string("/vela/parameters/config/artifactory/username,/vela/secrets/artifactory/username"),
+			EnvVars:  []string{"PARAMETER_USERNAME", "ARTIFACTORY_USERNAME"},
+			FilePath: "/vela/parameters/artifactory/username,/vela/secrets/artifactory/username",
 			Name:     "config.username",
 			Usage:    "user name for communication with the Artifactory instance",
 		},
@@ -100,20 +100,20 @@ func main() {
 		// Copy Flags
 
 		&cli.BoolFlag{
-			EnvVars:  []string{"PARAMETER_FLAT", "COPY_FLAT"},
-			FilePath: string("/vela/parameters/artifactory/copy/flat,/vela/secrets/artifactory/copy/flat"),
+			EnvVars:  []string{"PARAMETER_FLAT", "ARTIFACTORY_FLAT"},
+			FilePath: "/vela/parameters/artifactory/flat,/vela/secrets/artifactory/flat",
 			Name:     "copy.flat",
 			Usage:    "enables removing source directory hierarchy",
 		},
 		&cli.BoolFlag{
-			EnvVars:  []string{"PARAMETER_RECURSIVE", "COPY_RECURSIVE"},
-			FilePath: string("/vela/parameters/artifactory/copy/recursive,/vela/secrets/artifactory/copy/recursive"),
+			EnvVars:  []string{"PARAMETER_RECURSIVE", "ARTIFACTORY_RECURSIVE"},
+			FilePath: "/vela/parameters/artifactory/recursive,/vela/secrets/artifactory/recursive",
 			Name:     "copy.recursive",
 			Usage:    "enables copying sub-directories for the artifact(s)",
 		},
 		&cli.StringFlag{
-			EnvVars:  []string{"PARAMETER_TARGET", "COPY_TARGET"},
-			FilePath: string("/vela/parameters/artifactory/copy/target,/vela/secrets/artifactory/copy/target"),
+			EnvVars:  []string{"PARAMETER_TARGET", "ARTIFACTORY_TARGET"},
+			FilePath: "/vela/parameters/artifactory/target,/vela/secrets/artifactory/target",
 			Name:     "copy.target",
 			Usage:    "target path to copy artifact(s) to",
 		},
@@ -121,63 +121,63 @@ func main() {
 		// Delete Flags
 
 		&cli.BoolFlag{
-			EnvVars:  []string{"PARAMETER_RECURSIVE", "DELETE_RECURSIVE"},
-			FilePath: string("/vela/parameters/artifactory/delete/recursive,/vela/secrets/artifactory/delete/recursive"),
+			EnvVars:  []string{"PARAMETER_RECURSIVE", "ARTIFACTORY_RECURSIVE"},
+			FilePath: "/vela/parameters/artifactory/recursive,/vela/secrets/artifactory/recursive",
 			Name:     "delete.recursive",
 			Usage:    "enables removing sub-directories for the artifact(s)",
 		},
 
-		// Docker promote Flags
+		// Docker Promote Flags
 
 		&cli.StringFlag{
-			EnvVars:  []string{"PARAMETER_TARGET_REPO", "DOCKER_PROMOTE_TARGET_REPO"},
-			FilePath: string("/vela/parameters/artifactory/docker_promote/target_repo,/vela/secrets/artifactory/docker_promote/target_repo"),
+			EnvVars:  []string{"PARAMETER_TARGET_REPO", "ARTIFACTORY_TARGET_REPO"},
+			FilePath: "/vela/parameters/artifactory/target_repo,/vela/secrets/artifactory/target_repo",
 			Name:     "docker_promote.target_repo",
 			Usage:    "target repository is the repository for the move or copy",
 		},
 		&cli.StringFlag{
-			EnvVars:  []string{"PARAMETER_DOCKER_REGISTRY", "DOCKER_PROMOTE_DOCKER_REGISTRY"},
-			FilePath: string("/vela/parameters/artifactory/docker_promote/docker_registry,/vela/secrets/artifactory/docker_promote/docker_registry"),
+			EnvVars:  []string{"PARAMETER_DOCKER_REGISTRY", "ARTIFACTORY_DOCKER_REGISTRY"},
+			FilePath: "/vela/parameters/artifactory/docker_registry,/vela/secrets/artifactory/docker_registry",
 			Name:     "docker_promote.docker_registry",
 			Usage:    "docker registry is the registry to promote",
 		},
 		&cli.StringFlag{
-			EnvVars:  []string{"PARAMETER_TARGET_DOCKER_REGISTRY", "DOCKER_PROMOTE_TARGET_DOCKER_REGISTRY"},
-			FilePath: string("/vela/parameters/artifactory/docker_promote/target_docker_registry,/vela/secrets/artifactory/docker_promote/target_docker_registry"),
+			EnvVars:  []string{"PARAMETER_TARGET_DOCKER_REGISTRY", "ARTIFACTORY_TARGET_DOCKER_REGISTRY"},
+			FilePath: "/vela/parameters/artifactory/target_docker_registry,/vela/secrets/artifactory/target_docker_registry",
 			Name:     "docker_promote.target_docker_registry",
 			Usage:    "target docker registry is an optional target registry, if null, will use the same name as 'docker_registry'",
 		},
 		&cli.StringFlag{
-			EnvVars:  []string{"PARAMETER_TAG", "DOCKER_PROMOTE_TAG"},
-			FilePath: string("/vela/parameters/artifactory/docker_promote/tag,/vela/secrets/artifactory/docker_promote/tag"),
+			EnvVars:  []string{"PARAMETER_TAG", "ARTIFACTORY_TAG"},
+			FilePath: "/vela/parameters/artifactory/tag,/vela/secrets/artifactory/tag",
 			Name:     "docker_promote.tag",
 			Usage:    "tag name to promote if null the entire docker repository will be promoted.",
 		},
 		&cli.StringSliceFlag{
-			EnvVars:  []string{"PARAMETER_TARGET_TAGS", "DOCKER_PROMOTE_TARGET_TAGS"},
-			FilePath: string("/vela/parameters/artifactory/docker_promote/target_tags,/vela/secrets/artifactory/docker_promote/target_tags"),
+			EnvVars:  []string{"PARAMETER_TARGET_TAGS", "ARTIFACTORY_TARGET_TAGS"},
+			FilePath: "/vela/parameters/artifactory/target_tags,/vela/secrets/artifactory/target_tags",
 			Name:     "docker_promote.target_tags",
 			Usage:    "target tag to assign the image after promotion",
 		},
 		&cli.BoolFlag{
-			EnvVars:  []string{"PARAMETER_COPY", "DOCKER_PROMOTE_COPY"},
-			FilePath: string("/vela/parameters/artifactory/docker_promote/copy,/vela/secrets/artifactory/docker_promote/copy"),
+			EnvVars:  []string{"PARAMETER_COPY", "ARTIFACTORY_COPY"},
+			FilePath: "/vela/parameters/artifactory/copy,/vela/secrets/artifactory/copy",
 			Name:     "docker_promote.copy",
 			Usage:    "set to copy instead of moving the image",
 			Value:    true,
 		},
 		&cli.BoolFlag{
-			EnvVars:  []string{"PARAMETER_PROPS_PROMOTE", "DOCKER_PROMOTE_SET_PROP_PROMOTE"},
-			FilePath: string("/vela/parameters/artifactory/docker_promote/promote,/vela/secrets/artifactory/docker_promote/promote"),
-			Name:     "docker_prop.promote",
+			EnvVars:  []string{"PARAMETER_PROMOTE_PROPS", "ARTIFACTORY_PROMOTE_PROPS"},
+			FilePath: "/vela/parameters/artifactory/promote,/vela/secrets/artifactory/promote",
+			Name:     "docker_promote.props",
 			Usage:    "property to be set on the artifact when it is being promoted",
 		},
 
 		// Set Prop Flags
 
 		&cli.StringFlag{
-			EnvVars:  []string{"PARAMETER_PROPS", "SET_PROP_PROPS"},
-			FilePath: string("/vela/parameters/artifactory/set_prop/props,/vela/secrets/artifactory/set_prop/props"),
+			EnvVars:  []string{"PARAMETER_PROPS", "ARTIFACTORY_PROPS"},
+			FilePath: "/vela/parameters/artifactory/props,/vela/secrets/artifactory/props",
 			Name:     "set_prop.props",
 			Usage:    "properties to set on the artifact(s)",
 		},
@@ -185,32 +185,32 @@ func main() {
 		// Upload Flags
 
 		&cli.BoolFlag{
-			EnvVars:  []string{"PARAMETER_FLAT", "UPLOAD_FLAT"},
-			FilePath: string("/vela/parameters/artifactory/upload/flat,/vela/secrets/artifactory/upload/flat"),
+			EnvVars:  []string{"PARAMETER_FLAT", "ARTIFACTORY_FLAT"},
+			FilePath: "/vela/parameters/artifactory/flat,/vela/secrets/artifactory/flat",
 			Name:     "upload.flat",
 			Usage:    "enables uploading artifacts to exact target path (excludes source file hierarchy)",
 		},
 		&cli.BoolFlag{
-			EnvVars:  []string{"PARAMETER_INCLUDE_DIRS", "UPLOAD_INCLUDE_DIRS"},
-			FilePath: string("/vela/parameters/artifactory/upload/include_dirs,/vela/secrets/artifactory/upload/include_dirs"),
+			EnvVars:  []string{"PARAMETER_INCLUDE_DIRS", "ARTIFACTORY_INCLUDE_DIRS"},
+			FilePath: "/vela/parameters/artifactory/include_dirs,/vela/secrets/artifactory/include_dirs",
 			Name:     "upload.include_dirs",
 			Usage:    "enables including directories from sources",
 		},
 		&cli.BoolFlag{
-			EnvVars:  []string{"PARAMETER_REGEXP", "UPLOAD_REGEXP"},
-			FilePath: string("/vela/parameters/artifactory/upload/regexp,/vela/secrets/artifactory/upload/regexp"),
+			EnvVars:  []string{"PARAMETER_REGEXP", "ARTIFACTORY_REGEXP"},
+			FilePath: "/vela/parameters/artifactory/regexp,/vela/secrets/artifactory/regexp",
 			Name:     "upload.regexp",
 			Usage:    "enables reading the sources as a regular expression",
 		},
 		&cli.BoolFlag{
-			EnvVars:  []string{"PARAMETER_RECURSIVE", "UPLOAD_RECURSIVE"},
-			FilePath: string("/vela/parameters/artifactory/upload/recursive,/vela/secrets/artifactory/upload/recursive"),
+			EnvVars:  []string{"PARAMETER_RECURSIVE", "ARTIFACTORY_RECURSIVE"},
+			FilePath: "/vela/parameters/artifactory/recursive,/vela/secrets/artifactory/recursive",
 			Name:     "upload.recursive",
 			Usage:    "enables uploading sub-directories for the sources",
 		},
 		&cli.StringSliceFlag{
-			EnvVars:  []string{"PARAMETER_SOURCES", "UPLOAD_SOURCES"},
-			FilePath: string("/vela/parameters/artifactory/upload/sources,/vela/secrets/artifactory/upload/sources"),
+			EnvVars:  []string{"PARAMETER_SOURCES", "ARTIFACTORY_SOURCES"},
+			FilePath: "/vela/parameters/artifactory/sources,/vela/secrets/artifactory/sources",
 			Name:     "upload.sources",
 			Usage:    "list of artifact(s) to upload",
 		},
