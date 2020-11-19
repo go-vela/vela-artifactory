@@ -8,7 +8,11 @@ Registry: https://hub.docker.com/r/target/vela-artifactory
 
 ## Usage
 
-**NOTE: It is not recommended to use `latest` as the tag for the Docker image. Users should use a semantically versioned tag instead.**
+> **NOTE:**
+>
+> Users should refrain from using latest as the tag for the Docker image.
+>
+> It is recommended to use a semantically versioned tag instead.
 
 Sample of copying an artifact:
 
@@ -110,9 +114,11 @@ steps:
 
 ## Secrets
 
-**NOTE: Users should refrain from configuring sensitive information in your pipeline in plain text.**
+> **NOTE:** Users should refrain from configuring sensitive information in your pipeline in plain text.
 
-You can use Vela secrets to substitute sensitive values at runtime:
+### Internal
+
+Users can use [Vela internal secrets](https://go-vela.github.io/docs/concepts/pipeline/secrets/) to substitute these sensitive values at runtime:
 
 ```diff
 steps:
@@ -129,81 +135,131 @@ steps:
 -     password: superSecretPassword
 ```
 
+> This example will add the secrets to the copy_artifacts step as environment variables:
+>
+> * `ARTIFACTORY_USERNAME=<value>`
+> * `ARTIFACTORY_PASSWORD=<value>`
+
+### External
+
+The plugin accepts the following files for authentication:
+
+| Parameter  | Volume Configuration                                                          |
+| ---------- | ----------------------------------------------------------------------------- |
+| `api_key`  | `/vela/parameters/artifactory/api_key`, `/vela/secrets/artifactory/api_key`   |
+| `password` | `/vela/parameters/artifactory/password`, `/vela/secrets/artifactory/password` |
+| `username` | `/vela/parameters/artifactory/username`, `/vela/secrets/artifactory/username` |
+
+Users can use [Vela external secrets](https://go-vela.github.io/docs/concepts/pipeline/secrets/origin/) to substitute these sensitive values at runtime:
+
+```diff
+steps:
+  - name: copy_artifacts
+    image: target/vela-artifactory:latest
+    pull: always
+    parameters:
+      action: copy
+      path: libs-snapshot-local/foo.txt
+      target: libs-snapshot-local/bar.txt
+      url: http://localhost:8081/artifactory
+-     username: octocat
+-     password: superSecretPassword
+```
+
+> This example will read the secret values in the volume stored at `/vela/secrets/`
+
 ## Parameters
 
-**NOTE:**
-
-* the plugin supports reading all parameters via environment variables or files
-* values set from a file take precedence over values set from the environment
+> **NOTE:**
+>
+> The plugin supports reading all parameters via environment variables or files.
+>
+> Any values set from a file take precedence over values set from the environment.
 
 The following parameters are used to configure the image:
 
-| Name        | Description                                  | Required | Default |
-| ----------- | -------------------------------------------- | -------- | ------- |
-| `action`    | action to perform against Artifactory        | `true`   | `N/A`   |
-| `api_key`   | API key for communication with Artifactory   | `false`  | `N/A`   |
-| `dry_run`   | enables pretending to perform the action     | `false`  | `false` |
-| `log_level` | set the log level for the plugin             | `true`   | `info`  |
-| `password`  | password for communication with Artifactory  | `false`  | `N/A`   |
-| `path`      | source/target path to artifact(s) for action | `true`   | `N/A`   |
-| `url`       | Artifactory instance to communicate with     | `true`   | `N/A`   |
-| `username`  | user name for communication with Artifactory | `true`   | `N/A`   |
+| Name        | Description                                  | Required | Default | Environment Variables                            |
+| ----------- | -------------------------------------------- | -------- | ------- | ------------------------------------------------ |
+| `action`    | action to perform against Artifactory        | `true`   | `N/A`   | `PARAMETER_ACTION`<br>`ARTIFACTORY_ACTION`       |
+| `api_key`   | API key for communication with Artifactory   | `false`  | `N/A`   | `PARAMETER_DRY_RUN`<br>`ARTIFACTORY_DRY_RUN`     |
+| `dry_run`   | enables pretending to perform the action     | `false`  | `false` | `PARAMETER_API_KEY`<br>`ARTIFACTORY_API_KEY`     |
+| `log_level` | set the log level for the plugin             | `true`   | `info`  | `PARAMETER_LOG_LEVEL`<br>`ARTIFACTORY_LOG_LEVEL` |
+| `password`  | password for communication with Artifactory  | `false`  | `N/A`   | `PARAMETER_PASSWORD`<br>`ARTIFACTORY_PASSWORD`   |
+| `path`      | source/target path to artifact(s) for action | `true`   | `N/A`   | `PARAMETER_PATH`<br>`ARTIFACTORY_PATH`           |
+| `url`       | Artifactory instance to communicate with     | `true`   | `N/A`   | `PARAMETER_URL`<br>`ARTIFACTORY_URL`             |
+| `username`  | user name for communication with Artifactory | `true`   | `N/A`   | `PARAMETER_USERNAME`<br>`ARTIFACTORY_USERNAME`   |
 
 #### Copy
 
 The following parameters are used to configure the `copy` action:
 
-| Name        | Description                                         | Required | Default |
-| ----------- | --------------------------------------------------- | -------- | ------- |
-| `flat`      | enables removing source directory hierarchy         | `false`  | `false` |
-| `recursive` | enables copying sub-directories for the artifact(s) | `false`  | `false` |
-| `target`    | target path to copy artifact(s) to                  | `true`   | `N/A`   |
+| Name        | Description                                         | Required | Default | Environment Variables                            |
+| ----------- | --------------------------------------------------- | -------- | ------- | ------------------------------------------------ |
+| `flat`      | enables removing source directory hierarchy         | `false`  | `false` | `PARAMETER_FLAT`<br>`ARTIFACTORY_FLAT`           |
+| `recursive` | enables copying sub-directories for the artifact(s) | `false`  | `false` | `PARAMETER_RECURSIVE`<br>`ARTIFACTORY_RECURSIVE` |
+| `target`    | target path to copy artifact(s) to                  | `true`   | `N/A`   | `PARAMETER_TARGET`<br>`ARTIFACTORY_TARGET`       |
 
 #### Delete
 
 The following parameters are used to configure the `delete` action:
 
-| Name        | Description                                          | Required | Default |
-| ----------- | ---------------------------------------------------- | -------- | ------- |
-| `recursive` | enables removing sub-directories for the artifact(s) | `false`  | `false` |
+| Name        | Description                                          | Required | Default | Environment Variables                            |
+| ----------- | ---------------------------------------------------- | -------- | ------- | ------------------------------------------------ |
+| `recursive` | enables removing sub-directories for the artifact(s) | `false`  | `false` | `PARAMETER_RECURSIVE`<br>`ARTIFACTORY_RECURSIVE` |
 
 #### Docker-Promote
 
 The following parameters are used to configure the `docker-promote` action:
 
-| Name                     | Description                                           | Required | Default  |
-| ------------------------ | ----------------------------------------------------- | -------- | -------- |
-| `target_repo`            | name of the docker registry containing the image      | `true`   | `N/A`    |
-| `docker_registry`        | path to image in docker registry                      | `true`   | `N/A`    |
-| `target_docker_registry` | path for target image in docker registry              | `true`   | `N/A`    |
-| `tag`                    | name of the tag for promoting                         | `true`   | `N/A`    |
-| `target_tags`            | name of the final tags after promotion                | `true`   | `N/A`    |
-| `copy`                   | set to copy instead of moving the image               | `false`  | `false`  |
+| Name                     | Description                                         | Required | Default | Environment Variables                                                      |
+| ------------------------ | --------------------------------------------------- | -------- | ------- | -------------------------------------------------------------------------- |
+| `target_repo`            | name of the docker registry containing the image    | `true`   | `N/A`   | `PARAMETER_TARGET_REPO`<br>`ARTIFACTORY_TARGET_REPO`                       |
+| `docker_registry`        | path to image in docker registry                    | `true`   | `N/A`   | `PARAMETER_DOCKER_REGISTRY`<br>`ARTIFACTORY_DOCKER_REGISTRY`               |
+| `target_docker_registry` | path for target image in docker registry            | `true`   | `N/A`   | `PARAMETER_TARGET_DOCKER_REGISTRY`<br>`ARTIFACTORY_TARGET_DOCKER_REGISTRY` |
+| `tag`                    | name of the tag for promoting                       | `true`   | `N/A`   | `PARAMETER_TAG`<br>`ARTIFACTORY_TAG`                                       |
+| `target_tags`            | name of the final tags after promotion              | `true`   | `N/A`   | `PARAMETER_TARGET_TAGS`<br>`ARTIFACTORY_TARGET_TAGS`                       |
+| `copy`                   | set to copy instead of moving the image             | `false`  | `false` | `PARAMETER_COPY`<br>`ARTIFACTORY_COPY`                                     |
+| `promote_props`          | enables setting properties on the promoted artifact | `false`  | `false` | `PARAMETER_PROMOTE_PROPS`<br>`ARTIFACTORY_PROMOTE_PROPS`                   |
 
 #### Set-Prop
 
 The following parameters are used to configure the `set-prop` action:
 
-| Name    | Description                          | Required | Default |
-| ------- | ------------------------------------ | -------- | ------- |
-| `props` | properties to set on the artifact(s) | `true`   | `N/A`   |
+| Name    | Description                          | Required | Default | Environment Variables                    |
+| ------- | ------------------------------------ | -------- | ------- | ---------------------------------------- |
+| `props` | properties to set on the artifact(s) | `true`   | `N/A`   | `PARAMETER_PROPS`<br>`ARTIFACTORY_PROPS` |
 
 #### Upload
 
 The following parameters are used to configure the `upload` action:
 
-| Name           | Description                                           | Required | Default |
-| -------------- | ----------------------------------------------------- | -------- | ------- |
-| `flat`         | enables removing source directory hierarchy           | `false`  | `false` |
-| `include_dirs` | enables including sub-directories for the artifact(s) | `false`  | `false` |
-| `recursive`    | enables uploading sub-directories for the artifact(s) | `false`  | `false` |
-| `regexp`       | enables reading the sources as a regular expression   | `false`  | `false` |
-| `sources`      | list of artifact(s) to upload                         | `true`   | `N/A`   |
+| Name           | Description                                           | Required | Default | Environment Variables                                  |
+| -------------- | ----------------------------------------------------- | -------- | ------- | ------------------------------------------------------ |
+| `flat`         | enables removing source directory hierarchy           | `false`  | `false` | `PARAMETER_FLAT`<br>`ARTIFACTORY_FLAT`                 |
+| `include_dirs` | enables including sub-directories for the artifact(s) | `false`  | `false` | `PARAMETER_INCLUDE_DIRS`<br>`ARTIFACTORY_INCLUDE_DIRS` |
+| `recursive`    | enables uploading sub-directories for the artifact(s) | `false`  | `false` | `PARAMETER_REGEXP`<br>`ARTIFACTORY_REGEXP`             |
+| `regexp`       | enables reading the sources as a regular expression   | `false`  | `false` | `PARAMETER_RECURSIVE`<br>`ARTIFACTORY_RECURSIVE`       |
+| `sources`      | list of artifact(s) to upload                         | `true`   | `N/A`   | `PARAMETER_SOURCES`<br>`ARTIFACTORY_SOURCES`           |
 
 ## Template
 
 COMING SOON!
 
 ## Troubleshooting
+
+You can start troubleshooting this plugin by tuning the level of logs being displayed:
+
+```diff
+steps:
+  - name: copy_artifacts
+    image: target/vela-artifactory:latest
+    pull: always
+    parameters:
+      action: copy
++     log_level: trace
+      path: libs-snapshot-local/foo.txt
+      target: libs-snapshot-local/bar.txt
+      url: http://localhost:8081/artifactory
+```
 
 Below are a list of common problems and how to solve them:
