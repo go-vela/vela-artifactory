@@ -135,7 +135,7 @@ steps:
 -     password: superSecretPassword
 ```
 
-> This example will add the secrets to the copy_artifacts step as environment variables:
+> This example will add the secrets to the `copy_artifacts` step as environment variables:
 >
 > * `ARTIFACTORY_USERNAME=<value>`
 > * `ARTIFACTORY_PASSWORD=<value>`
