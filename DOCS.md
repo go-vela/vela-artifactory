@@ -185,7 +185,6 @@ The following parameters are used to configure the image:
 | `dry_run`   | enables pretending to perform the action     | `false`  | `false` | `PARAMETER_API_KEY`<br>`ARTIFACTORY_API_KEY`     |
 | `log_level` | set the log level for the plugin             | `true`   | `info`  | `PARAMETER_LOG_LEVEL`<br>`ARTIFACTORY_LOG_LEVEL` |
 | `password`  | password for communication with Artifactory  | `false`  | `N/A`   | `PARAMETER_PASSWORD`<br>`ARTIFACTORY_PASSWORD`   |
-| `path`      | source/target path to artifact(s) for action | `true`   | `N/A`   | `PARAMETER_PATH`<br>`ARTIFACTORY_PATH`           |
 | `url`       | Artifactory instance to communicate with     | `true`   | `N/A`   | `PARAMETER_URL`<br>`ARTIFACTORY_URL`             |
 | `username`  | user name for communication with Artifactory | `true`   | `N/A`   | `PARAMETER_USERNAME`<br>`ARTIFACTORY_USERNAME`   |
 
@@ -196,6 +195,7 @@ The following parameters are used to configure the `copy` action:
 | Name        | Description                                         | Required | Default | Environment Variables                            |
 | ----------- | --------------------------------------------------- | -------- | ------- | ------------------------------------------------ |
 | `flat`      | enables removing source directory hierarchy         | `false`  | `false` | `PARAMETER_FLAT`<br>`ARTIFACTORY_FLAT`           |
+| `path`      | source path to copy artifact(s) from                | `true`   | `N/A`   | `PARAMETER_PATH`<br>`ARTIFACTORY_PATH`           |
 | `recursive` | enables copying sub-directories for the artifact(s) | `false`  | `false` | `PARAMETER_RECURSIVE`<br>`ARTIFACTORY_RECURSIVE` |
 | `target`    | target path to copy artifact(s) to                  | `true`   | `N/A`   | `PARAMETER_TARGET`<br>`ARTIFACTORY_TARGET`       |
 
@@ -205,6 +205,7 @@ The following parameters are used to configure the `delete` action:
 
 | Name        | Description                                          | Required | Default | Environment Variables                            |
 | ----------- | ---------------------------------------------------- | -------- | ------- | ------------------------------------------------ |
+| `path`      | target path to delete artifact(s) from               | `true`   | `N/A`   | `PARAMETER_PATH`<br>`ARTIFACTORY_PATH`           |
 | `recursive` | enables removing sub-directories for the artifact(s) | `false`  | `false` | `PARAMETER_RECURSIVE`<br>`ARTIFACTORY_RECURSIVE` |
 
 #### Docker-Promote
@@ -237,6 +238,7 @@ The following parameters are used to configure the `upload` action:
 | -------------- | ----------------------------------------------------- | -------- | ------- | ------------------------------------------------------ |
 | `flat`         | enables removing source directory hierarchy           | `false`  | `false` | `PARAMETER_FLAT`<br>`ARTIFACTORY_FLAT`                 |
 | `include_dirs` | enables including sub-directories for the artifact(s) | `false`  | `false` | `PARAMETER_INCLUDE_DIRS`<br>`ARTIFACTORY_INCLUDE_DIRS` |
+| `path`         | target path to upload artifact(s) to                  | `true`   | `N/A`   | `PARAMETER_PATH`<br>`ARTIFACTORY_PATH`                 |
 | `recursive`    | enables uploading sub-directories for the artifact(s) | `false`  | `false` | `PARAMETER_REGEXP`<br>`ARTIFACTORY_REGEXP`             |
 | `regexp`       | enables reading the sources as a regular expression   | `false`  | `false` | `PARAMETER_RECURSIVE`<br>`ARTIFACTORY_RECURSIVE`       |
 | `sources`      | list of artifact(s) to upload                         | `true`   | `N/A`   | `PARAMETER_SOURCES`<br>`ARTIFACTORY_SOURCES`           |
