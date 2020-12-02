@@ -136,7 +136,7 @@ func main() {
 			EnvVars:  []string{"PARAMETER_TARGET_DOCKER_REGISTRY", "ARTIFACTORY_TARGET_DOCKER_REGISTRY"},
 			FilePath: "/vela/parameters/artifactory/target_docker_registry,/vela/secrets/artifactory/target_docker_registry",
 			Name:     "docker_promote.target_docker_registry",
-			Usage:    "target registry to promote an image to (uses 'docker_registry' by if empty)",
+			Usage:    "target registry to promote an image to (uses 'docker_registry' if empty)",
 		},
 		&cli.StringFlag{
 			EnvVars:  []string{"PARAMETER_TAG", "ARTIFACTORY_TAG"},
