@@ -57,6 +57,12 @@ func main() {
 			Name:     "path",
 			Usage:    "source/target path to artifact(s) for action",
 		},
+		&cli.BoolFlag{
+			EnvVars:  []string{"PARAMETER_RECURSIVE", "ARTIFACTORY_RECURSIVE"},
+			FilePath: "/vela/parameters/artifactory/recursive,/vela/secrets/artifactory/recursive",
+			Name:     "recursive",
+			Usage:    "enables operating on sub-directories for the source/target path",
+		},
 
 		// Config Flags
 
@@ -105,26 +111,11 @@ func main() {
 			Name:     "copy.flat",
 			Usage:    "enables removing source directory hierarchy",
 		},
-		&cli.BoolFlag{
-			EnvVars:  []string{"PARAMETER_RECURSIVE", "ARTIFACTORY_RECURSIVE"},
-			FilePath: "/vela/parameters/artifactory/recursive,/vela/secrets/artifactory/recursive",
-			Name:     "copy.recursive",
-			Usage:    "enables copying sub-directories for the artifact(s)",
-		},
 		&cli.StringFlag{
 			EnvVars:  []string{"PARAMETER_TARGET", "ARTIFACTORY_TARGET"},
 			FilePath: "/vela/parameters/artifactory/target,/vela/secrets/artifactory/target",
 			Name:     "copy.target",
 			Usage:    "target path to copy artifact(s) to",
-		},
-
-		// Delete Flags
-
-		&cli.BoolFlag{
-			EnvVars:  []string{"PARAMETER_RECURSIVE", "ARTIFACTORY_RECURSIVE"},
-			FilePath: "/vela/parameters/artifactory/recursive,/vela/secrets/artifactory/recursive",
-			Name:     "delete.recursive",
-			Usage:    "enables removing sub-directories for the artifact(s)",
 		},
 
 		// Docker Promote Flags
@@ -133,25 +124,25 @@ func main() {
 			EnvVars:  []string{"PARAMETER_TARGET_REPO", "ARTIFACTORY_TARGET_REPO"},
 			FilePath: "/vela/parameters/artifactory/target_repo,/vela/secrets/artifactory/target_repo",
 			Name:     "docker_promote.target_repo",
-			Usage:    "target repository is the repository for the move or copy",
+			Usage:    "Docker repository in Artifactory for the move or copy",
 		},
 		&cli.StringFlag{
 			EnvVars:  []string{"PARAMETER_DOCKER_REGISTRY", "ARTIFACTORY_DOCKER_REGISTRY"},
 			FilePath: "/vela/parameters/artifactory/docker_registry,/vela/secrets/artifactory/docker_registry",
 			Name:     "docker_promote.docker_registry",
-			Usage:    "docker registry is the registry to promote",
+			Usage:    "source registry to promote an image from",
 		},
 		&cli.StringFlag{
 			EnvVars:  []string{"PARAMETER_TARGET_DOCKER_REGISTRY", "ARTIFACTORY_TARGET_DOCKER_REGISTRY"},
 			FilePath: "/vela/parameters/artifactory/target_docker_registry,/vela/secrets/artifactory/target_docker_registry",
 			Name:     "docker_promote.target_docker_registry",
-			Usage:    "target docker registry is an optional target registry, if null, will use the same name as 'docker_registry'",
+			Usage:    "target registry to promote an image to (uses 'docker_registry' by if empty)",
 		},
 		&cli.StringFlag{
 			EnvVars:  []string{"PARAMETER_TAG", "ARTIFACTORY_TAG"},
 			FilePath: "/vela/parameters/artifactory/tag,/vela/secrets/artifactory/tag",
 			Name:     "docker_promote.tag",
-			Usage:    "tag name to promote if null the entire docker repository will be promoted.",
+			Usage:    "tag name of image to promote (promotes all tags if empty)",
 		},
 		&cli.StringSliceFlag{
 			EnvVars:  []string{"PARAMETER_TARGET_TAGS", "ARTIFACTORY_TARGET_TAGS"},
@@ -201,12 +192,6 @@ func main() {
 			FilePath: "/vela/parameters/artifactory/regexp,/vela/secrets/artifactory/regexp",
 			Name:     "upload.regexp",
 			Usage:    "enables reading the sources as a regular expression",
-		},
-		&cli.BoolFlag{
-			EnvVars:  []string{"PARAMETER_RECURSIVE", "ARTIFACTORY_RECURSIVE"},
-			FilePath: "/vela/parameters/artifactory/recursive,/vela/secrets/artifactory/recursive",
-			Name:     "upload.recursive",
-			Usage:    "enables uploading sub-directories for the sources",
 		},
 		&cli.StringSliceFlag{
 			EnvVars:  []string{"PARAMETER_SOURCES", "ARTIFACTORY_SOURCES"},
@@ -274,13 +259,13 @@ func run(c *cli.Context) error {
 		Copy: &Copy{
 			Flat:      c.Bool("copy.flat"),
 			Path:      c.String("path"),
-			Recursive: c.Bool("copy.recursive"),
+			Recursive: c.Bool("recursive"),
 			Target:    c.String("copy.target"),
 		},
 		// delete configuration
 		Delete: &Delete{
 			Path:      c.String("path"),
-			Recursive: c.Bool("delete.recursive"),
+			Recursive: c.Bool("recursive"),
 		},
 		// docker-promote configuration
 		DockerPromote: &DockerPromote{
@@ -290,7 +275,7 @@ func run(c *cli.Context) error {
 			Tag:                  c.String("docker_promote.tag"),
 			TargetTags:           c.StringSlice("docker_promote.target_tags"),
 			Copy:                 c.Bool("docker_promote.copy"),
-			PromoteProperty:      c.Bool("docker_prop.promote"),
+			PromoteProperty:      c.Bool("docker_promote.props"),
 		},
 		// set-prop configuration
 		SetProp: &SetProp{
@@ -301,7 +286,7 @@ func run(c *cli.Context) error {
 		Upload: &Upload{
 			Flat:        c.Bool("upload.flat"),
 			IncludeDirs: c.Bool("upload.include_dirs"),
-			Recursive:   c.Bool("upload.recursive"),
+			Recursive:   c.Bool("recursive"),
 			Regexp:      c.Bool("upload.regexp"),
 			Path:        c.String("path"),
 			Sources:     c.StringSlice("upload.sources"),
