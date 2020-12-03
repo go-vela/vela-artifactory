@@ -228,6 +228,7 @@ The following parameters are used to configure the `set-prop` action:
 
 | Name    | Description                          | Required | Default | Environment Variables                    |
 | ------- | ------------------------------------ | -------- | ------- | ---------------------------------------- |
+| `path`  | target path to artifact(s)           | `true`   | `N/A`   | `PARAMETER_PATH`<br>`ARTIFACTORY_PATH`   |
 | `props` | properties to set on the artifact(s) | `true`   | `N/A`   | `PARAMETER_PROPS`<br>`ARTIFACTORY_PROPS` |
 
 #### Upload
