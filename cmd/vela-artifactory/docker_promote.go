@@ -17,17 +17,17 @@ const dockerPromoteAction = "docker-promote"
 
 // DockerPromote represents the plugin configuration for setting a Docker Promotion.
 type DockerPromote struct {
-	// target repo is the target repository for the move or copy
+	// Docker repository in Artifactory for the move or copy
 	TargetRepo string
-	// docker registry is the name of the registry promote
+	// source Docker registry to promote an image from
 	DockerRegistry string
-	// target docker registry is an optional target registry, if null, will use the same name as 'DockerRegistry'
+	// target Docker registry to promote an image to (uses 'DockerRegistry' if empty)
 	TargetDockerRegistry string
-	// tag is an optional tag name to promote, if null - the entire docker repository will be promoted. Available from v4.10.
+	// tag name of image to promote (promotes all tags if empty)
 	Tag string
-	// target tag is an optional target tag to assign the image after promotion, if null - will use the same tag
+	// target tag to assign the image after promotion
 	TargetTags []string
-	// An optional value to set whether to copy instead of move. Default: true
+	// set to copy instead of moving the image (default: true)
 	Copy bool
 	// An optional value to set an item property to add a promoted date.
 	PromoteProperty bool
