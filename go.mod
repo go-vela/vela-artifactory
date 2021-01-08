@@ -3,7 +3,7 @@ module github.com/go-vela/vela-artifactory
 go 1.13
 
 require (
-	github.com/Masterminds/semver v1.5.0
+	github.com/Masterminds/semver/v3/v3 v3.1.1
 	github.com/coreos/go-semver v0.3.0 // indirect
 	github.com/cpuguy83/go-md2man/v2 v2.0.0 // indirect
 	github.com/franela/goblin v0.0.0-20200105215937-c9ffbefa60db // indirect
