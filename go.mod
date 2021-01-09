@@ -3,14 +3,13 @@ module github.com/go-vela/vela-artifactory
 go 1.13
 
 require (
-	github.com/Masterminds/semver v1.5.0
+	github.com/Masterminds/semver/v3 v3.1.1
 	github.com/coreos/go-semver v0.3.0 // indirect
 	github.com/cpuguy83/go-md2man/v2 v2.0.0 // indirect
 	github.com/franela/goblin v0.0.0-20200105215937-c9ffbefa60db // indirect
 	github.com/ghodss/yaml v1.0.0
 	github.com/gin-gonic/gin v1.6.3 // indirect
-	github.com/go-playground/validator/v10 v10.3.0 // indirect
-	github.com/go-vela/types v0.6.1-0.20201019123446-226d0cc72538
+	github.com/go-vela/types v0.6.1-0.20210108224628-20005834775b
 	github.com/golang/protobuf v1.4.2 // indirect
 	github.com/google/go-querystring v1.0.0 // indirect
 	github.com/jfrog/gofrog v1.0.6 // indirect
@@ -29,8 +28,9 @@ require (
 	github.com/ulikunitz/xz v0.5.7 // indirect
 	github.com/urfave/cli/v2 v2.3.0
 	golang.org/x/net v0.0.0-20200625001655-4c5254603344 // indirect
-	golang.org/x/sys v0.0.0-20200625212154-ddb9806d33ae // indirect
+	golang.org/x/sys v0.0.0-20210108172913-0df2131ae363 // indirect
 	golang.org/x/text v0.3.3 // indirect
 	google.golang.org/protobuf v1.25.0 // indirect
 	gopkg.in/src-d/go-git.v4 v4.13.1 // indirect
+	gopkg.in/yaml.v2 v2.4.0 // indirect
 )
