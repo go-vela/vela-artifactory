@@ -53,8 +53,20 @@ func (u *Upload) Exec(cli *artifactory.ArtifactoryServicesManager) error {
 		p.Retries = 3
 
 		// send API call to upload artifacts in Artifactory
-		_, _, _, err := cli.UploadFiles(p)
+		fmt.Printf("uploading")
+		_, totalUploaded, totalFailed, err := cli.UploadFiles(p)
 		if err != nil {
+			return err
+		}
+
+		if totalUploaded > 0 {
+			logrus.Info("successfully uploaded %d artifacts", totalUploaded)
+
+		}
+
+		// return an error when artifacts fail to upload
+		if totalFailed > 0 {
+			err = fmt.Errorf("failed to upload %d artifacts", totalFailed)
 			return err
 		}
 	}
