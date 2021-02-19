@@ -13,7 +13,7 @@ require (
 	github.com/golang/protobuf v1.4.2 // indirect
 	github.com/google/go-querystring v1.0.0 // indirect
 	github.com/jfrog/gofrog v1.0.6 // indirect
-	github.com/jfrog/jfrog-client-go v0.8.1
+	github.com/jfrog/jfrog-client-go v0.19.1
 	github.com/joho/godotenv v1.3.0
 	github.com/json-iterator/go v1.1.10 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
