@@ -130,9 +130,22 @@ func TestArtifactory_Config_Validate_NoUsername(t *testing.T) {
 	c := &Config{
 		Action:   "copy",
 		DryRun:   false,
-		APIKey:   "superSecretAPIKey",
 		Password: "superSecretPassword",
 		URL:      "https://myarti.com/artifactory",
+	}
+
+	err := c.Validate()
+	if err == nil {
+		t.Errorf("Validate should have returned err")
+	}
+}
+
+func TestArtifactory_Config_Validate_NoAuth(t *testing.T) {
+	// setup types
+	c := &Config{
+		Action: "copy",
+		DryRun: false,
+		URL:    "https://myarti.com/artifactory",
 	}
 
 	err := c.Validate()
