@@ -47,8 +47,11 @@ func (c *Config) New() (*artifactory.ArtifactoryServicesManager, error) {
 
 	// set URL for Artifactory details
 	details.SetUrl(c.URL)
-	// set user name for Artifactory details
-	details.SetUser(c.Username)
+	// check if username is provided
+	if len(c.Username) > 0 {
+		// set user name for Artifactory details
+		details.SetUser(c.Username)
+	}
 
 	// check if API key is provided
 	if len(c.APIKey) > 0 {
@@ -102,8 +105,8 @@ func (c *Config) Validate() error {
 
 	// check if dry run is disabled
 	if !c.DryRun {
-		// verify username is provided
-		if len(c.Username) == 0 {
+		// verify username is provided if APIKey is empty
+		if len(c.Username) == 0 && len(c.APIKey) == 0 {
 			return fmt.Errorf("no config username provided")
 		}
 
