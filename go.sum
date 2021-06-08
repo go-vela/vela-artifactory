@@ -61,8 +61,8 @@ github.com/go-playground/universal-translator v0.17.0 h1:icxd5fm+REJzpZx7ZfpaD87
 github.com/go-playground/universal-translator v0.17.0/go.mod h1:UkSxE5sNxxRwHyU+Scu5vgOQjsIJAF8j9muTVoKLVtA=
 github.com/go-playground/validator/v10 v10.2.0 h1:KgJ0snyC2R9VXYN2rneOtQcw5aHQB1Vv0sFl1UcHBOY=
 github.com/go-playground/validator/v10 v10.2.0/go.mod h1:uOYAAleCW8F/7oMFd6aG0GOhaH6EGOAJShg8Id5JGkI=
-github.com/go-vela/types v0.8.0 h1:u/mlMU3/GIiXclRuD/PRHuh6wTf2ZhA5O9i9TEUZOS4=
-github.com/go-vela/types v0.8.0/go.mod h1:tKk+FpEAv+BTMr9CL3Wed6tMy5IqyOCJpRTKZI88yDc=
+github.com/go-vela/types v0.8.2 h1:XM5fgHfbAOmIk5zzppjh4u1KsC3auTibsEoVfUZs5pc=
+github.com/go-vela/types v0.8.2/go.mod h1:tKk+FpEAv+BTMr9CL3Wed6tMy5IqyOCJpRTKZI88yDc=
 github.com/golang/glog v0.0.0-20160126235308-23def4e6c14b/go.mod h1:SBH7ygxi8pfUlaOkMMuAQtPIUF8ecWP5IEl/CR7VP2Q=
 github.com/golang/mock v1.1.1/go.mod h1:oTYuIxOrZwtPieC+H1uAHpcLFnEyAGVDL/k47Jfbm0A=
 github.com/golang/protobuf v1.1.0/go.mod h1:6lQm79b+lXiMfvg/cZm0SGofjICqVBUtrP5yJMmIC1U=
