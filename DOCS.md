@@ -192,8 +192,8 @@ The following parameters are used to configure the image:
 | Name        | Description                                  | Required | Default | Environment Variables                            |
 | ----------- | -------------------------------------------- | -------- | ------- | ------------------------------------------------ |
 | `action`    | action to perform against Artifactory        | `true`   | `N/A`   | `PARAMETER_ACTION`<br>`ARTIFACTORY_ACTION`       |
-| `api_key`   | API key for communication with Artifactory   | `false`  | `N/A`   | `PARAMETER_DRY_RUN`<br>`ARTIFACTORY_DRY_RUN`     |
-| `dry_run`   | enables pretending to perform the action     | `false`  | `false` | `PARAMETER_API_KEY`<br>`ARTIFACTORY_API_KEY`     |
+| `api_key`   | API key for communication with Artifactory   | `false`  | `N/A`   | `PARAMETER_API_KEY`<br>`ARTIFACTORY_API_KEY`     |
+| `dry_run`   | enables pretending to perform the action     | `false`  | `false` | `PARAMETER_DRY_RUN`<br>`ARTIFACTORY_DRY_RUN`     |
 | `log_level` | set the log level for the plugin             | `true`   | `info`  | `PARAMETER_LOG_LEVEL`<br>`ARTIFACTORY_LOG_LEVEL` |
 | `password`  | password for communication with Artifactory  | `false`  | `N/A`   | `PARAMETER_PASSWORD`<br>`ARTIFACTORY_PASSWORD`   |
 | `url`       | Artifactory instance to communicate with     | `true`   | `N/A`   | `PARAMETER_URL`<br>`ARTIFACTORY_URL`             |
