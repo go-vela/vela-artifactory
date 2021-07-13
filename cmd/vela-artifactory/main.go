@@ -8,6 +8,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/go-vela/vela-artifactory/version"
@@ -251,6 +252,17 @@ func run(c *cli.Context) error {
 		"registry": "https://hub.docker.com/r/target/vela-artifactory",
 	}).Info("Vela Artifactory Plugin")
 
+	// When a user wants to configure the plugin using the
+	// /vela/parameters/artifactory path there is a high probability
+	// a user will do something like `echo 'VALUE' > /vela/parameters/artifactory/param`
+	// which unintentionally introduced a new line into the parameter.
+	// If we don't sanitize those paths the client library doesn't raise an error,
+	// and instead behaves unexpectedly. In some cases with multiple file uploads
+	// it will create a file with the last part of the path segment which takes on the value
+	// of the last uploaded file.
+	sanitizedPath := strings.TrimSpace(c.String("path"))
+	sanitizedCopyTarget := strings.TrimSpace(c.String("copy.target"))
+
 	// create the plugin
 	p := &Plugin{
 		// config configuration
@@ -265,13 +277,13 @@ func run(c *cli.Context) error {
 		// copy configuration
 		Copy: &Copy{
 			Flat:      c.Bool("copy.flat"),
-			Path:      c.String("path"),
+			Path:      sanitizedPath,
 			Recursive: c.Bool("recursive"),
-			Target:    c.String("copy.target"),
+			Target:    sanitizedCopyTarget,
 		},
 		// delete configuration
 		Delete: &Delete{
-			Path:      c.String("path"),
+			Path:      sanitizedPath,
 			Recursive: c.Bool("recursive"),
 		},
 		// docker-promote configuration
@@ -286,7 +298,7 @@ func run(c *cli.Context) error {
 		},
 		// set-prop configuration
 		SetProp: &SetProp{
-			Path:     c.String("path"),
+			Path:     sanitizedPath,
 			RawProps: c.String("set_prop.props"),
 		},
 		// upload configuration
@@ -295,7 +307,7 @@ func run(c *cli.Context) error {
 			IncludeDirs: c.Bool("upload.include_dirs"),
 			Recursive:   c.Bool("recursive"),
 			Regexp:      c.Bool("upload.regexp"),
-			Path:        c.String("path"),
+			Path:        sanitizedPath,
 			Sources:     c.StringSlice("upload.sources"),
 		},
 	}
