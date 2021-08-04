@@ -4,7 +4,12 @@
 
 package main
 
-import "testing"
+import (
+	"errors"
+	"github.com/jfrog/jfrog-client-go/artifactory/services"
+	"github.com/jfrog/jfrog-client-go/artifactory/services/utils"
+	"testing"
+)
 
 func TestArtifactory_Upload_Exec_Error(t *testing.T) {
 	// setup types
@@ -85,3 +90,63 @@ func TestArtifactory_Upload_Validate_NoSources(t *testing.T) {
 		t.Errorf("Validate should have returned err")
 	}
 }
+
+func TestArtifactory_Upload_Failure_Returns_Error(t *testing.T) {
+	cli := &MockArtifactoryService { Fail: true }
+
+	u := &Upload{
+		Flat:        true,
+		IncludeDirs: false,
+		Recursive:   true,
+		Regexp:      false,
+		Path:        "foo/bar",
+		Sources:     []string{"baz.txt"},
+	}
+
+	err := u.Exec(cli)
+	if err == nil {
+		t.Errorf("Exec should have returned err")
+	}
+}
+
+func TestArtifactory_Upload_Success(t *testing.T) {
+	cli := &MockArtifactoryService { Fail: false }
+
+	u := &Upload{
+		Flat:        true,
+		IncludeDirs: false,
+		Recursive:   true,
+		Regexp:      false,
+		Path:        "foo/bar",
+		Sources:     []string{"baz.txt"},
+	}
+
+	err := u.Exec(cli)
+	if err != nil {
+		t.Errorf("Exec should have returned err")
+	}
+}
+
+
+type MockArtifactoryService struct {
+	Fail bool
+}
+
+func (a *MockArtifactoryService) UploadFiles(...services.UploadParams) ([]utils.FileInfo, int, int, error) {
+	if a.Fail {
+		return nil, 0, 1, errors.New("upload failed")
+	}
+	return nil, 0, 0, nil
+}
+
+func (a *MockArtifactoryService) Copy(services.MoveCopyParams) (int, int, error) {
+	return 0,0, nil
+}
+
+func (a *MockArtifactoryService) GetPathsToDelete(services.DeleteParams) ([]utils.ResultItem, error) {
+	return nil, nil
+}
+func (a *MockArtifactoryService) DeleteFiles([]utils.ResultItem) (int, error) {
+	return 0, nil
+}
+

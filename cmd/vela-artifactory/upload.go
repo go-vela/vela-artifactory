@@ -9,7 +9,6 @@ import (
 
 	"github.com/sirupsen/logrus"
 
-	"github.com/jfrog/jfrog-client-go/artifactory"
 	"github.com/jfrog/jfrog-client-go/artifactory/services"
 	"github.com/jfrog/jfrog-client-go/artifactory/services/utils"
 )
@@ -33,7 +32,7 @@ type Upload struct {
 }
 
 // Exec formats and runs the commands for uploading artifacts in Artifactory.
-func (u *Upload) Exec(cli *artifactory.ArtifactoryServicesManager) error {
+func (u *Upload) Exec(cli ArtifactoryServicesManager) error {
 	logrus.Trace("running upload with provided configuration")
 
 	// iterate through all sources

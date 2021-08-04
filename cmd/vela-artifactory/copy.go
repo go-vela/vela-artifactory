@@ -7,7 +7,6 @@ package main
 import (
 	"fmt"
 
-	"github.com/jfrog/jfrog-client-go/artifactory"
 	"github.com/jfrog/jfrog-client-go/artifactory/services"
 	"github.com/jfrog/jfrog-client-go/artifactory/services/utils"
 
@@ -29,7 +28,7 @@ type Copy struct {
 }
 
 // Exec formats and runs the commands for copying artifacts in Artifactory.
-func (c *Copy) Exec(cli *artifactory.ArtifactoryServicesManager) error {
+func (c *Copy) Exec(cli ArtifactoryServicesManager) error {
 	logrus.Trace("running copy with provided configuration")
 
 	// create new copy parameters
