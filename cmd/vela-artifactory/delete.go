@@ -9,7 +9,6 @@ import (
 
 	"github.com/sirupsen/logrus"
 
-	"github.com/jfrog/jfrog-client-go/artifactory"
 	"github.com/jfrog/jfrog-client-go/artifactory/services"
 	"github.com/jfrog/jfrog-client-go/artifactory/services/utils"
 )
@@ -25,7 +24,7 @@ type Delete struct {
 }
 
 // Exec formats and runs the commands for removing artifacts in Artifactory.
-func (d *Delete) Exec(cli *artifactory.ArtifactoryServicesManager) error {
+func (d *Delete) Exec(cli ArtifactoryServicesManager) error {
 	logrus.Trace("running delete with provided configuration")
 
 	// create new delete parameters
