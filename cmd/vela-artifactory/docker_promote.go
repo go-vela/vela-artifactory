@@ -86,13 +86,22 @@ func (p *DockerPromote) Exec(c *Config) error {
 			var promotedImagePath string
 
 			if payload.GetTargetDockerRepository() != "" {
-				promotedImagePath = fmt.Sprintf("%s/%s", payload.GetTargetDockerRepository(), payload.GetTargetTag())
+				promotedImagePath = fmt.Sprintf(
+					"%s/%s",
+					payload.GetTargetDockerRepository(),
+					payload.GetTargetTag(),
+				)
 			} else {
-				promotedImagePath = fmt.Sprintf("%s/%s", payload.GetDockerRepository(), payload.GetTargetTag())
+				promotedImagePath = fmt.Sprintf(
+					"%s/%s",
+					payload.GetDockerRepository(),
+					payload.GetTargetTag(),
+				)
 			}
 
 			properties := make(map[string][]string)
-			properties["promoted_on"] = append(properties["promoted_on"], time.Now().UTC().Format(time.RFC3339))
+			ts := time.Now().UTC().Format(time.RFC3339)
+			properties["promoted_on"] = append(properties["promoted_on"], ts)
 
 			_, err = client.Storage.SetItemProperties(payload.GetTargetRepo(), promotedImagePath, properties)
 			if err != nil {

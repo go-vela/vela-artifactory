@@ -31,10 +31,6 @@ linters-settings:
     lines: 100
     statements: 50
 
-  # https://github.com/golang/lint
-  golint:
-    min-confidence: 0
-
   # https://github.com/tommy-muehle/go-mnd
   gomnd:
     settings:
@@ -80,7 +76,6 @@ linters:
     - godot
     - gofmt
     - goimports
-    - golint
     - gomnd
     - goprintffuncname
     - gosec
@@ -92,6 +87,7 @@ linters:
     - misspell
     - nakedret
     - nolintlint
+    - revive
     - staticcheck # enabled by default
     - structcheck # enabled by default
     - stylecheck
@@ -131,7 +127,10 @@ issues:
     # prevent linters from running on *_test.go files
     - path: _test\.go
       linters:
+        - dupl
         - funlen
         - goconst
         - gocyclo
         - gomnd
+        - lll
+        - revive
