@@ -92,7 +92,7 @@ func TestArtifactory_Upload_Validate_NoSources(t *testing.T) {
 }
 
 func TestArtifactory_Upload_Failure_Returns_Error(t *testing.T) {
-	cli := &MockArtifactoryService { Fail: true }
+	cli := &MockArtifactoryService{Fail: true}
 
 	u := &Upload{
 		Flat:        true,
@@ -110,7 +110,7 @@ func TestArtifactory_Upload_Failure_Returns_Error(t *testing.T) {
 }
 
 func TestArtifactory_Upload_Success(t *testing.T) {
-	cli := &MockArtifactoryService { Fail: false }
+	cli := &MockArtifactoryService{Fail: false}
 
 	u := &Upload{
 		Flat:        true,
@@ -127,7 +127,6 @@ func TestArtifactory_Upload_Success(t *testing.T) {
 	}
 }
 
-
 type MockArtifactoryService struct {
 	Fail bool
 }
@@ -140,7 +139,7 @@ func (a *MockArtifactoryService) UploadFiles(...services.UploadParams) ([]utils.
 }
 
 func (a *MockArtifactoryService) Copy(services.MoveCopyParams) (int, int, error) {
-	return 0,0, nil
+	return 0, 0, nil
 }
 
 func (a *MockArtifactoryService) GetPathsToDelete(services.DeleteParams) ([]utils.ResultItem, error) {
@@ -149,4 +148,3 @@ func (a *MockArtifactoryService) GetPathsToDelete(services.DeleteParams) ([]util
 func (a *MockArtifactoryService) DeleteFiles([]utils.ResultItem) (int, error) {
 	return 0, nil
 }
-
