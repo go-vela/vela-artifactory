@@ -6,9 +6,10 @@ package main
 
 import (
 	"errors"
+	"testing"
+
 	"github.com/jfrog/jfrog-client-go/artifactory/services"
 	"github.com/jfrog/jfrog-client-go/artifactory/services/utils"
-	"testing"
 )
 
 func TestArtifactory_Upload_Exec_Error(t *testing.T) {
@@ -92,7 +93,7 @@ func TestArtifactory_Upload_Validate_NoSources(t *testing.T) {
 }
 
 func TestArtifactory_Upload_Failure_Returns_Error(t *testing.T) {
-	cli := &MockArtifactoryService { Fail: true }
+	cli := &MockArtifactoryService{Fail: true}
 
 	u := &Upload{
 		Flat:        true,
@@ -110,7 +111,7 @@ func TestArtifactory_Upload_Failure_Returns_Error(t *testing.T) {
 }
 
 func TestArtifactory_Upload_Success(t *testing.T) {
-	cli := &MockArtifactoryService { Fail: false }
+	cli := &MockArtifactoryService{Fail: false}
 
 	u := &Upload{
 		Flat:        true,
@@ -127,11 +128,11 @@ func TestArtifactory_Upload_Success(t *testing.T) {
 	}
 }
 
-
 type MockArtifactoryService struct {
 	Fail bool
 }
 
+// nolint: lll // ignore long line length due to parameters
 func (a *MockArtifactoryService) UploadFiles(...services.UploadParams) ([]utils.FileInfo, int, int, error) {
 	if a.Fail {
 		return nil, 0, 1, errors.New("upload failed")
@@ -140,13 +141,14 @@ func (a *MockArtifactoryService) UploadFiles(...services.UploadParams) ([]utils.
 }
 
 func (a *MockArtifactoryService) Copy(services.MoveCopyParams) (int, int, error) {
-	return 0,0, nil
+	return 0, 0, nil
 }
 
+// nolint: lll // ignore long line length due to parameters
 func (a *MockArtifactoryService) GetPathsToDelete(services.DeleteParams) ([]utils.ResultItem, error) {
 	return nil, nil
 }
+
 func (a *MockArtifactoryService) DeleteFiles([]utils.ResultItem) (int, error) {
 	return 0, nil
 }
-
