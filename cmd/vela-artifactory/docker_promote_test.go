@@ -58,7 +58,7 @@ func TestArtifactory_DockerPromote_Exec(t *testing.T) {
 	for _, test := range tests {
 		err := test.dockerPromote.Exec(config)
 		if err != nil {
-			t.Errorf("Exec should have returned err: %w", err)
+			t.Errorf("Exec should have returned err: %v", err)
 		}
 	}
 }
