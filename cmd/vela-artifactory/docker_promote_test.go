@@ -8,7 +8,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/target/go-arty/artifactory/fixtures/docker"
+	"github.com/target/go-arty/v2/artifactory/fixtures/docker"
 )
 
 func TestArtifactory_DockerPromote_Exec(t *testing.T) {

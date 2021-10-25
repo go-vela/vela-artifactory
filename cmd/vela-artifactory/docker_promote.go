@@ -10,7 +10,7 @@ import (
 	"time"
 
 	"github.com/sirupsen/logrus"
-	goarty "github.com/target/go-arty/artifactory"
+	goarty "github.com/target/go-arty/v2/artifactory"
 )
 
 const dockerPromoteAction = "docker-promote"
