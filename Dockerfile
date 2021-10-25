@@ -10,7 +10,7 @@ FROM alpine as binary
 
 ARG JFROG_VERSION=1.33.2
 
-ADD https://api.bintray.com/content/jfrog/jfrog-cli-go/${JFROG_VERSION}/jfrog-cli-linux-amd64/jfrog?bt_package=jfrog-cli-linux-amd64 /bin/jfrog
+ADD https://releases.jfrog.io/artifactory/jfrog-cli/v1/${JFROG_VERSION}/jfrog-cli-linux-amd64/jfrog /bin/jfrog
 
 RUN chmod a+x /bin/jfrog
 
