@@ -8,7 +8,7 @@ require (
 	github.com/cpuguy83/go-md2man/v2 v2.0.0 // indirect
 	github.com/franela/goblin v0.0.0-20200105215937-c9ffbefa60db // indirect
 	github.com/ghodss/yaml v1.0.0
-	github.com/go-vela/types v0.10.0
+	github.com/go-vela/types v0.11.0
 	github.com/golang/protobuf v1.4.2 // indirect
 	github.com/google/go-querystring v1.0.0 // indirect
 	github.com/jfrog/gofrog v1.0.6 // indirect
