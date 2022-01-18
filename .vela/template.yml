@@ -2,7 +2,7 @@
 #
 # Use of this source code is governed by the LICENSE file in this repository.
 
-## Template Variables
+### Template Variables
 # - .image        (default: "target/vela-artifactory:latest")
 # - .pull         (default: true)
 # - .log_level    (default: "info")
@@ -24,19 +24,19 @@ metadata:
 
 steps:
   - name: artifactory_plugin_template
-    image: { { default "target/vela-artifactory:latest" .image } }
-    pull: { { default "true" .pull } }
+    image: {{ default "target/vela-artifactory:latest" .image }}
+    pull: {{ default "true" .pull }}
     parameters:
-      log_level: { { default "info" .log_level } }
-      action: { { default "" .action } }
-      api_key: { { default "" .api_key } }
-      dry_run: { { default "false" .dry_run } }
-      flat: { { default "false" .flat } }
-      include_dirs: { { default "false" .include_dirs } }
-      path: { { default "" .path } }
-      props: { { default "" .props } }
-      recursive: { { default "false" .recursive } }
-      regexp: { { default "false" .regexp } }
-      sources: { { default "" .sources } }
-      target: { { default "" .target } }
-      url: { { default "" .url } }
+      log_level: {{ default "info" .log_level }}
+      action: {{ default "" .action }}
+      api_key: {{ default "" .api_key }}
+      dry_run: {{ default "false" .dry_run }}
+      flat: {{ default "false" .flat }}
+      include_dirs: {{ default "false" .include_dirs }}
+      path: {{ default "" .path }}
+      props: {{ default "" .props }}
+      recursive: {{ default "false" .recursive }}
+      regexp: {{ default "false" .regexp }}
+      sources: {{ default "" .sources }}
+      target: {{ default "" .target }}
+      url: {{ default "" .url }}
