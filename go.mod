@@ -9,7 +9,7 @@ require (
 	github.com/jfrog/jfrog-client-go v0.8.1
 	github.com/joho/godotenv v1.4.0
 	github.com/sirupsen/logrus v1.8.1
-	github.com/target/go-arty/v2 v2.2.0
+	github.com/target/go-arty/v2 v2.2.1
 	github.com/urfave/cli/v2 v2.3.0
 )
 
@@ -43,9 +43,9 @@ require (
 	github.com/sergi/go-diff v1.1.0 // indirect
 	github.com/shurcooL/sanitized_anchor_name v1.0.0 // indirect
 	github.com/src-d/gcfg v1.4.0 // indirect
-	github.com/tidwall/gjson v1.6.7 // indirect
-	github.com/tidwall/match v1.0.3 // indirect
-	github.com/tidwall/pretty v1.0.2 // indirect
+	github.com/tidwall/gjson v1.9.3 // indirect
+	github.com/tidwall/match v1.1.1 // indirect
+	github.com/tidwall/pretty v1.2.0 // indirect
 	github.com/ugorji/go/codec v1.1.7 // indirect
 	github.com/ulikunitz/xz v0.5.7 // indirect
 	github.com/xanzy/ssh-agent v0.2.1 // indirect
