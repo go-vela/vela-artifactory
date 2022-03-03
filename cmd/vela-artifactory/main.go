@@ -142,15 +142,13 @@ func main() {
 			Usage:    "Docker repository in Artifactory for the move or copy",
 		},
 		&cli.StringFlag{
-			EnvVars: []string{"PARAMETER_DOCKER_REGISTRY", "ARTIFACTORY_DOCKER_REGISTRY"},
-			// nolint: lll // ignore long line length due to flag names
+			EnvVars:  []string{"PARAMETER_DOCKER_REGISTRY", "ARTIFACTORY_DOCKER_REGISTRY"},
 			FilePath: "/vela/parameters/artifactory/docker_registry,/vela/secrets/artifactory/docker_registry",
 			Name:     "docker_promote.docker_registry",
 			Usage:    "source Docker registry to promote an image from",
 		},
 		&cli.StringFlag{
-			EnvVars: []string{"PARAMETER_TARGET_DOCKER_REGISTRY", "ARTIFACTORY_TARGET_DOCKER_REGISTRY"},
-			// nolint: lll // ignore long line length due to flag names
+			EnvVars:  []string{"PARAMETER_TARGET_DOCKER_REGISTRY", "ARTIFACTORY_TARGET_DOCKER_REGISTRY"},
 			FilePath: "/vela/parameters/artifactory/target_docker_registry,/vela/secrets/artifactory/target_docker_registry",
 			Name:     "docker_promote.target_docker_registry",
 			Usage:    "target Docker registry to promote an image to (uses 'docker_registry' if empty)",
