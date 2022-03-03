@@ -137,6 +137,7 @@ func (a *MockArtifactoryService) UploadFiles(...services.UploadParams) ([]utils.
 	if a.Fail {
 		return nil, 0, 1, errors.New("upload failed")
 	}
+
 	return nil, 0, 0, nil
 }
 

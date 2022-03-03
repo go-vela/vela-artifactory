@@ -150,7 +150,7 @@ func (s *SetProp) Validate() error {
 	// serialize provided properties into expected type
 	err := s.Unmarshal()
 	if err != nil {
-		return fmt.Errorf("unable to unmarshal set-prop props: %v", err)
+		return fmt.Errorf("unable to unmarshal set-prop props: %w", err)
 	}
 
 	// verify properties are provided
@@ -163,7 +163,7 @@ func (s *SetProp) Validate() error {
 		// verify the property is valid
 		err := prop.Validate()
 		if err != nil {
-			return fmt.Errorf("invalid set-prop prop provided: %v", err)
+			return fmt.Errorf("invalid set-prop prop provided: %w", err)
 		}
 	}
 
