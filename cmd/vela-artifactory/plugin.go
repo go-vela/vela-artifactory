@@ -62,7 +62,7 @@ func (p *Plugin) Exec() error {
 		return p.Upload.Exec(cli)
 	default:
 		return fmt.Errorf(
-			"%s: %s (Valid actions: %s, %s, %s, %s, %s)",
+			"%w: %s (Valid actions: %s, %s, %s, %s, %s)",
 			ErrInvalidAction,
 			p.Config.Action,
 			copyAction,
@@ -103,7 +103,7 @@ func (p *Plugin) Validate() error {
 		return p.Upload.Validate()
 	default:
 		return fmt.Errorf(
-			"%s: %s (Valid actions: %s, %s, %s, %s)",
+			"%w: %s (Valid actions: %s, %s, %s, %s)",
 			ErrInvalidAction,
 			p.Config.Action,
 			copyAction,
