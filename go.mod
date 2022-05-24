@@ -10,7 +10,7 @@ require (
 	github.com/joho/godotenv v1.4.0
 	github.com/sirupsen/logrus v1.8.1
 	github.com/target/go-arty/v2 v2.2.1
-	github.com/urfave/cli/v2 v2.6.0
+	github.com/urfave/cli/v2 v2.8.1
 )
 
 require (
@@ -48,6 +48,7 @@ require (
 	github.com/ugorji/go/codec v1.1.7 // indirect
 	github.com/ulikunitz/xz v0.5.8 // indirect
 	github.com/xanzy/ssh-agent v0.2.1 // indirect
+	github.com/xrash/smetrics v0.0.0-20201216005158-039620a65673 // indirect
 	golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9 // indirect
 	golang.org/x/net v0.0.0-20210614182718-04defd469f4e // indirect
 	golang.org/x/sys v0.0.0-20210423082822-04245dca01da // indirect
