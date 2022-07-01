@@ -9,7 +9,7 @@ require (
 	github.com/jfrog/jfrog-client-go v0.8.1
 	github.com/joho/godotenv v1.4.0
 	github.com/sirupsen/logrus v1.8.1
-	github.com/target/go-arty/v2 v2.2.1
+	github.com/target/go-arty/v2 v2.3.0
 	github.com/urfave/cli/v2 v2.8.1
 )
 
