@@ -109,7 +109,9 @@ func (p *DockerPromote) Exec(c *Config) error {
 			}
 		}
 
-		logrus.Infof("Promotion ended successfully for target tag %s", payload.GetTargetTag())
+		logrus.Infof("Promotion ended successfully for tag %s for target tag %s",
+			payload.GetTag(),
+			payload.GetTargetTag())
 	}
 
 	return nil
