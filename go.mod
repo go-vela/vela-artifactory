@@ -5,7 +5,7 @@ go 1.18
 require (
 	github.com/Masterminds/semver/v3 v3.1.1
 	github.com/ghodss/yaml v1.0.0
-	github.com/go-vela/types v0.14.0
+	github.com/go-vela/types v0.15.1
 	github.com/jfrog/jfrog-client-go v0.8.1
 	github.com/joho/godotenv v1.4.0
 	github.com/sirupsen/logrus v1.9.0
@@ -50,8 +50,8 @@ require (
 	github.com/xanzy/ssh-agent v0.2.1 // indirect
 	github.com/xrash/smetrics v0.0.0-20201216005158-039620a65673 // indirect
 	golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9 // indirect
-	golang.org/x/net v0.0.0-20210614182718-04defd469f4e // indirect
-	golang.org/x/sys v0.0.0-20220715151400-c0bba94af5f8 // indirect
+	golang.org/x/net v0.0.0-20221002022538-bcab6841153b // indirect
+	golang.org/x/sys v0.0.0-20220728004956-3c1f35247d10 // indirect
 	google.golang.org/protobuf v1.25.0 // indirect
 	gopkg.in/src-d/go-billy.v4 v4.3.2 // indirect
 	gopkg.in/src-d/go-git.v4 v4.13.1 // indirect
