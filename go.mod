@@ -3,7 +3,7 @@ module github.com/go-vela/vela-artifactory
 go 1.19
 
 require (
-	github.com/Masterminds/semver/v3 v3.1.1
+	github.com/Masterminds/semver/v3 v3.2.1
 	github.com/ghodss/yaml v1.0.0
 	github.com/go-vela/types v0.17.0
 	github.com/jfrog/jfrog-client-go v0.8.1
