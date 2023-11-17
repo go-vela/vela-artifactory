@@ -12,7 +12,6 @@ import (
 
 func TestArtifactory_Prop_Exec(t *testing.T) {
 	// setup types
-
 	s := httptest.NewServer(mock.Handlers())
 
 	p := &Plugin{

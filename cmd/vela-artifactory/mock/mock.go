@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: Apache-2.0
+
 package mock
 
 import (
@@ -26,8 +28,8 @@ func Handlers() http.Handler {
 
 	e.GET("/api/system/version", getVersion)
 	e.POST("/api/search/aql", search)
-	e.POST("/api/copy", copy)
-	e.DELETE("/", delete)
+	e.POST("/api/copy", copyArtifact)
+	e.DELETE("/", deleteArtifact)
 	e.GET("/api/docker/:registry/v2/_catalog", getRepositories)
 	e.GET("/api/docker/:registry/v2/docker-dev/tags/list", getTags)
 	e.POST("/api/docker/:registry/v2/promote", promoteImage)
@@ -45,11 +47,11 @@ func search(c *gin.Context) {
 	c.String(200, loadFixture("mock/fixtures/search.json"))
 }
 
-func copy(c *gin.Context) {
+func copyArtifact(c *gin.Context) {
 	c.JSON(200, "Copy ended successfully")
 }
 
-func delete(c *gin.Context) {
+func deleteArtifact(c *gin.Context) {
 	c.JSON(204, "Delete ended successfully")
 }
 

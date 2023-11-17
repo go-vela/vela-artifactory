@@ -96,7 +96,9 @@ func (p *DockerPromote) Exec(cli artifactory.ArtifactoryServicesManager) error {
 			if err != nil {
 				return err
 			}
+
 			defer reader.Close()
+
 			propsParams := services.NewPropsParams()
 			propsParams.Props = properties
 			propsParams.Reader = reader
