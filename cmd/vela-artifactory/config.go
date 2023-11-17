@@ -9,6 +9,8 @@ import (
 
 	"github.com/jfrog/jfrog-client-go/artifactory"
 	"github.com/jfrog/jfrog-client-go/artifactory/auth"
+	"github.com/jfrog/jfrog-client-go/config"
+	"github.com/jfrog/jfrog-client-go/http/httpclient"
 	"github.com/jfrog/jfrog-client-go/utils/log"
 
 	"github.com/sirupsen/logrus"
@@ -18,6 +20,8 @@ import (
 type Config struct {
 	// action to perform against the Artifactory instance
 	Action string
+	// Token for communication with the Artifactory instance
+	Token string
 	// API key for communication with the Artifactory instance
 	APIKey string
 	// enables pretending to perform the action against the Artifactory instance
@@ -51,8 +55,13 @@ func (c *Config) New() (*artifactory.ArtifactoryServicesManager, error) {
 		details.SetUser(c.Username)
 	}
 
-	// check if API key is provided
-	if len(c.APIKey) > 0 {
+	// check if Access/Identity token is provided
+	if len(c.Token) > 0 && !httpclient.IsApiKey(c.Token) {
+		// set Access/Identity token for Artifactory details
+		details.SetAccessToken(c.APIKey)
+
+		// check if API key is provided
+	} else if len(c.APIKey) > 0 && httpclient.IsApiKey(c.APIKey) {
 		// set API key for Artifactory details
 		details.SetApiKey(c.APIKey)
 	}
@@ -70,8 +79,8 @@ func (c *Config) New() (*artifactory.ArtifactoryServicesManager, error) {
 	)
 
 	// create new Artifactory config from details
-	config, err := artifactory.NewConfigBuilder().
-		SetArtDetails(details).
+	config, err := config.NewConfigBuilder().
+		SetServiceDetails(details).
 		SetDryRun(c.DryRun).
 		Build()
 	if err != nil {
@@ -79,12 +88,12 @@ func (c *Config) New() (*artifactory.ArtifactoryServicesManager, error) {
 	}
 
 	// create new Artifactory client from config and details
-	client, err := artifactory.New(&details, config)
+	client, err := artifactory.New(config)
 	if err != nil {
 		return nil, err
 	}
 
-	return client, nil
+	return &client, nil
 }
 
 // Validate verifies the Config is properly configured.

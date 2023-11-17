@@ -14,6 +14,7 @@ func TestArtifactory_Plugin_Exec_Copy(t *testing.T) {
 	p := &Plugin{
 		Config: &Config{
 			Action:   "copy",
+			Token:    "superSecretToken",
 			APIKey:   "superSecretAPIKey",
 			DryRun:   false,
 			Password: "superSecretPassword",
@@ -42,6 +43,7 @@ func TestArtifactory_Plugin_Exec_Delete(t *testing.T) {
 	p := &Plugin{
 		Config: &Config{
 			Action:   "delete",
+			Token:    "superSecretToken",
 			APIKey:   "superSecretAPIKey",
 			DryRun:   false,
 			Password: "superSecretPassword",
@@ -71,6 +73,7 @@ func TestArtifactory_Plugin_Exec_DockerPromote(t *testing.T) {
 	p := &Plugin{
 		Config: &Config{
 			Action:   "docker-promote",
+			Token:    "superSecretToken",
 			APIKey:   "superSecretAPIKey",
 			DryRun:   false,
 			Password: "superSecretPassword",
@@ -98,6 +101,7 @@ func TestArtifactory_Plugin_Exec_SetProp(t *testing.T) {
 	p := &Plugin{
 		Config: &Config{
 			Action:   "set-prop",
+			Token:    "superSecretToken",
 			APIKey:   "superSecretAPIKey",
 			DryRun:   false,
 			Password: "superSecretPassword",
@@ -130,6 +134,7 @@ func TestArtifactory_Plugin_Exec_Upload(t *testing.T) {
 	p := &Plugin{
 		Config: &Config{
 			Action:   "upload",
+			Token:    "superSecretToken",
 			APIKey:   "superSecretAPIKey",
 			DryRun:   false,
 			Password: "superSecretPassword",
@@ -160,6 +165,7 @@ func TestArtifactory_Plugin_Exec_InvalidAction(t *testing.T) {
 	p := &Plugin{
 		Config: &Config{
 			Action:   "foobar",
+			Token:    "superSecretToken",
 			APIKey:   "superSecretAPIKey",
 			DryRun:   false,
 			Password: "superSecretPassword",
@@ -183,6 +189,7 @@ func TestArtifactory_Plugin_Validate(t *testing.T) {
 	p := &Plugin{
 		Config: &Config{
 			Action:   "copy",
+			Token:    "superSecretToken",
 			APIKey:   "superSecretAPIKey",
 			DryRun:   false,
 			Password: "superSecretPassword",
@@ -234,6 +241,7 @@ func TestArtifactory_Plugin_Validate_InvalidAction(t *testing.T) {
 	p := &Plugin{
 		Config: &Config{
 			Action:   "foobar",
+			Token:    "superSecretToken",
 			APIKey:   "superSecretAPIKey",
 			DryRun:   false,
 			Password: "superSecretPassword",
@@ -274,6 +282,7 @@ func TestArtifactory_Plugin_Validate_NoCopy(t *testing.T) {
 	p := &Plugin{
 		Config: &Config{
 			Action:   "copy",
+			Token:    "superSecretToken",
 			APIKey:   "superSecretAPIKey",
 			DryRun:   false,
 			Password: "superSecretPassword",
@@ -298,6 +307,7 @@ func TestArtifactory_Plugin_Validate_NoDelete(t *testing.T) {
 	p := &Plugin{
 		Config: &Config{
 			Action:   "delete",
+			Token:    "superSecretToken",
 			APIKey:   "superSecretAPIKey",
 			DryRun:   false,
 			Password: "superSecretPassword",
@@ -322,6 +332,7 @@ func TestArtifactory_Plugin_Validate_NoDockerPromote(t *testing.T) {
 	p := &Plugin{
 		Config: &Config{
 			Action:   "docker-promote",
+			Token:    "superSecretToken",
 			APIKey:   "superSecretAPIKey",
 			DryRun:   false,
 			Password: "superSecretPassword",
@@ -346,6 +357,7 @@ func TestArtifactory_Plugin_Validate_NoSetProp(t *testing.T) {
 	p := &Plugin{
 		Config: &Config{
 			Action:   "set-prop",
+			Token:    "superSecretToken",
 			APIKey:   "superSecretAPIKey",
 			DryRun:   false,
 			Password: "superSecretPassword",
@@ -370,6 +382,7 @@ func TestArtifactory_Plugin_Validate_NoUpload(t *testing.T) {
 	p := &Plugin{
 		Config: &Config{
 			Action:   "upload",
+			Token:    "superSecretToken",
 			APIKey:   "superSecretAPIKey",
 			DryRun:   false,
 			Password: "superSecretPassword",

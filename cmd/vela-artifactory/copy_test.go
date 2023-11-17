@@ -27,7 +27,7 @@ func TestArtifactory_Copy_Exec_Error(t *testing.T) {
 		Target:    "bar/foo",
 	}
 
-	err = c.Exec(cli)
+	err = c.Exec(*cli)
 	if err == nil {
 		t.Errorf("Exec should have returned err")
 	}

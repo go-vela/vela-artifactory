@@ -7,8 +7,9 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/jfrog/jfrog-client-go/artifactory"
+	"github.com/jfrog/jfrog-client-go/artifactory/services"
 	"github.com/sirupsen/logrus"
-	goarty "github.com/target/go-arty/v2/artifactory"
 )
 
 const dockerPromoteAction = "docker-promote"
@@ -32,39 +33,25 @@ type DockerPromote struct {
 }
 
 // Exec formats and runs the commands for uploading artifacts in Artifactory.
-func (p *DockerPromote) Exec(c *Config) error {
+func (p *DockerPromote) Exec(cli artifactory.ArtifactoryServicesManager) error {
 	logrus.Trace("running docker-promote with provided configuration")
 
-	// create go-arty client for interacting with Docker promotion
-	// https://github.com/target/go-arty
-	client, err := goarty.NewClient(c.URL, nil)
-	if err != nil {
-		return err
-	}
-
-	// set basic authentication on client
-	client.Authentication.SetBasicAuth(c.Username, c.Password)
-
-	// set the auth token if user passed token
-	if len(c.APIKey) != 0 {
-		client.Authentication.SetTokenAuth(c.APIKey)
-	}
-
-	var payloads []*goarty.ImagePromotion
+	var payloads []*services.DockerPromoteParams
 
 	for _, t := range p.TargetTags {
-		payload := &goarty.ImagePromotion{
-			TargetRepo:             goarty.String(p.TargetRepo),
-			DockerRepository:       goarty.String(p.DockerRegistry),
-			TargetDockerRepository: goarty.String(p.TargetDockerRegistry),
-			Tag:                    goarty.String(p.Tag),
-			TargetTag:              goarty.String(t),
-			Copy:                   goarty.Bool(p.Copy),
-		}
+		params := services.NewDockerPromoteParams(
+			p.TargetRepo,
+			p.DockerRegistry,
+			p.TargetDockerRegistry,
+		)
 
-		payloads = append(payloads, payload)
+		params.SourceTag = p.Tag
+		params.TargetTag = t
+		params.Copy = p.Copy
 
-		pretty, err := json.MarshalIndent(payload, "", "  ")
+		payloads = append(payloads, &params)
+
+		pretty, err := json.MarshalIndent(params, "", "  ")
 		if err != nil {
 			return err
 		}
@@ -75,7 +62,7 @@ func (p *DockerPromote) Exec(c *Config) error {
 	for _, payload := range payloads {
 		logrus.Debugf("Promoting target tag %s", payload.GetTargetTag())
 
-		_, _, err := client.Docker.PromoteImage(p.TargetRepo, payload)
+		err := cli.PromoteDocker(*payload)
 		if err != nil {
 			return err
 		}
@@ -83,33 +70,47 @@ func (p *DockerPromote) Exec(c *Config) error {
 		if p.PromoteProperty {
 			var promotedImagePath string
 
-			if payload.GetTargetDockerRepository() != "" {
+			if payload.TargetRepo != "" {
 				promotedImagePath = fmt.Sprintf(
 					"%s/%s",
-					payload.GetTargetDockerRepository(),
-					payload.GetTargetTag(),
+					payload.TargetRepo,
+					payload.TargetTag,
 				)
 			} else {
 				promotedImagePath = fmt.Sprintf(
 					"%s/%s",
-					payload.GetDockerRepository(),
-					payload.GetTargetTag(),
+					payload.SourceRepo,
+					payload.TargetTag,
 				)
 			}
 
-			properties := make(map[string][]string)
 			ts := time.Now().UTC().Format(time.RFC3339)
-			properties["promoted_on"] = append(properties["promoted_on"], ts)
+			properties := fmt.Sprintf("promoted_on=%s", ts)
 
-			_, err = client.Storage.SetItemProperties(payload.GetTargetRepo(), promotedImagePath, properties)
+			searchParams := services.NewSearchParams()
+			searchParams.Recursive = true
+			searchParams.IncludeDirs = true
+			searchParams.Pattern = promotedImagePath
+
+			reader, err := cli.SearchFiles(searchParams)
+			if err != nil {
+				return err
+			}
+			defer reader.Close()
+			propsParams := services.NewPropsParams()
+			propsParams.Props = properties
+			propsParams.Reader = reader
+
+			_, err = cli.SetProps(propsParams)
+
 			if err != nil {
 				return err
 			}
 		}
 
 		logrus.Infof("Promotion ended successfully for tag %s for target tag %s",
-			payload.GetTag(),
-			payload.GetTargetTag())
+			payload.SourceTag,
+			payload.TargetTag)
 	}
 
 	return nil

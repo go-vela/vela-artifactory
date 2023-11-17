@@ -45,19 +45,19 @@ func (p *Plugin) Exec() error {
 	switch p.Config.Action {
 	case copyAction:
 		// execute copy action
-		return p.Copy.Exec(cli)
+		return p.Copy.Exec(*cli)
 	case deleteAction:
 		// execute delete action
-		return p.Delete.Exec(cli)
+		return p.Delete.Exec(*cli)
 	case dockerPromoteAction:
 		// execute docker-promote action
-		return p.DockerPromote.Exec(p.Config)
+		return p.DockerPromote.Exec(*cli)
 	case setPropAction:
 		// execute set-prop action
-		return p.SetProp.Exec(cli)
+		return p.SetProp.Exec(*cli)
 	case uploadAction:
 		// execute upload action
-		return p.Upload.Exec(cli)
+		return p.Upload.Exec(*cli)
 	default:
 		return fmt.Errorf(
 			"%w: %s (Valid actions: %s, %s, %s, %s, %s)",

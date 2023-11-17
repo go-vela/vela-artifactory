@@ -35,7 +35,7 @@ func TestArtifactory_Upload_Exec_Error(t *testing.T) {
 		Sources:     []string{"baz.txt"},
 	}
 
-	err = u.Exec(cli)
+	err = u.Exec(*cli)
 	if err == nil {
 		t.Errorf("Exec should have returned err")
 	}
@@ -102,7 +102,7 @@ func TestArtifactory_Upload_Failure_Returns_Error(t *testing.T) {
 		Sources:     []string{"baz.txt"},
 	}
 
-	err := u.Exec(cli)
+	err := u.Exec(*cli)
 	if err == nil {
 		t.Errorf("Exec should have returned err")
 	}
@@ -120,7 +120,7 @@ func TestArtifactory_Upload_Success(t *testing.T) {
 		Sources:     []string{"baz.txt"},
 	}
 
-	err := u.Exec(cli)
+	err := u.Exec(*cli)
 	if err != nil {
 		t.Errorf("Exec should have returned err")
 	}
@@ -130,12 +130,12 @@ type MockArtifactoryService struct {
 	Fail bool
 }
 
-func (a *MockArtifactoryService) UploadFiles(...services.UploadParams) ([]utils.FileInfo, int, int, error) {
+func (a *MockArtifactoryService) UploadFiles(...services.UploadParams) (int, int, error) {
 	if a.Fail {
-		return nil, 0, 1, errors.New("upload failed")
+		return 0, 1, errors.New("upload failed")
 	}
 
-	return nil, 0, 0, nil
+	return 0, 0, nil
 }
 
 func (a *MockArtifactoryService) Copy(services.MoveCopyParams) (int, int, error) {

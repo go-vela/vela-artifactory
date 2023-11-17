@@ -133,7 +133,7 @@ func TestArtifactory_SetProp_Exec_Error(t *testing.T) {
 		RawProps: `[{"name": "single", "value": "foo"}]`,
 	}
 
-	err = s.Exec(cli)
+	err = s.Exec(*cli)
 	if err == nil {
 		t.Errorf("Exec should have returned err")
 	}

@@ -5,6 +5,7 @@ package main
 import (
 	"fmt"
 
+	"github.com/jfrog/jfrog-client-go/artifactory"
 	"github.com/jfrog/jfrog-client-go/artifactory/services"
 	"github.com/jfrog/jfrog-client-go/artifactory/services/utils"
 
@@ -26,14 +27,14 @@ type Copy struct {
 }
 
 // Exec formats and runs the commands for copying artifacts in Artifactory.
-func (c *Copy) Exec(cli ArtifactoryServicesManager) error {
+func (c *Copy) Exec(cli artifactory.ArtifactoryServicesManager) error {
 	logrus.Trace("running copy with provided configuration")
 
 	// create new copy parameters
 	p := services.NewMoveCopyParams()
 
 	// add copy configuration to copy parameters
-	p.ArtifactoryCommonParams = &utils.ArtifactoryCommonParams{
+	p.CommonParams = &utils.CommonParams{
 		Pattern:   c.Path,
 		Recursive: c.Recursive,
 		Target:    c.Target,

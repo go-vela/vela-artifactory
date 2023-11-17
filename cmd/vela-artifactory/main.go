@@ -98,6 +98,12 @@ func main() {
 			Usage:    "API key for communication with the Artifactory instance",
 		},
 		&cli.StringFlag{
+			EnvVars:  []string{"PARAMETER_TOKEN", "ARTIFACTORY_TOKEN"},
+			FilePath: "/vela/parameters/artifactory/token,/vela/secrets/artifactory/token",
+			Name:     "config.token",
+			Usage:    "Access/Identity token for communication with the Artifactory instance",
+		},
+		&cli.StringFlag{
 			EnvVars:  []string{"PARAMETER_PASSWORD", "ARTIFACTORY_PASSWORD"},
 			FilePath: "/vela/parameters/artifactory/password,/vela/secrets/artifactory/password",
 			Name:     "config.password",
@@ -264,6 +270,7 @@ func run(c *cli.Context) error {
 		// config configuration
 		Config: &Config{
 			Action:   c.String("config.action"),
+			Token:    c.String("config.token"),
 			APIKey:   c.String("config.api_key"),
 			DryRun:   c.Bool("config.dry_run"),
 			Password: c.String("config.password"),

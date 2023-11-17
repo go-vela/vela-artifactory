@@ -25,7 +25,7 @@ func TestArtifactory_Delete_Exec_Error(t *testing.T) {
 		Path:      "foo/bar",
 	}
 
-	err = d.Exec(cli)
+	err = d.Exec(*cli)
 	if err == nil {
 		t.Errorf("Exec should have returned err")
 	}

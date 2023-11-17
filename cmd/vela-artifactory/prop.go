@@ -69,14 +69,14 @@ type SetProp struct {
 }
 
 // Exec formats and runs the commands for setting properties on artifacts in Artifactory.
-func (s *SetProp) Exec(cli *artifactory.ArtifactoryServicesManager) error {
+func (s *SetProp) Exec(cli artifactory.ArtifactoryServicesManager) error {
 	logrus.Trace("running set-prop with provided configuration")
 
 	// create new search parameters
 	searchParams := services.NewSearchParams()
 
 	// add search configuration to search parameters
-	searchParams.ArtifactoryCommonParams = &utils.ArtifactoryCommonParams{
+	searchParams.CommonParams = &utils.CommonParams{
 		Pattern:   s.Path,
 		Recursive: s.Recursive,
 	}
@@ -91,7 +91,7 @@ func (s *SetProp) Exec(cli *artifactory.ArtifactoryServicesManager) error {
 	p := services.NewPropsParams()
 
 	// add property configuration to property parameters
-	p.Items = files
+	p.Reader = files
 	p.Props = s.String()
 
 	// send API call to set properties for artifacts in Artifactory
