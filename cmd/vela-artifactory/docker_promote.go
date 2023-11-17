@@ -18,17 +18,17 @@ const dockerPromoteAction = "docker-promote"
 type DockerPromote struct {
 	// Docker repository in Artifactory for the move or copy
 	TargetRepo string
-	// source Docker registry to promote an image from
+	// DockerRegistry is the source Docker registry to promote an image from
 	DockerRegistry string
-	// target Docker registry to promote an image to (uses 'DockerRegistry' if empty)
+	// TargetDockerRegistry is the target Docker registry to promote an image to (uses 'DockerRegistry' if empty)
 	TargetDockerRegistry string
-	// tag name of image to promote (promotes all tags if empty)
+	// Tag is the name of image to promote (promotes all tags if empty)
 	Tag string
-	// target tag to assign the image after promotion
+	// TargetTags are the target tags to assign to the image after promotion
 	TargetTags []string
-	// set to copy instead of moving the image (default: true)
+	// Copy is a flag to set to copy instead of moving the image (default: true)
 	Copy bool
-	// An optional value to set an item property to add a promoted date.
+	// PromoteProperty is an optional value to set an item property to add a promoted date.
 	PromoteProperty bool
 }
 

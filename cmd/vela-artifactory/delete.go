@@ -16,9 +16,9 @@ const deleteAction = "delete"
 
 // Delete represents the plugin configuration for delete information.
 type Delete struct {
-	// enables removing sub-directories for the artifact(s) in the path
+	// Recursive is a flag that enables removing sub-directories for the artifact(s) in the path
 	Recursive bool
-	// target path to artifact(s) to remove
+	// Path is the target path to artifact(s) to remove
 	Path string
 }
 

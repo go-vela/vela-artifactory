@@ -16,13 +16,13 @@ const copyAction = "copy"
 
 // Copy represents the plugin configuration for copy information.
 type Copy struct {
-	// enables removing source file directory hierarchy
+	// Flat is a flag that enables removing source file directory hierarchy
 	Flat bool
-	// enables copying sub-directories from source
+	// Recursive is a flag that enables copying sub-directories from source
 	Recursive bool
-	// source path to artifact(s) to copy
+	// Path is the source path to artifact(s) to copy
 	Path string
-	// target path to copy artifact(s) to
+	// Target is the path to copy artifact(s) to
 	Target string
 }
 

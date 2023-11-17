@@ -18,19 +18,19 @@ import (
 
 // Config represents the plugin configuration for Artifactory config information.
 type Config struct {
-	// action to perform against the Artifactory instance
+	// Action to perform against the Artifactory instance
 	Action string
 	// Token for communication with the Artifactory instance
 	Token string
 	// API key for communication with the Artifactory instance
 	APIKey string
-	// enables pretending to perform the action against the Artifactory instance
+	// DryRun enables pretending to perform the action against the Artifactory instance
 	DryRun bool
-	// password for communication with the Artifactory instance
+	// Password for communication with the Artifactory instance
 	Password string
-	// full url to Artifactory instance
+	// URL points to the Artifactory instance
 	URL string
-	// user name for communication with the Artifactory instance
+	// Username for communication with the Artifactory instance
 	Username string
 }
 

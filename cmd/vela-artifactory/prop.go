@@ -58,13 +58,13 @@ func (p *Prop) Validate() error {
 
 // SetProp represents the plugin configuration for setting property information.
 type SetProp struct {
-	// target path to artifact(s) to set properties
+	// Path is the target path to artifact(s) to set properties
 	Path string
-	// properties to set on the artifact(s)
+	// Props are properties to set on the artifact(s)
 	Props []*Prop
-	// raw input of properties provided for plugin
+	// RawProps is raw input of properties provided for plugin
 	RawProps string
-	// enables setting properties on sub-directories for the artifact(s) in the path
+	// Recursive is a flag that enables setting properties on sub-directories for the artifact(s) in the path
 	Recursive bool
 }
 

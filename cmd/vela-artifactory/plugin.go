@@ -17,17 +17,17 @@ var (
 
 // Plugin represents the configuration loaded for the plugin.
 type Plugin struct {
-	// config arguments loaded for the plugin
+	// Config stores arguments loaded for the plugin
 	Config *Config
-	// copy arguments loaded for the plugin
+	// Copy arguments loaded for the plugin
 	Copy *Copy
-	// delete arguments loaded for the plugin
+	// Delete arguments loaded for the plugin
 	Delete *Delete
-	// docker-promote arguments loaded for the plugin
+	// DockerPromote arguments loaded for the plugin
 	DockerPromote *DockerPromote
-	// set-prop arguments loaded for the plugin
+	// SetProp arguments loaded for the plugin
 	SetProp *SetProp
-	// upload arguments loaded for the plugin
+	// Upload arguments loaded for the plugin
 	Upload *Upload
 }
 
