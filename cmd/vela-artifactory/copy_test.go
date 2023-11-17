@@ -69,8 +69,6 @@ func TestArtifactory_Copy_Exec_Error(t *testing.T) {
 	}
 }
 
-// todo: mock success Copy test
-
 func TestArtifactory_Copy_Validate(t *testing.T) {
 	// setup types
 	c := &Copy{
