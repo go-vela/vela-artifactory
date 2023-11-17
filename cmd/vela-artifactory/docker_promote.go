@@ -38,15 +38,25 @@ func (p *DockerPromote) Exec(cli artifactory.ArtifactoryServicesManager) error {
 
 	var payloads []*services.DockerPromoteParams
 
+	if len(p.TargetTags) == 0 {
+		logrus.Trace("no tags to promote")
+	}
+
 	for _, t := range p.TargetTags {
 		params := services.NewDockerPromoteParams(
-			p.TargetRepo,
-			p.DockerRegistry,
-			p.TargetDockerRegistry,
+			"",
+			"",
+			"",
 		)
+		params.SourceRepo = p.TargetRepo
+		params.TargetRepo = p.TargetRepo
+
+		params.SourceDockerImage = p.DockerRegistry
+		params.TargetDockerImage = p.TargetDockerRegistry
 
 		params.SourceTag = p.Tag
 		params.TargetTag = t
+
 		params.Copy = p.Copy
 
 		payloads = append(payloads, &params)
@@ -68,6 +78,8 @@ func (p *DockerPromote) Exec(cli artifactory.ArtifactoryServicesManager) error {
 		}
 
 		if p.PromoteProperty {
+			logrus.Tracef("Setting properties on payload for target tag %s", payload.GetTargetTag())
+
 			var promotedImagePath string
 
 			if payload.TargetRepo != "" {
