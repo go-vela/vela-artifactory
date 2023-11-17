@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"os"
 	"strings"
-	"time"
 
 	"github.com/jfrog/jfrog-client-go/artifactory"
 	"github.com/jfrog/jfrog-client-go/artifactory/auth"
@@ -78,10 +77,6 @@ func (c *Config) New() (*artifactory.ArtifactoryServicesManager, error) {
 		// create new logger for Artifactory client
 		log.NewLogger(log.INFO, os.Stdout),
 	)
-
-	// todo: remove or allow to be configured
-	details.SetDialTimeout(time.Second * 5)
-	details.SetOverallRequestTimeout(time.Second * 6)
 
 	// create new Artifactory config from details
 	config, err := config.NewConfigBuilder().
