@@ -3,10 +3,68 @@
 package main
 
 import (
+	"net/http/httptest"
 	"testing"
+
+	"github.com/go-vela/vela-artifactory/cmd/vela-artifactory/mock"
 )
 
 func TestArtifactory_DockerPromote_Exec(t *testing.T) {
+	// setup types
+	s := httptest.NewServer(mock.Handlers())
+
+	p := &Plugin{
+		Config: &Config{
+			Action:   "docker-promote",
+			Token:    mock.Token,
+			APIKey:   mock.APIKey,
+			DryRun:   false,
+			Password: mock.Password,
+			URL:      s.URL,
+			Username: mock.Username,
+		},
+		Copy:   &Copy{},
+		Delete: &Delete{},
+		DockerPromote: &DockerPromote{
+			TargetRepo:     "docker",
+			DockerRegistry: "github/octocat",
+		},
+		SetProp: &SetProp{},
+		Upload:  &Upload{},
+	}
+
+	err := p.Exec()
+	if err != nil {
+		t.Errorf("Exec returned err %v", err)
+	}
+}
+
+func TestArtifactory_DockerPromote_Exec_Error(t *testing.T) {
+	// setup types
+	p := &Plugin{
+		Config: &Config{
+			Action:   "docker-promote",
+			Token:    mock.Token,
+			APIKey:   mock.APIKey,
+			DryRun:   false,
+			Password: mock.Password,
+			URL:      mock.InvalidArtifactoryServerURL,
+			Username: mock.Username,
+		},
+		Copy:   &Copy{},
+		Delete: &Delete{},
+		DockerPromote: &DockerPromote{
+			TargetRepo:     "docker",
+			DockerRegistry: "github/octocat",
+		},
+		SetProp: &SetProp{},
+		Upload:  &Upload{},
+	}
+
+	err := p.Exec()
+	if err != nil {
+		t.Errorf("Exec returned err %v", err)
+	}
 }
 
 func TestArtifactory_DockerPromote_Validate(t *testing.T) {

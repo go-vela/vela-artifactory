@@ -3,9 +3,48 @@
 package main
 
 import (
+	"net/http/httptest"
 	"reflect"
 	"testing"
+
+	"github.com/go-vela/vela-artifactory/cmd/vela-artifactory/mock"
 )
+
+func TestArtifactory_Prop_Exec(t *testing.T) {
+	// setup types
+
+	s := httptest.NewServer(mock.Handlers())
+
+	p := &Plugin{
+		Config: &Config{
+			Action:   "set-prop",
+			Token:    mock.Token,
+			APIKey:   mock.APIKey,
+			DryRun:   false,
+			Password: mock.Password,
+			URL:      s.URL,
+			Username: mock.Username,
+		},
+		Copy:   &Copy{},
+		Delete: &Delete{},
+		SetProp: &SetProp{
+			Path: "foo/bar",
+			Props: []*Prop{
+				{
+					Name:  "foo",
+					Value: "bar",
+				},
+			},
+			RawProps: `[{"name": "single", "value": "foo"}]`,
+		},
+		Upload: &Upload{},
+	}
+
+	err := p.Exec()
+	if err != nil {
+		t.Errorf("Exec returned err %v", err)
+	}
+}
 
 func TestArtifactory_Prop_String_Value(t *testing.T) {
 	// setup types
@@ -110,11 +149,11 @@ func TestArtifactory_SetProp_Exec_Error(t *testing.T) {
 	// setup types
 	config := &Config{
 		Action:   "set-prop",
-		APIKey:   "superSecretAPIKey",
+		APIKey:   mock.APIKey,
 		DryRun:   false,
-		Password: "superSecretPassword",
-		URL:      "http://localhost:8081/artifactory",
-		Username: "octocat",
+		Password: mock.Password,
+		URL:      mock.InvalidArtifactoryServerURL,
+		Username: mock.Username,
 	}
 
 	cli, err := config.New()
