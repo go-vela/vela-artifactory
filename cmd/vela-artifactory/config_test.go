@@ -14,9 +14,9 @@ func TestArtifactory_Config_New(t *testing.T) {
 		Action:   "copy",
 		APIKey:   mock.APIKey,
 		DryRun:   false,
-		Password: mock.Password,
 		URL:      mock.InvalidArtifactoryServerURL,
 		Username: mock.Username,
+		Password: mock.Password,
 	}
 
 	got, err := c.New()
@@ -35,9 +35,9 @@ func TestArtifactory_Config_Validate(t *testing.T) {
 		Action:   "copy",
 		APIKey:   mock.APIKey,
 		DryRun:   false,
-		Password: mock.Password,
 		URL:      mock.InvalidArtifactoryServerURL,
 		Username: mock.Username,
+		Password: mock.Password,
 	}
 
 	err := c.Validate()
@@ -51,9 +51,9 @@ func TestArtifactory_Config_Validate_NoAction(t *testing.T) {
 	c := &Config{
 		APIKey:   mock.APIKey,
 		DryRun:   false,
-		Password: mock.Password,
 		URL:      mock.InvalidArtifactoryServerURL,
 		Username: mock.Username,
+		Password: mock.Password,
 	}
 
 	err := c.Validate()
@@ -115,8 +115,8 @@ func TestArtifactory_Config_Validate_NoUrl(t *testing.T) {
 		Action:   "copy",
 		DryRun:   false,
 		APIKey:   mock.APIKey,
-		Password: mock.Password,
 		Username: mock.Username,
+		Password: mock.Password,
 	}
 
 	err := c.Validate()

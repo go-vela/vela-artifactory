@@ -19,9 +19,9 @@ func TestArtifactory_Copy_Exec(t *testing.T) {
 			Token:    mock.Token,
 			APIKey:   mock.APIKey,
 			DryRun:   false,
-			Password: mock.Password,
 			URL:      s.URL,
 			Username: mock.Username,
+			Password: mock.Password,
 		},
 		Copy: &Copy{
 			Flat:      false,
@@ -46,9 +46,9 @@ func TestArtifactory_Copy_Exec_Error(t *testing.T) {
 		Action:   "copy",
 		APIKey:   mock.APIKey,
 		DryRun:   false,
-		Password: mock.Password,
 		URL:      mock.InvalidArtifactoryServerURL,
 		Username: mock.Username,
+		Password: mock.Password,
 	}
 
 	cli, err := config.New()

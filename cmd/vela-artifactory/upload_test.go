@@ -22,9 +22,9 @@ func TestArtifactory_Plugin_Exec_Upload(t *testing.T) {
 			Token:    mock.Token,
 			APIKey:   mock.APIKey,
 			DryRun:   false,
-			Password: mock.Password,
 			URL:      s.URL,
 			Username: mock.Username,
+			Password: mock.Password,
 		},
 		Copy:    &Copy{},
 		Delete:  &Delete{},
@@ -50,9 +50,9 @@ func TestArtifactory_Upload_Exec_Error(t *testing.T) {
 		Action:   "upload",
 		APIKey:   mock.APIKey,
 		DryRun:   false,
-		Password: mock.Password,
 		URL:      mock.InvalidArtifactoryServerURL,
 		Username: mock.Username,
+		Password: mock.Password,
 	}
 
 	cli, err := config.New()
