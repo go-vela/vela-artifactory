@@ -62,6 +62,9 @@ func (c *Config) New() (*artifactory.ArtifactoryServicesManager, error) {
 	} else if len(c.APIKey) > 0 && httpclient.IsApiKey(c.APIKey) { // check if API key is provided
 		// set API key for Artifactory details
 		details.SetApiKey(c.APIKey)
+	} else if len(c.APIKey) > 0 && !httpclient.IsApiKey(c.APIKey) {
+		// set Access/Identity token for Artifactory details
+		details.SetAccessToken(c.APIKey)
 	}
 
 	// check if password is provided
