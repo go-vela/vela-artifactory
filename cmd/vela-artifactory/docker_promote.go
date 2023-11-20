@@ -78,8 +78,11 @@ func (p *DockerPromote) Exec(cli artifactory.ArtifactoryServicesManager) error {
 		}
 
 		if p.PromoteProperty {
+
+			// todo: ensure the target params are validated
+			// aka, could this lead to /// ?
 			promotedImagePath := fmt.Sprintf(
-				"%s/%s/%s",
+				"%s/%s/%s/*",
 				payload.TargetRepo,
 				payload.TargetDockerImage,
 				payload.TargetTag,
