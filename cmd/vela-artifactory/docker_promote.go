@@ -66,11 +66,11 @@ func (p *DockerPromote) Exec(cli artifactory.ArtifactoryServicesManager) error {
 			return err
 		}
 
-		logrus.Tracef("Created payload for target tag %s: %s", t, string(pretty))
+		logrus.Tracef("created payload for target tag %s: %s", t, string(pretty))
 	}
 
 	for _, payload := range payloads {
-		logrus.Debugf("Promoting target tag %s", payload.GetTargetTag())
+		logrus.Infof("Promoting tag %s to target %s", payload.GetSourceTag(), payload.GetTargetTag())
 
 		err := cli.PromoteDocker(*payload)
 		if err != nil {
@@ -78,31 +78,21 @@ func (p *DockerPromote) Exec(cli artifactory.ArtifactoryServicesManager) error {
 		}
 
 		if p.PromoteProperty {
-			logrus.Tracef("Setting properties on payload for target tag %s", payload.GetTargetTag())
+			promotedImagePath := fmt.Sprintf(
+				"%s/%s/%s",
+				payload.TargetRepo,
+				payload.TargetDockerImage,
+				payload.TargetTag,
+			)
 
-			var promotedImagePath string
-
-			if payload.TargetRepo != "" {
-				promotedImagePath = fmt.Sprintf(
-					"%s/%s",
-					payload.TargetRepo,
-					payload.TargetTag,
-				)
-			} else {
-				promotedImagePath = fmt.Sprintf(
-					"%s/%s",
-					payload.SourceRepo,
-					payload.TargetTag,
-				)
-			}
-
-			ts := time.Now().UTC().Format(time.RFC3339)
-			properties := fmt.Sprintf("promoted_on=%s", ts)
+			logrus.Infof("Setting promote properties for %s", promotedImagePath)
 
 			searchParams := services.NewSearchParams()
 			searchParams.Recursive = true
 			searchParams.IncludeDirs = true
 			searchParams.Pattern = promotedImagePath
+
+			logrus.Tracef("searching files using pattern %s", promotedImagePath)
 
 			reader, err := cli.SearchFiles(searchParams)
 			if err != nil {
@@ -112,13 +102,22 @@ func (p *DockerPromote) Exec(cli artifactory.ArtifactoryServicesManager) error {
 			defer reader.Close()
 
 			propsParams := services.NewPropsParams()
+			ts := time.Now().UTC().Format(time.RFC3339)
+			properties := fmt.Sprintf("promoted_on=%s", ts)
 			propsParams.Props = properties
 			propsParams.Reader = reader
 
-			_, err = cli.SetProps(propsParams)
+			logrus.Tracef("assigning property [%s] to %d matched images", properties, len(reader.GetFilesPaths()))
 
+			totalSuccess, err := cli.SetProps(propsParams)
 			if err != nil {
 				return err
+			}
+
+			if totalSuccess > 0 {
+				logrus.Infof("Successfully assigned property [%s] to %d images", properties, totalSuccess)
+			} else {
+				logrus.Info("Promote properties not assigned to any images.")
 			}
 		}
 
