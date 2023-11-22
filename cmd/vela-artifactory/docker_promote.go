@@ -137,6 +137,11 @@ func (p *DockerPromote) Exec(cli artifactory.ArtifactoryServicesManager) error {
 				return err
 			}
 
+			// setup base search params
+			searchParams = services.NewSearchParams()
+			searchParams.Recursive = true
+			searchParams.IncludeDirs = true
+
 			// this is required to set properties on the image's folder artifact
 			imageContentsSearchPattern := fmt.Sprintf(
 				"%s/%s/%s/*",
