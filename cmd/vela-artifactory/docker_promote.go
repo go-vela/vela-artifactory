@@ -85,6 +85,7 @@ func (p *DockerPromote) Exec(cli artifactory.ArtifactoryServicesManager) error {
 
 	for _, payload := range payloads {
 		logrus.Infof("Promoting tag %s to target %s", payload.GetSourceTag(), payload.GetTargetTag())
+
 		err := cli.PromoteDocker(*payload)
 		if err != nil {
 			return err
