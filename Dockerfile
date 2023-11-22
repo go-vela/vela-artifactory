@@ -34,5 +34,4 @@ COPY --from=certs /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certifica
 
 COPY release/vela-artifactory /bin/vela-artifactory
 
-
 ENTRYPOINT ["/bin/vela-artifactory"]
