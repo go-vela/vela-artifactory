@@ -140,10 +140,16 @@ func main() {
 		// Docker Promote Flags
 
 		&cli.StringFlag{
+			EnvVars:  []string{"PARAMETER_SOURCE_REPO", "ARTIFACTORY_SOURCE_REPO"},
+			FilePath: "/vela/parameters/artifactory/source_repo,/vela/secrets/artifactory/source_repo",
+			Name:     "docker_promote.source_repo",
+			Usage:    "source Docker repository in Artifactory for the move or copy",
+		},
+		&cli.StringFlag{
 			EnvVars:  []string{"PARAMETER_TARGET_REPO", "ARTIFACTORY_TARGET_REPO"},
 			FilePath: "/vela/parameters/artifactory/target_repo,/vela/secrets/artifactory/target_repo",
 			Name:     "docker_promote.target_repo",
-			Usage:    "Docker repository in Artifactory for the move or copy",
+			Usage:    "destination Docker repository in Artifactory for the move or copy",
 		},
 		&cli.StringFlag{
 			EnvVars:  []string{"PARAMETER_DOCKER_REGISTRY", "ARTIFACTORY_DOCKER_REGISTRY"},
@@ -160,7 +166,7 @@ func main() {
 		&cli.StringFlag{
 			EnvVars:  []string{"PARAMETER_TAG", "ARTIFACTORY_TAG"},
 			FilePath: "/vela/parameters/artifactory/tag,/vela/secrets/artifactory/tag",
-			Name:     "docker_promote.tag",
+			Name:     "docker_promote.source_tag",
 			Usage:    "tag name of image to promote (promotes all tags if empty)",
 		},
 		&cli.StringSliceFlag{
@@ -291,10 +297,11 @@ func run(c *cli.Context) error {
 		},
 		// docker-promote configuration
 		DockerPromote: &DockerPromote{
+			SourceRepo:           c.String("docker_promote.source_repo"),
 			TargetRepo:           c.String("docker_promote.target_repo"),
 			DockerRegistry:       c.String("docker_promote.docker_registry"),
 			TargetDockerRegistry: c.String("docker_promote.target_docker_registry"),
-			Tag:                  c.String("docker_promote.tag"),
+			SourceTag:            c.String("docker_promote.source_tag"),
 			TargetTags:           c.StringSlice("docker_promote.target_tags"),
 			Copy:                 c.Bool("docker_promote.copy"),
 			PromoteProperty:      c.Bool("docker_promote.props"),

@@ -16,14 +16,16 @@ const dockerPromoteAction = "docker-promote"
 
 // DockerPromote represents the plugin configuration for setting a Docker Promotion.
 type DockerPromote struct {
-	// Docker repository in Artifactory for the move or copy
+	// SourceRepo is the Docker repository in Artifactory to use as the source for move or copy
+	SourceRepo string
+	// TargetRepo is the Docker repository in Artifactory to use as the destination for move or copy
 	TargetRepo string
 	// DockerRegistry is the source Docker registry to promote an image from
 	DockerRegistry string
 	// TargetDockerRegistry is the target Docker registry to promote an image to (uses 'DockerRegistry' if empty)
 	TargetDockerRegistry string
-	// Tag is the name of image to promote (promotes all tags if empty)
-	Tag string
+	// SourceTag is the name of image to promote (promotes all tags if empty)
+	SourceTag string
 	// TargetTags are the target tags to assign to the image after promotion
 	TargetTags []string
 	// Copy is a flag to set to copy instead of moving the image (default: true)
@@ -43,20 +45,32 @@ func (p *DockerPromote) Exec(cli artifactory.ArtifactoryServicesManager) error {
 	}
 
 	for _, t := range p.TargetTags {
+		// avoid assigning parameters via constructor to ensure promote endpoint is constructed properly
 		params := services.NewDockerPromoteParams(
 			"",
 			"",
 			"",
 		)
-		params.SourceRepo = p.TargetRepo
+
+		params.SourceRepo = p.SourceRepo
 		params.TargetRepo = p.TargetRepo
+
+		// assign source repo to target repo when not provided, to ensure backwards compatibility
+		// with existing configurations that assume source repo is not required
+		if len(params.SourceRepo) == 0 {
+			params.SourceRepo = params.TargetRepo
+		}
 
 		params.SourceDockerImage = p.DockerRegistry
 		params.TargetDockerImage = p.TargetDockerRegistry
 
-		params.SourceTag = p.Tag
-		params.TargetTag = t
+		// use DockerRegistry as TargetDockerRegistry when a target is not set
+		if len(params.TargetDockerImage) == 0 {
+			params.TargetDockerImage = params.SourceDockerImage
+		}
 
+		params.SourceTag = p.SourceTag
+		params.TargetTag = t
 		params.Copy = p.Copy
 
 		payloads = append(payloads, &params)
@@ -77,54 +91,91 @@ func (p *DockerPromote) Exec(cli artifactory.ArtifactoryServicesManager) error {
 			return err
 		}
 
+		// recursively assign promoted_on property based on plugin configuration
 		if p.PromoteProperty {
+			logrus.Infof("Setting promote properties for %s/%s/%s",
+				payload.TargetRepo,
+				payload.TargetDockerImage,
+				payload.TargetTag)
 
-			// todo: ensure the target params are validated
-			// aka, could this lead to /// ?
-			promotedImagePath := fmt.Sprintf(
+			// setup base property params
+			ts := time.Now().UTC().Format(time.RFC3339)
+			promotedOnProperty := fmt.Sprintf("promoted_on=%s", ts)
+			propsParams := services.NewPropsParams()
+			propsParams.Props = promotedOnProperty
+
+			// setup base search params
+			searchParams := services.NewSearchParams()
+			searchParams.Recursive = true
+			searchParams.IncludeDirs = true
+
+			// this is required to set properties on the image's folder artifact
+			imageFolderSearchPattern := fmt.Sprintf(
+				"%s/%s/%s",
+				payload.TargetRepo,
+				payload.TargetDockerImage,
+				payload.TargetTag,
+			)
+
+			logrus.Tracef("searching files using pattern %s", imageFolderSearchPattern)
+
+			searchParams.Pattern = imageFolderSearchPattern
+
+			imageFolderReader, err := cli.SearchFiles(searchParams)
+			if err != nil {
+				return err
+			}
+
+			defer imageFolderReader.Close()
+
+			// assign the files found to be used in SetProps
+			propsParams.Reader = imageFolderReader
+
+			logrus.Tracef("assigning property [%s] to %d matched images", promotedOnProperty, len(imageFolderReader.GetFilesPaths()))
+
+			imageFolderSuccess, err := cli.SetProps(propsParams)
+			if err != nil {
+				return err
+			}
+
+			// this is required to set properties on the image's folder artifact
+			imageContentsSearchPattern := fmt.Sprintf(
 				"%s/%s/%s/*",
 				payload.TargetRepo,
 				payload.TargetDockerImage,
 				payload.TargetTag,
 			)
 
-			logrus.Infof("Setting promote properties for %s", promotedImagePath)
+			logrus.Tracef("searching files using pattern %s", imageContentsSearchPattern)
 
-			searchParams := services.NewSearchParams()
-			searchParams.Recursive = true
-			searchParams.IncludeDirs = true
-			searchParams.Pattern = promotedImagePath
+			searchParams.Pattern = imageContentsSearchPattern
 
-			logrus.Tracef("searching files using pattern %s", promotedImagePath)
-
-			reader, err := cli.SearchFiles(searchParams)
+			imageContentsReader, err := cli.SearchFiles(searchParams)
 			if err != nil {
 				return err
 			}
 
-			defer reader.Close()
+			defer imageContentsReader.Close()
 
-			propsParams := services.NewPropsParams()
-			ts := time.Now().UTC().Format(time.RFC3339)
-			properties := fmt.Sprintf("promoted_on=%s", ts)
-			propsParams.Props = properties
-			propsParams.Reader = reader
+			// assign the files found to be used in SetProps
+			propsParams.Reader = imageContentsReader
 
-			logrus.Tracef("assigning property [%s] to %d matched images", properties, len(reader.GetFilesPaths()))
+			logrus.Tracef("assigning property [%s] to %d matched images", promotedOnProperty, len(imageContentsReader.GetFilesPaths()))
 
-			totalSuccess, err := cli.SetProps(propsParams)
+			imageContentsSuccess, err := cli.SetProps(propsParams)
 			if err != nil {
 				return err
 			}
 
+			totalSuccess := imageFolderSuccess + imageContentsSuccess
 			if totalSuccess > 0 {
-				logrus.Infof("Successfully assigned property [%s] to %d images", properties, totalSuccess)
+				logrus.Infof("Successfully assigned property [%s] to %d image files.", promotedOnProperty, totalSuccess)
 			} else {
 				logrus.Info("Promote properties not assigned to any images.")
 			}
 		}
 
-		logrus.Infof("Promotion ended successfully for tag %s for target tag %s",
+		logrus.Infof("Promotion ended successfully for tag %s promoted to target tag %s",
 			payload.SourceTag,
 			payload.TargetTag)
 	}
