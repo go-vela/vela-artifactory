@@ -2,17 +2,53 @@
 
 package main
 
-import "testing"
+import (
+	"net/http/httptest"
+	"testing"
+
+	"github.com/go-vela/vela-artifactory/cmd/vela-artifactory/mock"
+)
+
+func TestArtifactory_Copy_Exec(t *testing.T) {
+	// setup types
+	s := httptest.NewServer(mock.Handlers())
+
+	p := &Plugin{
+		Config: &Config{
+			Action:   "copy",
+			Token:    mock.Token,
+			APIKey:   mock.APIKey,
+			DryRun:   false,
+			URL:      s.URL,
+			Username: mock.Username,
+			Password: mock.Password,
+		},
+		Copy: &Copy{
+			Flat:      false,
+			Recursive: false,
+			Path:      "foo/bar",
+			Target:    "bar/foo",
+		},
+		Delete:  &Delete{},
+		SetProp: &SetProp{},
+		Upload:  &Upload{},
+	}
+
+	err := p.Exec()
+	if err != nil {
+		t.Errorf("Exec returned err %v", err)
+	}
+}
 
 func TestArtifactory_Copy_Exec_Error(t *testing.T) {
 	// setup types
 	config := &Config{
 		Action:   "copy",
-		APIKey:   "superSecretAPIKey",
+		APIKey:   mock.APIKey,
 		DryRun:   false,
-		Password: "superSecretPassword",
-		URL:      "http://localhost:8081/artifactory",
-		Username: "octocat",
+		URL:      mock.InvalidArtifactoryServerURL,
+		Username: mock.Username,
+		Password: mock.Password,
 	}
 
 	cli, err := config.New()
@@ -27,7 +63,7 @@ func TestArtifactory_Copy_Exec_Error(t *testing.T) {
 		Target:    "bar/foo",
 	}
 
-	err = c.Exec(cli)
+	err = c.Exec(*cli)
 	if err == nil {
 		t.Errorf("Exec should have returned err")
 	}

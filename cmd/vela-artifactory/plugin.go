@@ -17,17 +17,17 @@ var (
 
 // Plugin represents the configuration loaded for the plugin.
 type Plugin struct {
-	// config arguments loaded for the plugin
+	// Config stores arguments loaded for the plugin
 	Config *Config
-	// copy arguments loaded for the plugin
+	// Copy arguments loaded for the plugin
 	Copy *Copy
-	// delete arguments loaded for the plugin
+	// Delete arguments loaded for the plugin
 	Delete *Delete
-	// docker-promote arguments loaded for the plugin
+	// DockerPromote arguments loaded for the plugin
 	DockerPromote *DockerPromote
-	// set-prop arguments loaded for the plugin
+	// SetProp arguments loaded for the plugin
 	SetProp *SetProp
-	// upload arguments loaded for the plugin
+	// Upload arguments loaded for the plugin
 	Upload *Upload
 }
 
@@ -45,19 +45,19 @@ func (p *Plugin) Exec() error {
 	switch p.Config.Action {
 	case copyAction:
 		// execute copy action
-		return p.Copy.Exec(cli)
+		return p.Copy.Exec(*cli)
 	case deleteAction:
 		// execute delete action
-		return p.Delete.Exec(cli)
+		return p.Delete.Exec(*cli)
 	case dockerPromoteAction:
 		// execute docker-promote action
-		return p.DockerPromote.Exec(p.Config)
+		return p.DockerPromote.Exec(*cli)
 	case setPropAction:
 		// execute set-prop action
-		return p.SetProp.Exec(cli)
+		return p.SetProp.Exec(*cli)
 	case uploadAction:
 		// execute upload action
-		return p.Upload.Exec(cli)
+		return p.Upload.Exec(*cli)
 	default:
 		return fmt.Errorf(
 			"%w: %s (Valid actions: %s, %s, %s, %s, %s)",

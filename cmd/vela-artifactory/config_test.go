@@ -4,17 +4,19 @@ package main
 
 import (
 	"testing"
+
+	"github.com/go-vela/vela-artifactory/cmd/vela-artifactory/mock"
 )
 
 func TestArtifactory_Config_New(t *testing.T) {
 	// setup types
 	c := &Config{
 		Action:   "copy",
-		APIKey:   "superSecretAPIKey",
+		APIKey:   mock.APIKey,
 		DryRun:   false,
-		Password: "superSecretPassword",
-		URL:      "https://myarti.com/artifactory",
-		Username: "octocat",
+		URL:      mock.InvalidArtifactoryServerURL,
+		Username: mock.Username,
+		Password: mock.Password,
 	}
 
 	got, err := c.New()
@@ -31,11 +33,11 @@ func TestArtifactory_Config_Validate(t *testing.T) {
 	// setup types
 	c := &Config{
 		Action:   "copy",
-		APIKey:   "superSecretAPIKey",
+		APIKey:   mock.APIKey,
 		DryRun:   false,
-		Password: "superSecretPassword",
-		URL:      "https://myarti.com/artifactory",
-		Username: "octocat",
+		URL:      mock.InvalidArtifactoryServerURL,
+		Username: mock.Username,
+		Password: mock.Password,
 	}
 
 	err := c.Validate()
@@ -47,11 +49,11 @@ func TestArtifactory_Config_Validate(t *testing.T) {
 func TestArtifactory_Config_Validate_NoAction(t *testing.T) {
 	// setup types
 	c := &Config{
-		APIKey:   "superSecretAPIKey",
+		APIKey:   mock.APIKey,
 		DryRun:   false,
-		Password: "superSecretPassword",
-		URL:      "https://myarti.com/artifactory",
-		Username: "octocat",
+		URL:      mock.InvalidArtifactoryServerURL,
+		Username: mock.Username,
+		Password: mock.Password,
 	}
 
 	err := c.Validate()
@@ -65,8 +67,8 @@ func TestArtifactory_Config_Validate_NoAPIKeyOrPassword(t *testing.T) {
 	c := &Config{
 		Action:   "copy",
 		DryRun:   false,
-		URL:      "https://myarti.com/artifactory",
-		Username: "octocat",
+		URL:      mock.InvalidArtifactoryServerURL,
+		Username: mock.Username,
 	}
 
 	err := c.Validate()
@@ -80,9 +82,9 @@ func TestArtifactory_Config_Validate_NoAPIKey(t *testing.T) {
 	c := &Config{
 		Action:   "copy",
 		DryRun:   false,
-		Password: "superSecretPassword",
-		URL:      "https://myarti.com/artifactory",
-		Username: "octocat",
+		Password: mock.Password,
+		URL:      mock.InvalidArtifactoryServerURL,
+		Username: mock.Username,
 	}
 
 	err := c.Validate()
@@ -96,9 +98,9 @@ func TestArtifactory_Config_Validate_NoPassword(t *testing.T) {
 	c := &Config{
 		Action:   "copy",
 		DryRun:   false,
-		APIKey:   "superSecretAPIKey",
-		URL:      "https://myarti.com/artifactory",
-		Username: "octocat",
+		APIKey:   mock.APIKey,
+		URL:      mock.InvalidArtifactoryServerURL,
+		Username: mock.Username,
 	}
 
 	err := c.Validate()
@@ -112,9 +114,9 @@ func TestArtifactory_Config_Validate_NoUrl(t *testing.T) {
 	c := &Config{
 		Action:   "copy",
 		DryRun:   false,
-		APIKey:   "superSecretAPIKey",
-		Password: "superSecretPassword",
-		Username: "octocat",
+		APIKey:   mock.APIKey,
+		Username: mock.Username,
+		Password: mock.Password,
 	}
 
 	err := c.Validate()
@@ -128,8 +130,8 @@ func TestArtifactory_Config_Validate_NoUsername(t *testing.T) {
 	c := &Config{
 		Action:   "copy",
 		DryRun:   false,
-		Password: "superSecretPassword",
-		URL:      "https://myarti.com/artifactory",
+		Password: mock.Password,
+		URL:      mock.InvalidArtifactoryServerURL,
 	}
 
 	err := c.Validate()
@@ -143,7 +145,7 @@ func TestArtifactory_Config_Validate_NoAuth(t *testing.T) {
 	c := &Config{
 		Action: "copy",
 		DryRun: false,
-		URL:    "https://myarti.com/artifactory",
+		URL:    mock.InvalidArtifactoryServerURL,
 	}
 
 	err := c.Validate()

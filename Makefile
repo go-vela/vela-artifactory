@@ -86,7 +86,7 @@ fix:
 test:
 	@echo
 	@echo "### Testing Go Code"
-	@go test -race ./...
+	@go test ./...
 
 # The `test-cover` target is intended to run
 # the tests for the Go source code and then

@@ -5,6 +5,7 @@ package main
 import (
 	"fmt"
 
+	"github.com/jfrog/jfrog-client-go/artifactory"
 	"github.com/jfrog/jfrog-client-go/artifactory/services"
 	"github.com/jfrog/jfrog-client-go/artifactory/services/utils"
 
@@ -15,25 +16,25 @@ const copyAction = "copy"
 
 // Copy represents the plugin configuration for copy information.
 type Copy struct {
-	// enables removing source file directory hierarchy
+	// Flat is a flag that enables removing source file directory hierarchy
 	Flat bool
-	// enables copying sub-directories from source
+	// Recursive is a flag that enables copying sub-directories from source
 	Recursive bool
-	// source path to artifact(s) to copy
+	// Path is the source path to artifact(s) to copy
 	Path string
-	// target path to copy artifact(s) to
+	// Target is the path to copy artifact(s) to
 	Target string
 }
 
 // Exec formats and runs the commands for copying artifacts in Artifactory.
-func (c *Copy) Exec(cli ArtifactoryServicesManager) error {
+func (c *Copy) Exec(cli artifactory.ArtifactoryServicesManager) error {
 	logrus.Trace("running copy with provided configuration")
 
 	// create new copy parameters
 	p := services.NewMoveCopyParams()
 
 	// add copy configuration to copy parameters
-	p.ArtifactoryCommonParams = &utils.ArtifactoryCommonParams{
+	p.CommonParams = &utils.CommonParams{
 		Pattern:   c.Path,
 		Recursive: c.Recursive,
 		Target:    c.Target,

@@ -7,6 +7,7 @@ import (
 
 	"github.com/sirupsen/logrus"
 
+	"github.com/jfrog/jfrog-client-go/artifactory"
 	"github.com/jfrog/jfrog-client-go/artifactory/services"
 	"github.com/jfrog/jfrog-client-go/artifactory/services/utils"
 )
@@ -30,7 +31,7 @@ type Upload struct {
 }
 
 // Exec formats and runs the commands for uploading artifacts in Artifactory.
-func (u *Upload) Exec(cli ArtifactoryServicesManager) error {
+func (u *Upload) Exec(cli artifactory.ArtifactoryServicesManager) error {
 	logrus.Trace("running upload with provided configuration")
 
 	// iterate through all sources
@@ -39,7 +40,7 @@ func (u *Upload) Exec(cli ArtifactoryServicesManager) error {
 		p := services.NewUploadParams()
 
 		// add upload configuration to upload parameters
-		p.ArtifactoryCommonParams = &utils.ArtifactoryCommonParams{
+		p.CommonParams = &utils.CommonParams{
 			IncludeDirs: u.IncludeDirs,
 			Pattern:     source,
 			Recursive:   u.Recursive,
@@ -47,10 +48,9 @@ func (u *Upload) Exec(cli ArtifactoryServicesManager) error {
 			Target:      u.Path,
 		}
 		p.Flat = u.Flat
-		p.Retries = 3
 
 		// send API call to upload artifacts in Artifactory
-		_, _, totalFailed, err := cli.UploadFiles(p)
+		_, totalFailed, err := cli.UploadFiles(p)
 		if totalFailed > 0 || err != nil {
 			return err
 		}

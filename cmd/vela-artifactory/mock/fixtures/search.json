@@ -1,0 +1,10 @@
+{
+    "results": [
+        {
+            "uri": "http://localhost:8081/artifactory/api/storage/foo/bar/file.json"
+        },
+        {
+            "uri": "http://localhost:8081/artifactory/api/foo/bar/file.txt"
+        }
+    ]
+}

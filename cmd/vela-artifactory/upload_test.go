@@ -3,22 +3,53 @@
 package main
 
 import (
-	"errors"
+	"net/http/httptest"
 	"testing"
 
-	"github.com/jfrog/jfrog-client-go/artifactory/services"
-	"github.com/jfrog/jfrog-client-go/artifactory/services/utils"
+	"github.com/go-vela/vela-artifactory/cmd/vela-artifactory/mock"
 )
 
+func TestArtifactory_Plugin_Exec_Upload(t *testing.T) {
+	// setup types
+	s := httptest.NewServer(mock.Handlers())
+
+	p := &Plugin{
+		Config: &Config{
+			Action:   "upload",
+			Token:    mock.Token,
+			APIKey:   mock.APIKey,
+			DryRun:   false,
+			URL:      s.URL,
+			Username: mock.Username,
+			Password: mock.Password,
+		},
+		Copy:    &Copy{},
+		Delete:  &Delete{},
+		SetProp: &SetProp{},
+		Upload: &Upload{
+			Flat:        true,
+			IncludeDirs: false,
+			Recursive:   true,
+			Regexp:      false,
+			Path:        "foo/bar",
+			Sources:     []string{"mock/testdata/baz.txt"},
+		},
+	}
+
+	err := p.Exec()
+	if err != nil {
+		t.Errorf("Exec returned err %v", err)
+	}
+}
 func TestArtifactory_Upload_Exec_Error(t *testing.T) {
 	// setup types
 	config := &Config{
 		Action:   "upload",
-		APIKey:   "superSecretAPIKey",
+		APIKey:   mock.APIKey,
 		DryRun:   false,
-		Password: "superSecretPassword",
-		URL:      "http://localhost:8081/artifactory",
-		Username: "octocat",
+		URL:      mock.InvalidArtifactoryServerURL,
+		Username: mock.Username,
+		Password: mock.Password,
 	}
 
 	cli, err := config.New()
@@ -35,7 +66,7 @@ func TestArtifactory_Upload_Exec_Error(t *testing.T) {
 		Sources:     []string{"baz.txt"},
 	}
 
-	err = u.Exec(cli)
+	err = u.Exec(*cli)
 	if err == nil {
 		t.Errorf("Exec should have returned err")
 	}
@@ -88,64 +119,4 @@ func TestArtifactory_Upload_Validate_NoSources(t *testing.T) {
 	if err == nil {
 		t.Errorf("Validate should have returned err")
 	}
-}
-
-func TestArtifactory_Upload_Failure_Returns_Error(t *testing.T) {
-	cli := &MockArtifactoryService{Fail: true}
-
-	u := &Upload{
-		Flat:        true,
-		IncludeDirs: false,
-		Recursive:   true,
-		Regexp:      false,
-		Path:        "foo/bar",
-		Sources:     []string{"baz.txt"},
-	}
-
-	err := u.Exec(cli)
-	if err == nil {
-		t.Errorf("Exec should have returned err")
-	}
-}
-
-func TestArtifactory_Upload_Success(t *testing.T) {
-	cli := &MockArtifactoryService{Fail: false}
-
-	u := &Upload{
-		Flat:        true,
-		IncludeDirs: false,
-		Recursive:   true,
-		Regexp:      false,
-		Path:        "foo/bar",
-		Sources:     []string{"baz.txt"},
-	}
-
-	err := u.Exec(cli)
-	if err != nil {
-		t.Errorf("Exec should have returned err")
-	}
-}
-
-type MockArtifactoryService struct {
-	Fail bool
-}
-
-func (a *MockArtifactoryService) UploadFiles(...services.UploadParams) ([]utils.FileInfo, int, int, error) {
-	if a.Fail {
-		return nil, 0, 1, errors.New("upload failed")
-	}
-
-	return nil, 0, 0, nil
-}
-
-func (a *MockArtifactoryService) Copy(services.MoveCopyParams) (int, int, error) {
-	return 0, 0, nil
-}
-
-func (a *MockArtifactoryService) GetPathsToDelete(services.DeleteParams) ([]utils.ResultItem, error) {
-	return nil, nil
-}
-
-func (a *MockArtifactoryService) DeleteFiles([]utils.ResultItem) (int, error) {
-	return 0, nil
 }

@@ -6,58 +6,64 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/target/go-arty/v2/artifactory/fixtures/docker"
+	"github.com/go-vela/vela-artifactory/cmd/vela-artifactory/mock"
 )
 
 func TestArtifactory_DockerPromote_Exec(t *testing.T) {
-	// Create http test server from our fake API handler
-	s := httptest.NewServer(docker.FakeHandler())
-
 	// setup types
-	config := &Config{
-		Action:   "docker-promote",
-		APIKey:   "superSecretAPIKey",
-		DryRun:   false,
-		Password: "superSecretPassword",
-		URL:      s.URL,
-		Username: "octocat",
-	}
+	s := httptest.NewServer(mock.Handlers())
 
-	tests := []struct {
-		dockerPromote *DockerPromote
-		want          *error
-	}{
-		{ // dockerPromote that does not have a promoteProperty
-			dockerPromote: &DockerPromote{
-				TargetRepo:      "docker",
-				DockerRegistry:  "github/octocat",
-				TargetTags:      []string{"test"},
-				PromoteProperty: false,
-			},
-			want: nil,
+	p := &Plugin{
+		Config: &Config{
+			Action:   "docker-promote",
+			Token:    mock.Token,
+			APIKey:   mock.APIKey,
+			DryRun:   false,
+			URL:      s.URL,
+			Username: mock.Username,
+			Password: mock.Password,
 		},
-		//TODO: investigate ways of combining handlers
-		//
-		// Go-Arty API docs for handlers:
-		//	"github.com/target/go-arty/artifactory/fixtures/docker"
-		//	"github.com/target/go-arty/artifactory/fixtures/storage"
-		//
-		// 	{ // dockerPromote that does have a promoteProperty
-		// 		dockerPromote: &DockerPromote{
-		// 			TargetRepo:      "docker",
-		// 			DockerRegistry:  "github/octocat",
-		// 			TargetTags:      []string{"test"},
-		// 			PromoteProperty: true,
-		// 		},
-		// 		want: nil,
-		// 	},
+		Copy:   &Copy{},
+		Delete: &Delete{},
+		DockerPromote: &DockerPromote{
+			TargetRepo:     "docker",
+			DockerRegistry: "github/octocat",
+		},
+		SetProp: &SetProp{},
+		Upload:  &Upload{},
 	}
 
-	for _, test := range tests {
-		err := test.dockerPromote.Exec(config)
-		if err != nil {
-			t.Errorf("Exec should have returned err: %v", err)
-		}
+	err := p.Exec()
+	if err != nil {
+		t.Errorf("Exec returned err %v", err)
+	}
+}
+
+func TestArtifactory_DockerPromote_Exec_Error(t *testing.T) {
+	// setup types
+	p := &Plugin{
+		Config: &Config{
+			Action:   "docker-promote",
+			Token:    mock.Token,
+			APIKey:   mock.APIKey,
+			DryRun:   false,
+			URL:      mock.InvalidArtifactoryServerURL,
+			Username: mock.Username,
+			Password: mock.Password,
+		},
+		Copy:   &Copy{},
+		Delete: &Delete{},
+		DockerPromote: &DockerPromote{
+			TargetRepo:     "docker",
+			DockerRegistry: "github/octocat",
+		},
+		SetProp: &SetProp{},
+		Upload:  &Upload{},
+	}
+
+	err := p.Exec()
+	if err != nil {
+		t.Errorf("Exec returned err %v", err)
 	}
 }
 

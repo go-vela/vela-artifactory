@@ -3,168 +3,22 @@
 package main
 
 import (
-	"net/http/httptest"
 	"testing"
 
-	"github.com/target/go-arty/v2/artifactory/fixtures/docker"
+	"github.com/go-vela/vela-artifactory/cmd/vela-artifactory/mock"
 )
-
-func TestArtifactory_Plugin_Exec_Copy(t *testing.T) {
-	// setup types
-	p := &Plugin{
-		Config: &Config{
-			Action:   "copy",
-			APIKey:   "superSecretAPIKey",
-			DryRun:   false,
-			Password: "superSecretPassword",
-			URL:      "https://myarti.com/artifactory",
-			Username: "octocat",
-		},
-		Copy: &Copy{
-			Flat:      false,
-			Recursive: false,
-			Path:      "foo/bar",
-			Target:    "bar/foo",
-		},
-		Delete:  &Delete{},
-		SetProp: &SetProp{},
-		Upload:  &Upload{},
-	}
-
-	err := p.Exec()
-	if err == nil {
-		t.Errorf("Exec should have returned err")
-	}
-}
-
-func TestArtifactory_Plugin_Exec_Delete(t *testing.T) {
-	// setup types
-	p := &Plugin{
-		Config: &Config{
-			Action:   "delete",
-			APIKey:   "superSecretAPIKey",
-			DryRun:   false,
-			Password: "superSecretPassword",
-			URL:      "https://myarti.com/artifactory",
-			Username: "octocat",
-		},
-		Copy: &Copy{},
-		Delete: &Delete{
-			Recursive: false,
-			Path:      "foo/bar",
-		},
-		SetProp: &SetProp{},
-		Upload:  &Upload{},
-	}
-
-	err := p.Exec()
-	if err == nil {
-		t.Errorf("Exec should have returned err")
-	}
-}
-
-func TestArtifactory_Plugin_Exec_DockerPromote(t *testing.T) {
-	// Create http test server from our fake API handler
-	s := httptest.NewServer(docker.FakeHandler())
-
-	// setup types
-	p := &Plugin{
-		Config: &Config{
-			Action:   "docker-promote",
-			APIKey:   "superSecretAPIKey",
-			DryRun:   false,
-			Password: "superSecretPassword",
-			URL:      s.URL,
-			Username: "octocat",
-		},
-		Copy:   &Copy{},
-		Delete: &Delete{},
-		DockerPromote: &DockerPromote{
-			TargetRepo:     "docker",
-			DockerRegistry: "github/octocat",
-		},
-		SetProp: &SetProp{},
-		Upload:  &Upload{},
-	}
-
-	err := p.Exec()
-	if err != nil {
-		t.Errorf("Exec should have returned err")
-	}
-}
-
-func TestArtifactory_Plugin_Exec_SetProp(t *testing.T) {
-	// setup types
-	p := &Plugin{
-		Config: &Config{
-			Action:   "set-prop",
-			APIKey:   "superSecretAPIKey",
-			DryRun:   false,
-			Password: "superSecretPassword",
-			URL:      "https://myarti.com/artifactory",
-			Username: "octocat",
-		},
-		Copy:   &Copy{},
-		Delete: &Delete{},
-		SetProp: &SetProp{
-			Path: "foo/bar",
-			Props: []*Prop{
-				{
-					Name:  "foo",
-					Value: "bar",
-				},
-			},
-			RawProps: `[{"name": "single", "value": "foo"}]`,
-		},
-		Upload: &Upload{},
-	}
-
-	err := p.Exec()
-	if err == nil {
-		t.Errorf("Exec should have returned err")
-	}
-}
-
-func TestArtifactory_Plugin_Exec_Upload(t *testing.T) {
-	// setup types
-	p := &Plugin{
-		Config: &Config{
-			Action:   "upload",
-			APIKey:   "superSecretAPIKey",
-			DryRun:   false,
-			Password: "superSecretPassword",
-			URL:      "https://myarti.com/artifactory",
-			Username: "octocat",
-		},
-		Copy:    &Copy{},
-		Delete:  &Delete{},
-		SetProp: &SetProp{},
-		Upload: &Upload{
-			Flat:        true,
-			IncludeDirs: false,
-			Recursive:   true,
-			Regexp:      false,
-			Path:        "foo/bar",
-			Sources:     []string{"baz.txt"},
-		},
-	}
-
-	err := p.Exec()
-	if err == nil {
-		t.Errorf("Exec should have returned err")
-	}
-}
 
 func TestArtifactory_Plugin_Exec_InvalidAction(t *testing.T) {
 	// setup types
 	p := &Plugin{
 		Config: &Config{
 			Action:   "foobar",
-			APIKey:   "superSecretAPIKey",
+			Token:    mock.Token,
+			APIKey:   mock.APIKey,
 			DryRun:   false,
-			Password: "superSecretPassword",
-			URL:      "https://myarti.com/artifactory",
-			Username: "octocat",
+			URL:      mock.InvalidArtifactoryServerURL,
+			Username: mock.Username,
+			Password: mock.Password,
 		},
 		Copy:    &Copy{},
 		Delete:  &Delete{},
@@ -183,11 +37,12 @@ func TestArtifactory_Plugin_Validate(t *testing.T) {
 	p := &Plugin{
 		Config: &Config{
 			Action:   "copy",
-			APIKey:   "superSecretAPIKey",
+			Token:    mock.Token,
+			APIKey:   mock.APIKey,
 			DryRun:   false,
-			Password: "superSecretPassword",
-			URL:      "https://myarti.com/artifactory",
-			Username: "octocat",
+			URL:      mock.InvalidArtifactoryServerURL,
+			Username: mock.Username,
+			Password: mock.Password,
 		},
 		Copy: &Copy{
 			Flat:      false,
@@ -234,11 +89,12 @@ func TestArtifactory_Plugin_Validate_InvalidAction(t *testing.T) {
 	p := &Plugin{
 		Config: &Config{
 			Action:   "foobar",
-			APIKey:   "superSecretAPIKey",
+			Token:    mock.Token,
+			APIKey:   mock.APIKey,
 			DryRun:   false,
-			Password: "superSecretPassword",
-			URL:      "https://myarti.com/artifactory",
-			Username: "octocat",
+			URL:      mock.InvalidArtifactoryServerURL,
+			Username: mock.Username,
+			Password: mock.Password,
 		},
 		Copy:          &Copy{},
 		Delete:        &Delete{},
@@ -274,11 +130,12 @@ func TestArtifactory_Plugin_Validate_NoCopy(t *testing.T) {
 	p := &Plugin{
 		Config: &Config{
 			Action:   "copy",
-			APIKey:   "superSecretAPIKey",
+			Token:    mock.Token,
+			APIKey:   mock.APIKey,
 			DryRun:   false,
-			Password: "superSecretPassword",
-			URL:      "https://myarti.com/artifactory",
-			Username: "octocat",
+			URL:      mock.InvalidArtifactoryServerURL,
+			Username: mock.Username,
+			Password: mock.Password,
 		},
 		Copy:          &Copy{},
 		Delete:        &Delete{},
@@ -298,11 +155,12 @@ func TestArtifactory_Plugin_Validate_NoDelete(t *testing.T) {
 	p := &Plugin{
 		Config: &Config{
 			Action:   "delete",
-			APIKey:   "superSecretAPIKey",
+			Token:    mock.Token,
+			APIKey:   mock.APIKey,
 			DryRun:   false,
-			Password: "superSecretPassword",
-			URL:      "https://myarti.com/artifactory",
-			Username: "octocat",
+			URL:      mock.InvalidArtifactoryServerURL,
+			Username: mock.Username,
+			Password: mock.Password,
 		},
 		Copy:          &Copy{},
 		Delete:        &Delete{},
@@ -322,11 +180,12 @@ func TestArtifactory_Plugin_Validate_NoDockerPromote(t *testing.T) {
 	p := &Plugin{
 		Config: &Config{
 			Action:   "docker-promote",
-			APIKey:   "superSecretAPIKey",
+			Token:    mock.Token,
+			APIKey:   mock.APIKey,
 			DryRun:   false,
-			Password: "superSecretPassword",
-			URL:      "https://myarti.com/artifactory",
-			Username: "octocat",
+			URL:      mock.InvalidArtifactoryServerURL,
+			Username: mock.Username,
+			Password: mock.Password,
 		},
 		Copy:          &Copy{},
 		Delete:        &Delete{},
@@ -346,11 +205,12 @@ func TestArtifactory_Plugin_Validate_NoSetProp(t *testing.T) {
 	p := &Plugin{
 		Config: &Config{
 			Action:   "set-prop",
-			APIKey:   "superSecretAPIKey",
+			Token:    mock.Token,
+			APIKey:   mock.APIKey,
 			DryRun:   false,
-			Password: "superSecretPassword",
-			URL:      "https://myarti.com/artifactory",
-			Username: "octocat",
+			URL:      mock.InvalidArtifactoryServerURL,
+			Username: mock.Username,
+			Password: mock.Password,
 		},
 		Copy:          &Copy{},
 		Delete:        &Delete{},
@@ -370,11 +230,12 @@ func TestArtifactory_Plugin_Validate_NoUpload(t *testing.T) {
 	p := &Plugin{
 		Config: &Config{
 			Action:   "upload",
-			APIKey:   "superSecretAPIKey",
+			Token:    mock.Token,
+			APIKey:   mock.APIKey,
 			DryRun:   false,
-			Password: "superSecretPassword",
-			URL:      "https://myarti.com/artifactory",
-			Username: "octocat",
+			URL:      mock.InvalidArtifactoryServerURL,
+			Username: mock.Username,
+			Password: mock.Password,
 		},
 		Copy:          &Copy{},
 		Delete:        &Delete{},

@@ -7,109 +7,182 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/jfrog/jfrog-client-go/artifactory"
+	"github.com/jfrog/jfrog-client-go/artifactory/services"
 	"github.com/sirupsen/logrus"
-	goarty "github.com/target/go-arty/v2/artifactory"
 )
 
 const dockerPromoteAction = "docker-promote"
 
 // DockerPromote represents the plugin configuration for setting a Docker Promotion.
 type DockerPromote struct {
-	// Docker repository in Artifactory for the move or copy
+	// SourceRepo is the Docker repository in Artifactory to use as the source for move or copy
+	SourceRepo string
+	// TargetRepo is the Docker repository in Artifactory to use as the destination for move or copy
 	TargetRepo string
-	// source Docker registry to promote an image from
+	// DockerRegistry is the source Docker registry to promote an image from
 	DockerRegistry string
-	// target Docker registry to promote an image to (uses 'DockerRegistry' if empty)
+	// TargetDockerRegistry is the target Docker registry to promote an image to (uses 'DockerRegistry' if empty)
 	TargetDockerRegistry string
-	// tag name of image to promote (promotes all tags if empty)
-	Tag string
-	// target tag to assign the image after promotion
+	// SourceTag is the name of image to promote (promotes all tags if empty)
+	SourceTag string
+	// TargetTags are the target tags to assign to the image after promotion
 	TargetTags []string
-	// set to copy instead of moving the image (default: true)
+	// Copy is a flag to set to copy instead of moving the image (default: true)
 	Copy bool
-	// An optional value to set an item property to add a promoted date.
+	// PromoteProperty is an optional value to set an item property to add a promoted date.
 	PromoteProperty bool
 }
 
 // Exec formats and runs the commands for uploading artifacts in Artifactory.
-func (p *DockerPromote) Exec(c *Config) error {
+func (p *DockerPromote) Exec(cli artifactory.ArtifactoryServicesManager) error {
 	logrus.Trace("running docker-promote with provided configuration")
 
-	// create go-arty client for interacting with Docker promotion
-	// https://github.com/target/go-arty
-	client, err := goarty.NewClient(c.URL, nil)
-	if err != nil {
-		return err
+	var payloads []*services.DockerPromoteParams
+
+	if len(p.TargetTags) == 0 {
+		logrus.Trace("no tags to promote")
 	}
-
-	// set basic authentication on client
-	client.Authentication.SetBasicAuth(c.Username, c.Password)
-
-	// set the auth token if user passed token
-	if len(c.APIKey) != 0 {
-		client.Authentication.SetTokenAuth(c.APIKey)
-	}
-
-	var payloads []*goarty.ImagePromotion
 
 	for _, t := range p.TargetTags {
-		payload := &goarty.ImagePromotion{
-			TargetRepo:             goarty.String(p.TargetRepo),
-			DockerRepository:       goarty.String(p.DockerRegistry),
-			TargetDockerRepository: goarty.String(p.TargetDockerRegistry),
-			Tag:                    goarty.String(p.Tag),
-			TargetTag:              goarty.String(t),
-			Copy:                   goarty.Bool(p.Copy),
+		// avoid assigning parameters via constructor to ensure promote endpoint is constructed properly
+		params := services.NewDockerPromoteParams(
+			"",
+			"",
+			"",
+		)
+
+		params.SourceRepo = p.SourceRepo
+		params.TargetRepo = p.TargetRepo
+
+		// assign source repo to target repo when not provided, to ensure backwards compatibility
+		// with existing configurations that assume source repo is not required
+		if len(params.SourceRepo) == 0 {
+			params.SourceRepo = params.TargetRepo
 		}
 
-		payloads = append(payloads, payload)
+		params.SourceDockerImage = p.DockerRegistry
+		params.TargetDockerImage = p.TargetDockerRegistry
 
-		pretty, err := json.MarshalIndent(payload, "", "  ")
+		// use DockerRegistry as TargetDockerRegistry when a target is not set
+		if len(params.TargetDockerImage) == 0 {
+			params.TargetDockerImage = params.SourceDockerImage
+		}
+
+		params.SourceTag = p.SourceTag
+		params.TargetTag = t
+		params.Copy = p.Copy
+
+		payloads = append(payloads, &params)
+
+		pretty, err := json.MarshalIndent(params, "", "  ")
 		if err != nil {
 			return err
 		}
 
-		logrus.Tracef("Created payload for target tag %s: %s", t, string(pretty))
+		logrus.Tracef("created payload for target tag %s: %s", t, string(pretty))
 	}
 
 	for _, payload := range payloads {
-		logrus.Debugf("Promoting target tag %s", payload.GetTargetTag())
+		logrus.Infof("Promoting tag %s to target %s", payload.GetSourceTag(), payload.GetTargetTag())
 
-		_, _, err := client.Docker.PromoteImage(p.TargetRepo, payload)
+		err := cli.PromoteDocker(*payload)
 		if err != nil {
 			return err
 		}
 
+		// recursively assign promoted_on property based on plugin configuration
 		if p.PromoteProperty {
-			var promotedImagePath string
+			logrus.Infof("Setting promote properties for %s/%s/%s",
+				payload.TargetRepo,
+				payload.TargetDockerImage,
+				payload.TargetTag)
 
-			if payload.GetTargetDockerRepository() != "" {
-				promotedImagePath = fmt.Sprintf(
-					"%s/%s",
-					payload.GetTargetDockerRepository(),
-					payload.GetTargetTag(),
-				)
-			} else {
-				promotedImagePath = fmt.Sprintf(
-					"%s/%s",
-					payload.GetDockerRepository(),
-					payload.GetTargetTag(),
-				)
-			}
-
-			properties := make(map[string][]string)
+			// setup base property params
 			ts := time.Now().UTC().Format(time.RFC3339)
-			properties["promoted_on"] = append(properties["promoted_on"], ts)
+			promotedOnProperty := fmt.Sprintf("promoted_on=%s", ts)
+			propsParams := services.NewPropsParams()
+			propsParams.Props = promotedOnProperty
 
-			_, err = client.Storage.SetItemProperties(payload.GetTargetRepo(), promotedImagePath, properties)
+			// setup base search params
+			searchParams := services.NewSearchParams()
+			searchParams.Recursive = true
+			searchParams.IncludeDirs = true
+
+			// this is required to set properties on the image's folder artifact
+			imageFolderSearchPattern := fmt.Sprintf(
+				"%s/%s/%s",
+				payload.TargetRepo,
+				payload.TargetDockerImage,
+				payload.TargetTag,
+			)
+
+			logrus.Tracef("searching files using pattern %s", imageFolderSearchPattern)
+
+			searchParams.Pattern = imageFolderSearchPattern
+
+			imageFolderReader, err := cli.SearchFiles(searchParams)
 			if err != nil {
 				return err
 			}
+
+			defer imageFolderReader.Close()
+
+			// assign the files found to be used in SetProps
+			propsParams.Reader = imageFolderReader
+
+			logrus.Tracef("assigning property [%s] to %d matched images", promotedOnProperty, len(imageFolderReader.GetFilesPaths()))
+
+			imageFolderSuccess, err := cli.SetProps(propsParams)
+			if err != nil {
+				return err
+			}
+
+			// setup base search params
+			searchParams = services.NewSearchParams()
+			searchParams.Recursive = true
+			searchParams.IncludeDirs = true
+
+			// this is required to set properties on the image's folder artifact
+			imageContentsSearchPattern := fmt.Sprintf(
+				"%s/%s/%s/*",
+				payload.TargetRepo,
+				payload.TargetDockerImage,
+				payload.TargetTag,
+			)
+
+			logrus.Tracef("searching files using pattern %s", imageContentsSearchPattern)
+
+			searchParams.Pattern = imageContentsSearchPattern
+
+			imageContentsReader, err := cli.SearchFiles(searchParams)
+			if err != nil {
+				return err
+			}
+
+			defer imageContentsReader.Close()
+
+			// assign the files found to be used in SetProps
+			propsParams.Reader = imageContentsReader
+
+			logrus.Tracef("assigning property [%s] to %d matched images", promotedOnProperty, len(imageContentsReader.GetFilesPaths()))
+
+			imageContentsSuccess, err := cli.SetProps(propsParams)
+			if err != nil {
+				return err
+			}
+
+			totalSuccess := imageFolderSuccess + imageContentsSuccess
+			if totalSuccess > 0 {
+				logrus.Infof("Successfully assigned property [%s] to %d image files.", promotedOnProperty, totalSuccess)
+			} else {
+				logrus.Info("Promote properties not assigned to any images.")
+			}
 		}
 
-		logrus.Infof("Promotion ended successfully for tag %s for target tag %s",
-			payload.GetTag(),
-			payload.GetTargetTag())
+		logrus.Infof("Promotion ended successfully for tag %s promoted to target tag %s",
+			payload.SourceTag,
+			payload.TargetTag)
 	}
 
 	return nil

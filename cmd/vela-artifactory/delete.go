@@ -7,6 +7,7 @@ import (
 
 	"github.com/sirupsen/logrus"
 
+	"github.com/jfrog/jfrog-client-go/artifactory"
 	"github.com/jfrog/jfrog-client-go/artifactory/services"
 	"github.com/jfrog/jfrog-client-go/artifactory/services/utils"
 )
@@ -15,21 +16,21 @@ const deleteAction = "delete"
 
 // Delete represents the plugin configuration for delete information.
 type Delete struct {
-	// enables removing sub-directories for the artifact(s) in the path
+	// Recursive is a flag that enables removing sub-directories for the artifact(s) in the path
 	Recursive bool
-	// target path to artifact(s) to remove
+	// Path is the target path to artifact(s) to remove
 	Path string
 }
 
 // Exec formats and runs the commands for removing artifacts in Artifactory.
-func (d *Delete) Exec(cli ArtifactoryServicesManager) error {
+func (d *Delete) Exec(cli artifactory.ArtifactoryServicesManager) error {
 	logrus.Trace("running delete with provided configuration")
 
 	// create new delete parameters
 	p := services.NewDeleteParams()
 
 	// add delete configuration to delete parameters
-	p.ArtifactoryCommonParams = &utils.ArtifactoryCommonParams{
+	p.CommonParams = &utils.CommonParams{
 		Pattern:   d.Path,
 		Recursive: d.Recursive,
 	}
