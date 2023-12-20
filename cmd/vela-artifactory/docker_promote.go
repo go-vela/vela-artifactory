@@ -36,6 +36,8 @@ type DockerPromote struct {
 }
 
 // Exec formats and runs the commands for uploading artifacts in Artifactory.
+//
+//nolint:funlen // ignore function length
 func (p *DockerPromote) Exec(cli artifactory.ArtifactoryServicesManager) error {
 	logrus.Trace("running docker-promote with provided configuration")
 
