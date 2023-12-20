@@ -73,8 +73,8 @@ func (d *Delete) Exec(cli artifactory.ArtifactoryServicesManager) error {
 		// send API call to delete artifacts in Artifactory
 		_, retryErr = cli.DeleteFiles(paths)
 		if retryErr != nil {
-			logrus.Errorf("Error deleting paths on attempt %d: %s",
-				i+1, retryErr.Error())
+			logrus.Errorf("Error deleting paths at %s on attempt %d: %s",
+				p.CommonParams.Pattern, i+1, retryErr.Error())
 
 			if i == retries-1 {
 				return retryErr
