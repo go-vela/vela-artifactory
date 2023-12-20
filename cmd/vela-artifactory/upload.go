@@ -57,7 +57,7 @@ func (u *Upload) Exec(cli artifactory.ArtifactoryServicesManager) error {
 		maxSucceeded := 0
 
 		// send API call to upload files in Artifactory
-		// retry a couple times to avoid intermittent from Artifactory
+		// retry a couple times to avoid intermittent authentication failures from Artifactory
 		for i := 0; i < retries; i++ {
 			backoff := i*2 + 1
 

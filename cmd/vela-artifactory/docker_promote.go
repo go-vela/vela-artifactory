@@ -91,7 +91,7 @@ func (p *DockerPromote) Exec(cli artifactory.ArtifactoryServicesManager) error {
 		var retryErr error
 
 		// send API call to promote Docker image in Artifactory
-		// retry a couple times to avoid intermittent from Artifactory
+		// retry a couple times to avoid intermittent authentication failures from Artifactory
 		for i := 0; i < retries; i++ {
 			backoff := i*2 + 1
 
@@ -145,7 +145,7 @@ func (p *DockerPromote) Exec(cli artifactory.ArtifactoryServicesManager) error {
 			var imageFolderReader *content.ContentReader
 
 			// send API call to search for files in Artifactory
-			// retry a couple times to avoid intermittent from Artifactory
+			// retry a couple times to avoid intermittent authentication failures from Artifactory
 			for i := 0; i < retries; i++ {
 				backoff := i*2 + 1
 
@@ -177,7 +177,7 @@ func (p *DockerPromote) Exec(cli artifactory.ArtifactoryServicesManager) error {
 			imageFolderSuccess := 0
 
 			// send API call to set properties on a Docker image folder in Artifactory
-			// retry a couple times to avoid intermittent from Artifactory
+			// retry a couple times to avoid intermittent authentication failures from Artifactory
 			for i := 0; i < retries; i++ {
 				backoff := i*2 + 1
 

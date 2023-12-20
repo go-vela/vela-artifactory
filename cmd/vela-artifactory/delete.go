@@ -42,7 +42,7 @@ func (d *Delete) Exec(cli artifactory.ArtifactoryServicesManager) error {
 	var paths *content.ContentReader
 
 	// send API call to search for paths in Artifactory
-	// retry a couple times to avoid intermittent from Artifactory
+	// retry a couple times to avoid intermittent authentication failures from Artifactory
 	for i := 0; i < retries; i++ {
 		backoff := i*2 + 1
 
@@ -66,7 +66,7 @@ func (d *Delete) Exec(cli artifactory.ArtifactoryServicesManager) error {
 	}
 
 	// send API call to delete artifacts in Artifactory
-	// retry a couple times to avoid intermittent from Artifactory
+	// retry a couple times to avoid intermittent authentication failures from Artifactory
 	for i := 0; i < retries; i++ {
 		backoff := i*2 + 1
 

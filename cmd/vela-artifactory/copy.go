@@ -46,7 +46,7 @@ func (c *Copy) Exec(cli artifactory.ArtifactoryServicesManager) error {
 	var retryErr error
 
 	// send API call to copy artifacts in Artifactory
-	// retry a couple times to avoid intermittent from Artifactory
+	// retry a couple times to avoid intermittent authentication failures from Artifactory
 	for i := 0; i < retries; i++ {
 		backoff := i*2 + 1
 
