@@ -84,6 +84,7 @@ func (s *SetProp) Exec(cli artifactory.ArtifactoryServicesManager) error {
 	}
 
 	retries := 3
+
 	var retryErr error
 	var files *content.ContentReader
 

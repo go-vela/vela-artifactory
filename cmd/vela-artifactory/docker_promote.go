@@ -88,6 +88,7 @@ func (p *DockerPromote) Exec(cli artifactory.ArtifactoryServicesManager) error {
 		logrus.Infof("Promoting tag %s to target %s", payload.GetSourceTag(), payload.GetTargetTag())
 
 		retries := 3
+
 		var retryErr error
 
 		// send API call to promote Docker image in Artifactory

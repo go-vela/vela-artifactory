@@ -51,6 +51,7 @@ func (u *Upload) Exec(cli artifactory.ArtifactoryServicesManager) error {
 		p.Flat = u.Flat
 
 		retries := 3
+
 		var retryErr error
 		totalFailed := 0
 		totalSucceeded := 0

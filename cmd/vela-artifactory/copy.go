@@ -43,6 +43,7 @@ func (c *Copy) Exec(cli artifactory.ArtifactoryServicesManager) error {
 	p.Flat = c.Flat
 
 	retries := 3
+
 	var retryErr error
 
 	// send API call to copy artifacts in Artifactory
