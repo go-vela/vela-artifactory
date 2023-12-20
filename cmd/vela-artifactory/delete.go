@@ -38,7 +38,9 @@ func (d *Delete) Exec(cli artifactory.ArtifactoryServicesManager) error {
 	}
 
 	retries := 3
+
 	var retryErr error
+
 	var paths *content.ContentReader
 
 	// send API call to search for paths in Artifactory

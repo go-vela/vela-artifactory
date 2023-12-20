@@ -51,11 +51,11 @@ func (u *Upload) Exec(cli artifactory.ArtifactoryServicesManager) error {
 		p.Flat = u.Flat
 
 		retries := 3
-
-		var retryErr error
 		totalFailed := 0
 		totalSucceeded := 0
 		maxSucceeded := 0
+
+		var retryErr error
 
 		// send API call to upload files in Artifactory
 		// retry a couple times to avoid intermittent authentication failures from Artifactory
