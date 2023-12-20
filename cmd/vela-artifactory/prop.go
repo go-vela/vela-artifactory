@@ -5,10 +5,12 @@ package main
 import (
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/jfrog/jfrog-client-go/artifactory"
 	"github.com/jfrog/jfrog-client-go/artifactory/services"
 	"github.com/jfrog/jfrog-client-go/artifactory/services/utils"
+	"github.com/jfrog/jfrog-client-go/utils/io/content"
 
 	"github.com/sirupsen/logrus"
 
@@ -81,10 +83,31 @@ func (s *SetProp) Exec(cli artifactory.ArtifactoryServicesManager) error {
 		Recursive: s.Recursive,
 	}
 
-	// send API call to search path for artifacts in Artifactory
-	files, err := cli.SearchFiles(searchParams)
-	if err != nil {
-		return err
+	retries := 3
+	var retryErr error
+	var files *content.ContentReader
+
+	// send API call to search for files in Artifactory
+	// retry a couple times to avoid intermittent from Artifactory
+	for i := 0; i < retries; i++ {
+		backoff := i*2 + 1
+
+		// send API call to search path for artifacts in Artifactory
+		files, retryErr = cli.SearchFiles(searchParams)
+		if retryErr != nil {
+			logrus.Errorf("Error searching for files using pattern %s on attempt %d: %s",
+				searchParams.CommonParams.Pattern, i+1, retryErr.Error())
+
+			if i == retries-1 {
+				return retryErr
+			}
+
+			logrus.Infof("Retrying in %d seconds...", backoff)
+
+			time.Sleep(time.Duration(backoff) * time.Second)
+		} else {
+			break
+		}
 	}
 
 	// create new property parameters
@@ -94,10 +117,27 @@ func (s *SetProp) Exec(cli artifactory.ArtifactoryServicesManager) error {
 	p.Reader = files
 	p.Props = s.String()
 
-	// send API call to set properties for artifacts in Artifactory
-	_, err = cli.SetProps(p)
-	if err != nil {
-		return err
+	// send API call to upload files in Artifactory
+	// retry a couple times to avoid intermittent from Artifactory
+	for i := 0; i < retries; i++ {
+		backoff := i*2 + 1
+
+		// send API call to set properties for artifacts in Artifactory
+		_, retryErr = cli.SetProps(p)
+		if retryErr != nil {
+			logrus.Errorf("Error setting properties for files on attempt %d: %s",
+				i+1, retryErr.Error())
+
+			if i == retries-1 {
+				return retryErr
+			}
+
+			logrus.Infof("Retrying in %d seconds...", backoff)
+
+			time.Sleep(time.Duration(backoff) * time.Second)
+		} else {
+			break
+		}
 	}
 
 	return nil

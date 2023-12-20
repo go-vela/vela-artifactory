@@ -9,6 +9,7 @@ import (
 
 	"github.com/jfrog/jfrog-client-go/artifactory"
 	"github.com/jfrog/jfrog-client-go/artifactory/services"
+	"github.com/jfrog/jfrog-client-go/utils/io/content"
 	"github.com/sirupsen/logrus"
 )
 
@@ -86,9 +87,29 @@ func (p *DockerPromote) Exec(cli artifactory.ArtifactoryServicesManager) error {
 	for _, payload := range payloads {
 		logrus.Infof("Promoting tag %s to target %s", payload.GetSourceTag(), payload.GetTargetTag())
 
-		err := cli.PromoteDocker(*payload)
-		if err != nil {
-			return err
+		retries := 3
+		var retryErr error
+
+		// send API call to promote Docker image in Artifactory
+		// retry a couple times to avoid intermittent from Artifactory
+		for i := 0; i < retries; i++ {
+			backoff := i*2 + 1
+
+			retryErr = cli.PromoteDocker(*payload)
+			if retryErr != nil {
+				logrus.Errorf("Error promoting tag %s to target %s on attempt %d: %s",
+					payload.GetSourceTag(), payload.GetTargetTag(), i+1, retryErr.Error())
+
+				if i == retries-1 {
+					return retryErr
+				}
+
+				logrus.Infof("Retrying in %d seconds...", backoff)
+
+				time.Sleep(time.Duration(backoff) * time.Second)
+			} else {
+				break
+			}
 		}
 
 		// recursively assign promoted_on property based on plugin configuration
@@ -121,11 +142,31 @@ func (p *DockerPromote) Exec(cli artifactory.ArtifactoryServicesManager) error {
 
 			searchParams.Pattern = imageFolderSearchPattern
 
-			imageFolderReader, err := cli.SearchFiles(searchParams)
-			if err != nil {
-				return err
+			var imageFolderReader *content.ContentReader
+
+			// send API call to search for files in Artifactory
+			// retry a couple times to avoid intermittent from Artifactory
+			for i := 0; i < retries; i++ {
+				backoff := i*2 + 1
+
+				imageFolderReader, retryErr = cli.SearchFiles(searchParams)
+				if retryErr != nil {
+					logrus.Errorf("Error searching for files using pattern %s on attempt %d: %s",
+						imageFolderSearchPattern, i+1, retryErr.Error())
+
+					if i == retries-1 {
+						return retryErr
+					}
+
+					logrus.Infof("Retrying in %d seconds...", backoff)
+
+					time.Sleep(time.Duration(backoff) * time.Second)
+				} else {
+					break
+				}
 			}
 
+			// close the reader when done
 			defer imageFolderReader.Close()
 
 			// assign the files found to be used in SetProps
@@ -133,9 +174,28 @@ func (p *DockerPromote) Exec(cli artifactory.ArtifactoryServicesManager) error {
 
 			logrus.Tracef("assigning property [%s] to %d matched images", promotedOnProperty, len(imageFolderReader.GetFilesPaths()))
 
-			imageFolderSuccess, err := cli.SetProps(propsParams)
-			if err != nil {
-				return err
+			imageFolderSuccess := 0
+
+			// send API call to set properties on a Docker image folder in Artifactory
+			// retry a couple times to avoid intermittent from Artifactory
+			for i := 0; i < retries; i++ {
+				backoff := i*2 + 1
+
+				imageFolderSuccess, retryErr = cli.SetProps(propsParams)
+				if retryErr != nil {
+					logrus.Errorf("Error setting properties for folder on tag %s to target %s on attempt %d: %s",
+						payload.GetSourceTag(), payload.GetTargetTag(), i+1, retryErr.Error())
+
+					if i == retries-1 {
+						return retryErr
+					}
+
+					logrus.Infof("Retrying in %d seconds...", backoff)
+
+					time.Sleep(time.Duration(backoff) * time.Second)
+				} else {
+					break
+				}
 			}
 
 			// setup base search params
@@ -155,9 +215,28 @@ func (p *DockerPromote) Exec(cli artifactory.ArtifactoryServicesManager) error {
 
 			searchParams.Pattern = imageContentsSearchPattern
 
-			imageContentsReader, err := cli.SearchFiles(searchParams)
-			if err != nil {
-				return err
+			var imageContentsReader *content.ContentReader
+
+			// send API call to search for files in Artifactory
+			// use a retry backoff to avoid 403 errors
+			for i := 0; i < retries; i++ {
+				backoff := i*2 + 1
+
+				imageContentsReader, retryErr = cli.SearchFiles(searchParams)
+				if retryErr != nil {
+					logrus.Errorf("Error searching for files using pattern %s on attempt %d: %s",
+						imageContentsSearchPattern, i+1, retryErr.Error())
+
+					if i == retries-1 {
+						return retryErr
+					}
+
+					logrus.Infof("Retrying in %d seconds...", backoff)
+
+					time.Sleep(time.Duration(backoff) * time.Second)
+				} else {
+					break
+				}
 			}
 
 			defer imageContentsReader.Close()
@@ -167,16 +246,35 @@ func (p *DockerPromote) Exec(cli artifactory.ArtifactoryServicesManager) error {
 
 			logrus.Tracef("assigning property [%s] to %d matched images", promotedOnProperty, len(imageContentsReader.GetFilesPaths()))
 
-			imageContentsSuccess, err := cli.SetProps(propsParams)
-			if err != nil {
-				return err
+			imageContentsSuccess := 0
+
+			// send API call to set properties on a Docker image contents in Artifactory
+			// use a retry backoff to avoid 403 errors
+			for i := 0; i < retries; i++ {
+				backoff := i*2 + 1
+
+				imageContentsSuccess, retryErr = cli.SetProps(propsParams)
+				if retryErr != nil {
+					logrus.Errorf("Error setting properties for contents on tag %s to target %s on attempt %d: %s",
+						payload.GetSourceTag(), payload.GetTargetTag(), i+1, retryErr.Error())
+
+					if i == retries-1 {
+						return retryErr
+					}
+
+					logrus.Infof("Retrying in %d seconds...", backoff)
+
+					time.Sleep(time.Duration(backoff) * time.Second)
+				} else {
+					break
+				}
 			}
 
 			totalSuccess := imageFolderSuccess + imageContentsSuccess
 			if totalSuccess > 0 {
 				logrus.Infof("Successfully assigned property [%s] to %d image files.", promotedOnProperty, totalSuccess)
 			} else {
-				logrus.Info("Promote properties not assigned to any images.")
+				logrus.Warn("Promote properties not assigned to any image files.")
 			}
 		}
 

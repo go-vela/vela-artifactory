@@ -4,12 +4,14 @@ package main
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/sirupsen/logrus"
 
 	"github.com/jfrog/jfrog-client-go/artifactory"
 	"github.com/jfrog/jfrog-client-go/artifactory/services"
 	"github.com/jfrog/jfrog-client-go/artifactory/services/utils"
+	"github.com/jfrog/jfrog-client-go/utils/io/content"
 )
 
 const deleteAction = "delete"
@@ -35,16 +37,55 @@ func (d *Delete) Exec(cli artifactory.ArtifactoryServicesManager) error {
 		Recursive: d.Recursive,
 	}
 
-	// send API call to capture paths to artifacts in Artifactory
-	paths, err := cli.GetPathsToDelete(p)
-	if err != nil {
-		return err
+	retries := 3
+	var retryErr error
+	var paths *content.ContentReader
+
+	// send API call to search for paths in Artifactory
+	// retry a couple times to avoid intermittent from Artifactory
+	for i := 0; i < retries; i++ {
+		backoff := i*2 + 1
+
+		// send API call to capture paths to artifacts in Artifactory
+		paths, retryErr = cli.GetPathsToDelete(p)
+		if retryErr != nil {
+			logrus.Errorf("Error getting delete paths for files using pattern %s on attempt %d: %s",
+				p.CommonParams.Pattern,
+				i+1, retryErr.Error())
+
+			if i == retries-1 {
+				return retryErr
+			}
+
+			logrus.Infof("Retrying in %d seconds...", backoff)
+
+			time.Sleep(time.Duration(backoff) * time.Second)
+		} else {
+			break
+		}
 	}
 
 	// send API call to delete artifacts in Artifactory
-	_, err = cli.DeleteFiles(paths)
-	if err != nil {
-		return err
+	// retry a couple times to avoid intermittent from Artifactory
+	for i := 0; i < retries; i++ {
+		backoff := i*2 + 1
+
+		// send API call to delete artifacts in Artifactory
+		_, retryErr = cli.DeleteFiles(paths)
+		if retryErr != nil {
+			logrus.Errorf("Error deleting paths on attempt %d: %s",
+				i+1, retryErr.Error())
+
+			if i == retries-1 {
+				return retryErr
+			}
+
+			logrus.Infof("Retrying in %d seconds...", backoff)
+
+			time.Sleep(time.Duration(backoff) * time.Second)
+		} else {
+			break
+		}
 	}
 
 	return nil

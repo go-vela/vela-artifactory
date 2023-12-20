@@ -4,6 +4,7 @@ package main
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/sirupsen/logrus"
 
@@ -49,10 +50,45 @@ func (u *Upload) Exec(cli artifactory.ArtifactoryServicesManager) error {
 		}
 		p.Flat = u.Flat
 
-		// send API call to upload artifacts in Artifactory
-		_, totalFailed, err := cli.UploadFiles(p)
-		if totalFailed > 0 || err != nil {
-			return err
+		retries := 3
+		var retryErr error
+		totalFailed := 0
+		totalSucceeded := 0
+		maxSucceeded := 0
+
+		// send API call to upload files in Artifactory
+		// retry a couple times to avoid intermittent from Artifactory
+		for i := 0; i < retries; i++ {
+			backoff := i*2 + 1
+
+			// send API call to upload artifacts in Artifactory
+			totalSucceeded, totalFailed, retryErr = cli.UploadFiles(p)
+
+			if maxSucceeded < totalSucceeded {
+				maxSucceeded = totalSucceeded
+			}
+
+			if totalFailed > 0 || retryErr != nil {
+				logrus.Errorf("Error uploading files to target path %s on attempt %d: %s", p.CommonParams.Target, i+1, retryErr.Error())
+
+				if i == retries-1 {
+					if maxSucceeded > 0 {
+						logrus.Warn("Successfully uploaded some files. Therefore conflicts may have occurred during re-upload attempts. Check Artifactory.")
+					}
+
+					if retryErr == nil {
+						retryErr = fmt.Errorf("failed to upload %d files", totalFailed)
+					}
+
+					return retryErr
+				}
+
+				logrus.Infof("Retrying in %d seconds...", backoff)
+
+				time.Sleep(time.Duration(backoff) * time.Second)
+			} else {
+				break
+			}
 		}
 	}
 

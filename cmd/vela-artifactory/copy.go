@@ -4,6 +4,7 @@ package main
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/jfrog/jfrog-client-go/artifactory"
 	"github.com/jfrog/jfrog-client-go/artifactory/services"
@@ -41,10 +42,31 @@ func (c *Copy) Exec(cli artifactory.ArtifactoryServicesManager) error {
 	}
 	p.Flat = c.Flat
 
+	retries := 3
+	var retryErr error
+
 	// send API call to copy artifacts in Artifactory
-	_, _, err := cli.Copy(p)
-	if err != nil {
-		return err
+	// retry a couple times to avoid intermittent from Artifactory
+	for i := 0; i < retries; i++ {
+		backoff := i*2 + 1
+
+		// send API call to copy artifacts in Artifactory
+		_, _, retryErr = cli.Copy(p)
+		if retryErr != nil {
+			logrus.Errorf("Error copying files using pattern %s on attempt %d: %s",
+				p.CommonParams.Pattern,
+				i+1, retryErr.Error())
+
+			if i == retries-1 {
+				return retryErr
+			}
+
+			logrus.Infof("Retrying in %d seconds...", backoff)
+
+			time.Sleep(time.Duration(backoff) * time.Second)
+		} else {
+			break
+		}
 	}
 
 	return nil
