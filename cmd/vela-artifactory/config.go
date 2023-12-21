@@ -6,7 +6,9 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"time"
 
+	"github.com/hashicorp/go-retryablehttp"
 	"github.com/jfrog/jfrog-client-go/artifactory"
 	"github.com/jfrog/jfrog-client-go/artifactory/auth"
 	"github.com/jfrog/jfrog-client-go/config"
@@ -91,15 +93,21 @@ func (c *Config) New() (*artifactory.ArtifactoryServicesManager, error) {
 	}
 
 	if c.HTTPRetryWaitMilliSecs == 0 {
-		c.HTTPRetryWaitMilliSecs = 1000
+		c.HTTPRetryWaitMilliSecs = 500
 	}
+
+	retryClient := retryablehttp.NewClient()
+	retryClient.RetryMax = c.HTTPRetries
+	retryClient.RetryWaitMin = time.Millisecond * time.Duration(c.HTTPRetryWaitMilliSecs)
+	retryClient.CheckRetry = RetryPolicy
 
 	// create new Artifactory config from details
 	config, err := config.NewConfigBuilder().
 		SetServiceDetails(details).
 		SetDryRun(c.DryRun).
-		SetHttpRetryWaitMilliSecs(c.HTTPRetryWaitMilliSecs).
-		SetHttpRetries(c.HTTPRetries).
+		SetHttpRetryWaitMilliSecs(0).
+		SetHttpRetries(0).
+		SetHttpClient(retryClient.StandardClient()).
 		Build()
 	if err != nil {
 		return nil, err

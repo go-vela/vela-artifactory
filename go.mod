@@ -7,6 +7,7 @@ require (
 	github.com/ghodss/yaml v1.0.0
 	github.com/gin-gonic/gin v1.9.1
 	github.com/go-vela/types v0.20.1
+	github.com/hashicorp/go-retryablehttp v0.7.5
 	github.com/jfrog/jfrog-client-go v1.34.3
 	github.com/joho/godotenv v1.5.1
 	github.com/sirupsen/logrus v1.9.3
@@ -41,6 +42,7 @@ require (
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
 	github.com/golang/snappy v0.0.2 // indirect
 	github.com/gookit/color v1.5.4 // indirect
+	github.com/hashicorp/go-cleanhttp v0.5.2 // indirect
 	github.com/jbenet/go-context v0.0.0-20150711004518-d14ea06fba99 // indirect
 	github.com/jfrog/build-info-go v1.9.13 // indirect
 	github.com/jfrog/gofrog v1.3.1 // indirect

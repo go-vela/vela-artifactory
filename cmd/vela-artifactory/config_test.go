@@ -228,3 +228,147 @@ func TestArtifactory_Config_500_Retries(t *testing.T) {
 		t.Errorf("client should have attempted to copy %d times, only attempted %d times", httpRetries+1, copyAttempts)
 	}
 }
+
+func TestArtifactory_Config_403_Retries(t *testing.T) {
+	searchAttempts := 0
+	copyAttempts := 0
+
+	httpRetries := 3
+	httpRetryWaitMilliSecs := 1
+
+	failureResponseCode := 403
+
+	e := gin.New()
+
+	search := func(c *gin.Context) {
+		searchAttempts++
+
+		data, _ := os.ReadFile("mock/fixtures/search.json")
+
+		if searchAttempts == httpRetries+1 {
+			c.String(200, string(data))
+		} else {
+			c.Status(failureResponseCode)
+		}
+	}
+
+	copyArtifact := func(c *gin.Context) {
+		copyAttempts++
+
+		c.Status(failureResponseCode)
+	}
+
+	e.POST("/api/search/aql", search)
+	e.POST("/api/copy", copyArtifact)
+
+	ss := httptest.NewServer(e)
+
+	// setup types
+	p := &Plugin{
+		Config: &Config{
+			Action:                 "copy",
+			Token:                  mock.Token,
+			APIKey:                 mock.APIKey,
+			DryRun:                 false,
+			URL:                    ss.URL,
+			Username:               mock.Username,
+			Password:               mock.Password,
+			HTTPRetries:            httpRetries,
+			HTTPRetryWaitMilliSecs: httpRetryWaitMilliSecs,
+		},
+		Copy: &Copy{
+			Flat:      false,
+			Recursive: false,
+			Path:      "foo/bar",
+			Target:    "bar/foo",
+		},
+		Delete:  &Delete{},
+		SetProp: &SetProp{},
+		Upload:  &Upload{},
+	}
+
+	err := p.Exec()
+	if err == nil {
+		t.Errorf("Exec should have returned err")
+	}
+
+	if searchAttempts != httpRetries+1 {
+		t.Errorf("client should have attempted to search %d times, only attempted %d times", httpRetries+1, searchAttempts)
+	}
+
+	if copyAttempts != httpRetries+1 {
+		t.Errorf("client should have attempted to copy %d times, only attempted %d times", httpRetries+1, copyAttempts)
+	}
+}
+
+func TestArtifactory_Config_401_Retries(t *testing.T) {
+	searchAttempts := 0
+	copyAttempts := 0
+
+	httpRetries := 3
+	httpRetryWaitMilliSecs := 1
+
+	failureResponseCode := 401
+
+	e := gin.New()
+
+	search := func(c *gin.Context) {
+		searchAttempts++
+
+		data, _ := os.ReadFile("mock/fixtures/search.json")
+
+		if searchAttempts == httpRetries+1 {
+			c.String(200, string(data))
+		} else {
+			c.Status(failureResponseCode)
+		}
+	}
+
+	copyArtifact := func(c *gin.Context) {
+		copyAttempts++
+
+		c.Status(failureResponseCode)
+	}
+
+	e.POST("/api/search/aql", search)
+	e.POST("/api/copy", copyArtifact)
+
+	ss := httptest.NewServer(e)
+
+	// setup types
+	p := &Plugin{
+		Config: &Config{
+			Action:                 "copy",
+			Token:                  mock.Token,
+			APIKey:                 mock.APIKey,
+			DryRun:                 false,
+			URL:                    ss.URL,
+			Username:               mock.Username,
+			Password:               mock.Password,
+			HTTPRetries:            httpRetries,
+			HTTPRetryWaitMilliSecs: httpRetryWaitMilliSecs,
+		},
+		Copy: &Copy{
+			Flat:      false,
+			Recursive: false,
+			Path:      "foo/bar",
+			Target:    "bar/foo",
+		},
+		Delete:  &Delete{},
+		SetProp: &SetProp{},
+		Upload:  &Upload{},
+	}
+
+	err := p.Exec()
+	if err == nil {
+		t.Errorf("Exec should have returned err")
+	}
+
+	if searchAttempts != 1 {
+		t.Errorf("client should have attempted to search %d times, only attempted %d times", httpRetries+1, searchAttempts)
+	}
+
+	if copyAttempts != 0 {
+		t.Errorf("client should have attempted to copy %d times, only attempted %d times", httpRetries+1, copyAttempts)
+	}
+}
