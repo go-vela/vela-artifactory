@@ -30,6 +30,12 @@ type Config struct {
 	Password string
 	// URL points to the Artifactory instance
 	URL string
+	// HTTPRetries defines the number of times
+	// to retry failed http attempts using the jfrog client.
+	HTTPRetries int
+	// HTTPRetryWaitMilliSecs defines the amount of time to wait
+	// between failed http attempts using the jfrog client.
+	HTTPRetryWaitMilliSecs int
 	// Username for communication with the Artifactory instance
 	Username string
 }
@@ -79,12 +85,21 @@ func (c *Config) New() (*artifactory.ArtifactoryServicesManager, error) {
 		log.NewLogger(log.INFO, os.Stdout),
 	)
 
+	// set default HTTP retries and retry wait in milliseconds
+	if c.HTTPRetries == 0 {
+		c.HTTPRetries = 3
+	}
+
+	if c.HTTPRetryWaitMilliSecs == 0 {
+		c.HTTPRetryWaitMilliSecs = 1000
+	}
+
 	// create new Artifactory config from details
 	config, err := config.NewConfigBuilder().
 		SetServiceDetails(details).
 		SetDryRun(c.DryRun).
-		SetHttpRetryWaitMilliSecs(1).
-		SetHttpRetries(5).
+		SetHttpRetryWaitMilliSecs(c.HTTPRetryWaitMilliSecs).
+		SetHttpRetries(c.HTTPRetries).
 		Build()
 	if err != nil {
 		return nil, err

@@ -4,7 +4,6 @@ package mock
 
 import (
 	"fmt"
-	"net/http"
 	"os"
 	"strings"
 
@@ -21,7 +20,7 @@ const (
 
 // Handlers returns an http.Handler group that is capable of handling
 // Artifactory API requests and returning mock responses.
-func Handlers() http.Handler {
+func Handlers() *gin.Engine {
 	gin.SetMode(gin.TestMode)
 
 	e := gin.New()

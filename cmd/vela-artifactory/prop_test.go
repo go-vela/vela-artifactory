@@ -16,13 +16,15 @@ func TestArtifactory_Prop_Exec(t *testing.T) {
 
 	p := &Plugin{
 		Config: &Config{
-			Action:   "set-prop",
-			Token:    mock.Token,
-			APIKey:   mock.APIKey,
-			DryRun:   false,
-			Password: mock.Password,
-			URL:      s.URL,
-			Username: mock.Username,
+			Action:                 "set-prop",
+			Token:                  mock.Token,
+			APIKey:                 mock.APIKey,
+			DryRun:                 false,
+			URL:                    s.URL,
+			Username:               mock.Username,
+			Password:               mock.Password,
+			HTTPRetries:            3,
+			HTTPRetryWaitMilliSecs: 1,
 		},
 		Copy:   &Copy{},
 		Delete: &Delete{},
@@ -147,12 +149,14 @@ func TestArtifactory_Prop_Validate_NoValueOrValues(t *testing.T) {
 func TestArtifactory_SetProp_Exec_Error(t *testing.T) {
 	// setup types
 	config := &Config{
-		Action:   "set-prop",
-		APIKey:   mock.APIKey,
-		DryRun:   false,
-		Password: mock.Password,
-		URL:      mock.InvalidArtifactoryServerURL,
-		Username: mock.Username,
+		Action:                 "set-prop",
+		APIKey:                 mock.APIKey,
+		DryRun:                 false,
+		URL:                    mock.InvalidArtifactoryServerURL,
+		Username:               mock.Username,
+		Password:               mock.Password,
+		HTTPRetries:            3,
+		HTTPRetryWaitMilliSecs: 1,
 	}
 
 	cli, err := config.New()

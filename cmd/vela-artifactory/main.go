@@ -121,7 +121,6 @@ func main() {
 			Name:     "config.username",
 			Usage:    "user name for communication with the Artifactory instance",
 		},
-
 		// Copy Flags
 
 		&cli.BoolFlag{
