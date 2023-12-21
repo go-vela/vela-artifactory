@@ -180,14 +180,14 @@ func TestArtifactory_Config_500_Retries(t *testing.T) {
 		}
 	}
 
-	copy := func(c *gin.Context) {
+	copyArtifact := func(c *gin.Context) {
 		copyAttempts++
 
 		c.Status(failureResponseCode)
 	}
 
 	e.POST("/api/search/aql", search)
-	e.POST("/api/copy", copy)
+	e.POST("/api/copy", copyArtifact)
 
 	ss := httptest.NewServer(e)
 
