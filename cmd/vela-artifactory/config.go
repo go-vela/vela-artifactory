@@ -88,25 +88,33 @@ func (c *Config) New() (*artifactory.ArtifactoryServicesManager, error) {
 	)
 
 	// set default HTTP retries and retry wait in milliseconds
-	if c.HTTPRetries == 0 {
+	if c.HTTPRetries <= 0 {
 		c.HTTPRetries = 3
 	}
 
-	if c.HTTPRetryWaitMilliSecs == 0 {
+	if c.HTTPRetryWaitMilliSecs <= 0 {
 		c.HTTPRetryWaitMilliSecs = 500
 	}
 
+	// create a retryable http client using https://github.com/hashicorp/go-retryablehttp
+	// which is mostly a wrapper around https://golang.org/pkg/net/http/#Client with a customized
+	// roundtrip transport that can be modified to retry certain http responses
 	retryClient := retryablehttp.NewClient()
 	retryClient.RetryMax = c.HTTPRetries
 	retryClient.RetryWaitMin = time.Millisecond * time.Duration(c.HTTPRetryWaitMilliSecs)
+
+	// apply a custom retry policy that has been modified to retry on 403 responses
+	// using an incrementing backoff
 	retryClient.CheckRetry = RetryPolicy
 
 	// create new Artifactory config from details
 	config, err := config.NewConfigBuilder().
 		SetServiceDetails(details).
 		SetDryRun(c.DryRun).
+		// disable the default jfrog client retry policy
 		SetHttpRetryWaitMilliSecs(0).
 		SetHttpRetries(0).
+		// enable the custom retry policy using retryablehttp
 		SetHttpClient(retryClient.StandardClient()).
 		Build()
 	if err != nil {
