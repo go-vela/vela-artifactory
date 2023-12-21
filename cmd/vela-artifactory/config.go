@@ -83,6 +83,8 @@ func (c *Config) New() (*artifactory.ArtifactoryServicesManager, error) {
 	config, err := config.NewConfigBuilder().
 		SetServiceDetails(details).
 		SetDryRun(c.DryRun).
+		SetHttpRetryWaitMilliSecs(1).
+		SetHttpRetries(5).
 		Build()
 	if err != nil {
 		return nil, err
