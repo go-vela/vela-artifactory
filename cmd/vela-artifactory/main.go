@@ -132,10 +132,10 @@ func main() {
 			Value:    3,
 		},
 		&cli.IntFlag{
-			EnvVars:  []string{"PARAMETER_HTTP_CLIENT_RETRY_WAIT", "ARTIFACTORY_HTTP_CLIENT_RETRY_WAIT"},
+			EnvVars:  []string{"PARAMETER_HTTP_CLIENT_RETRY_WAIT_MILLISECONDS", "ARTIFACTORY_HTTP_CLIENT_RETRY_WAIT_MILLISECONDS"},
 			FilePath: "/vela/parameters/artifactory/client/retry_wait,/vela/secrets/artifactory/client/retry_wait",
 			Name:     "client.retry_wait",
-			Usage:    "amount of time to wait between failed http attempts",
+			Usage:    "amount of milliseconds to wait between failed http attempts",
 			Value:    500,
 		},
 		&cli.StringFlag{
