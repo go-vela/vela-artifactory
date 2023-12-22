@@ -20,6 +20,10 @@ func TestArtifactory_Config_New(t *testing.T) {
 		URL:      mock.InvalidArtifactoryServerURL,
 		Username: mock.Username,
 		Password: mock.Password,
+		Client: &Client{
+			Retries:            3,
+			RetryWaitMilliSecs: 1,
+		},
 	}
 
 	got, err := c.New()
@@ -161,8 +165,8 @@ func TestArtifactory_Config_500_Retries(t *testing.T) {
 	searchAttempts := 0
 	copyAttempts := 0
 
-	httpRetries := 3
-	httpRetryWaitMilliSecs := 1
+	httpRetries := 5
+	httpRetryWaitMilliSecs := 2
 
 	failureResponseCode := 500
 
@@ -194,15 +198,17 @@ func TestArtifactory_Config_500_Retries(t *testing.T) {
 	// setup types
 	p := &Plugin{
 		Config: &Config{
-			Action:                 "copy",
-			Token:                  mock.Token,
-			APIKey:                 mock.APIKey,
-			DryRun:                 false,
-			URL:                    ss.URL,
-			Username:               mock.Username,
-			Password:               mock.Password,
-			HTTPRetries:            httpRetries,
-			HTTPRetryWaitMilliSecs: httpRetryWaitMilliSecs,
+			Action:   "copy",
+			Token:    mock.Token,
+			APIKey:   mock.APIKey,
+			DryRun:   false,
+			URL:      ss.URL,
+			Username: mock.Username,
+			Password: mock.Password,
+			Client: &Client{
+				Retries:            httpRetries,
+				RetryWaitMilliSecs: httpRetryWaitMilliSecs,
+			},
 		},
 		Copy: &Copy{
 			Flat:      false,
@@ -266,15 +272,17 @@ func TestArtifactory_Config_403_Retries(t *testing.T) {
 	// setup types
 	p := &Plugin{
 		Config: &Config{
-			Action:                 "copy",
-			Token:                  mock.Token,
-			APIKey:                 mock.APIKey,
-			DryRun:                 false,
-			URL:                    ss.URL,
-			Username:               mock.Username,
-			Password:               mock.Password,
-			HTTPRetries:            httpRetries,
-			HTTPRetryWaitMilliSecs: httpRetryWaitMilliSecs,
+			Action:   "copy",
+			Token:    mock.Token,
+			APIKey:   mock.APIKey,
+			DryRun:   false,
+			URL:      ss.URL,
+			Username: mock.Username,
+			Password: mock.Password,
+			Client: &Client{
+				Retries:            httpRetries,
+				RetryWaitMilliSecs: httpRetryWaitMilliSecs,
+			},
 		},
 		Copy: &Copy{
 			Flat:      false,
@@ -338,15 +346,17 @@ func TestArtifactory_Config_401_Retries(t *testing.T) {
 	// setup types
 	p := &Plugin{
 		Config: &Config{
-			Action:                 "copy",
-			Token:                  mock.Token,
-			APIKey:                 mock.APIKey,
-			DryRun:                 false,
-			URL:                    ss.URL,
-			Username:               mock.Username,
-			Password:               mock.Password,
-			HTTPRetries:            httpRetries,
-			HTTPRetryWaitMilliSecs: httpRetryWaitMilliSecs,
+			Action:   "copy",
+			Token:    mock.Token,
+			APIKey:   mock.APIKey,
+			DryRun:   false,
+			URL:      ss.URL,
+			Username: mock.Username,
+			Password: mock.Password,
+			Client: &Client{
+				Retries:            httpRetries,
+				RetryWaitMilliSecs: httpRetryWaitMilliSecs,
+			},
 		},
 		Copy: &Copy{
 			Flat:      false,

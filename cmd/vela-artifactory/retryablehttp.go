@@ -41,11 +41,13 @@ func RetryPolicy(ctx context.Context, resp *http.Response, err error) (bool, err
 
 	// don't propagate other errors
 	shouldRetry, _ := baseRetryPolicy(resp, err)
+
 	return shouldRetry, nil
 }
 
 func baseRetryPolicy(resp *http.Response, err error) (bool, error) {
 	if err != nil {
+		//nolint:errorlint // borrowed code
 		if v, ok := err.(*url.Error); ok {
 			// Don't retry if the error was due to too many redirects.
 			if redirectsErrorRe.MatchString(v.Error()) {
@@ -61,6 +63,8 @@ func baseRetryPolicy(resp *http.Response, err error) (bool, error) {
 			if notTrustedErrorRe.MatchString(v.Error()) {
 				return false, v
 			}
+
+			//nolint:errorlint // borrowed code
 			if _, ok := v.Err.(x509.UnknownAuthorityError); ok {
 				return false, v
 			}

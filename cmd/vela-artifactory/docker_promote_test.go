@@ -15,15 +15,17 @@ func TestArtifactory_DockerPromote_Exec(t *testing.T) {
 
 	p := &Plugin{
 		Config: &Config{
-			Action:                 "docker-promote",
-			Token:                  mock.Token,
-			APIKey:                 mock.APIKey,
-			DryRun:                 false,
-			URL:                    s.URL,
-			Username:               mock.Username,
-			Password:               mock.Password,
-			HTTPRetries:            3,
-			HTTPRetryWaitMilliSecs: 1,
+			Action:   "docker-promote",
+			Token:    mock.Token,
+			APIKey:   mock.APIKey,
+			DryRun:   false,
+			URL:      s.URL,
+			Username: mock.Username,
+			Password: mock.Password,
+			Client: &Client{
+				Retries:            3,
+				RetryWaitMilliSecs: 1,
+			},
 		},
 		Copy:   &Copy{},
 		Delete: &Delete{},
@@ -45,15 +47,17 @@ func TestArtifactory_DockerPromote_Exec_Error(t *testing.T) {
 	// setup types
 	p := &Plugin{
 		Config: &Config{
-			Action:                 "docker-promote",
-			Token:                  mock.Token,
-			APIKey:                 mock.APIKey,
-			DryRun:                 false,
-			URL:                    mock.InvalidArtifactoryServerURL,
-			Username:               mock.Username,
-			Password:               mock.Password,
-			HTTPRetries:            3,
-			HTTPRetryWaitMilliSecs: 1,
+			Action:   "docker-promote",
+			Token:    mock.Token,
+			APIKey:   mock.APIKey,
+			DryRun:   false,
+			URL:      mock.InvalidArtifactoryServerURL,
+			Username: mock.Username,
+			Password: mock.Password,
+			Client: &Client{
+				Retries:            3,
+				RetryWaitMilliSecs: 1,
+			},
 		},
 		Copy:   &Copy{},
 		Delete: &Delete{},
