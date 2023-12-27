@@ -3,12 +3,17 @@
 package main
 
 import (
+	"crypto/tls"
 	"fmt"
 	"os"
 	"strings"
+	"time"
 
+	"github.com/hashicorp/go-cleanhttp"
+	"github.com/hashicorp/go-retryablehttp"
 	"github.com/jfrog/jfrog-client-go/artifactory"
 	"github.com/jfrog/jfrog-client-go/artifactory/auth"
+	"github.com/jfrog/jfrog-client-go/auth/cert"
 	"github.com/jfrog/jfrog-client-go/config"
 	"github.com/jfrog/jfrog-client-go/http/httpclient"
 	"github.com/jfrog/jfrog-client-go/utils/log"
@@ -26,12 +31,28 @@ type Config struct {
 	APIKey string
 	// DryRun enables pretending to perform the action against the Artifactory instance
 	DryRun bool
+	// Username for communication with the Artifactory instance
+	Username string
 	// Password for communication with the Artifactory instance
 	Password string
 	// URL points to the Artifactory instance
 	URL string
-	// Username for communication with the Artifactory instance
-	Username string
+	// Client represents the HTTP client configurations for interacting with Artifactory
+	*Client
+}
+
+// Client represents the HTTP client configurations for interacting with Artifactory.
+type Client struct {
+	// Retries is the number of times to retry communication with Artifactory
+	Retries int
+	// RetryWaitMilliSecs is the number of milliseconds to wait between retries
+	RetryWaitMilliSecs int
+	// CertPath is the path to the certificate for communication with Artifactory
+	CertPath string
+	// CertKeyPath is the path to the certificate key for communication with Artifactory
+	CertKeyPath string
+	// InsecureTLS enables insecure TLS communication with Artifactory
+	InsecureTLS bool
 }
 
 // New creates an Artifactory client for managing artifacts.
@@ -79,10 +100,56 @@ func (c *Config) New() (*artifactory.ArtifactoryServicesManager, error) {
 		log.NewLogger(log.INFO, os.Stdout),
 	)
 
+	// set default HTTP retries and retry wait in milliseconds
+	if c.Retries < 0 {
+		logrus.Warn("invalid retry count provided, defaulting to 3")
+
+		c.Retries = 3
+	}
+
+	if c.RetryWaitMilliSecs < 0 {
+		logrus.Warn("invalid retry wait in milliseconds provided, defaulting to 500")
+
+		c.RetryWaitMilliSecs = 500
+	}
+
+	// create a retryable http client using https://github.com/hashicorp/go-retryablehttp
+	// which is mostly a wrapper around https://golang.org/pkg/net/http/#Client with a customized
+	// roundtrip transport that can be modified to retry certain http responses
+	retryClient := retryablehttp.NewClient()
+	retryClient.RetryMax = c.Retries
+	retryClient.RetryWaitMin = time.Millisecond * time.Duration(c.RetryWaitMilliSecs)
+
+	transport := cleanhttp.DefaultPooledTransport()
+
+	//nolint:gosec // disable warning for InsecureSkipVerify
+	transport.TLSClientConfig = &tls.Config{InsecureSkipVerify: c.InsecureTLS}
+
+	// read certs if provided a path to a certificate and key
+	if c.CertPath != "" && c.CertKeyPath != "" {
+		certificate, err := cert.LoadCertificate(c.CertPath, c.CertKeyPath)
+		if err != nil {
+			return nil, err
+		}
+
+		transport.TLSClientConfig.Certificates = []tls.Certificate{certificate}
+	}
+
+	retryClient.HTTPClient.Transport = transport
+
+	// apply a custom retry policy that has been modified to retry on 403 responses
+	// using an incrementing backoff
+	retryClient.CheckRetry = RetryPolicy
+
 	// create new Artifactory config from details
 	config, err := config.NewConfigBuilder().
 		SetServiceDetails(details).
 		SetDryRun(c.DryRun).
+		// disable the default jfrog client retry policy
+		SetHttpRetryWaitMilliSecs(0).
+		SetHttpRetries(0).
+		// enable the custom retry policy using retryablehttp
+		SetHttpClient(retryClient.StandardClient()).
 		Build()
 	if err != nil {
 		return nil, err

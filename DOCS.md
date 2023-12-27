@@ -198,6 +198,11 @@ The following parameters are used to configure the image:
 | `password`  | password for communication with Artifactory  | `false`  | `N/A`   | `PARAMETER_PASSWORD`<br>`ARTIFACTORY_PASSWORD`   |
 | `url`       | Artifactory instance to communicate with     | `true`   | `N/A`   | `PARAMETER_URL`<br>`ARTIFACTORY_URL`             |
 | `username`  | user name for communication with Artifactory | `false`  | `N/A`   | `PARAMETER_USERNAME`<br>`ARTIFACTORY_USERNAME`   |
+| `http_client_retries` | number of times to retry failed http attempts | `false` | `3` | `PARAMETER_HTTP_CLIENT_RETRIES`<br>`ARTIFACTORY_HTTP_CLIENT_RETRIES` |
+| `http_client_retry_wait` | amount of milliseconds to wait between failed http attempts | `false` | `500` | `PARAMETER_HTTP_CLIENT_RETRY_WAIT_MILLISECONDS`<br>`ARTIFACTORY_HTTP_CLIENT_RETRY_WAIT_MILLISECONDS` |
+| `http_client_cert` | file path to the client certificate to use for TLS communication | `false` | `N/A` | `PARAMETER_HTTP_CLIENT_CERT`<br>`ARTIFACTORY_HTTP_CLIENT_CERT` |
+| `http_client_cert_key` | file path to the client certificate key to use for TLS communication | `false` | `N/A` | `PARAMETER_HTTP_CLIENT_CERT_KEY`<br>`ARTIFACTORY_HTTP_CLIENT_CERT_KEY` |
+| `http_client_insecure_tls` | enable insecure TLS communication | `false` | `false` | `PARAMETER_HTTP_CLIENT_INSECURE_TLS`<br>`ARTIFACTORY_HTTP_CLIENT_INSECURE_TLS` |
 
 ### Copy
 

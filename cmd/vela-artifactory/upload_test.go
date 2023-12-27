@@ -22,6 +22,10 @@ func TestArtifactory_Plugin_Exec_Upload(t *testing.T) {
 			URL:      s.URL,
 			Username: mock.Username,
 			Password: mock.Password,
+			Client: &Client{
+				Retries:            3,
+				RetryWaitMilliSecs: 1,
+			},
 		},
 		Copy:    &Copy{},
 		Delete:  &Delete{},
@@ -50,6 +54,10 @@ func TestArtifactory_Upload_Exec_Error(t *testing.T) {
 		URL:      mock.InvalidArtifactoryServerURL,
 		Username: mock.Username,
 		Password: mock.Password,
+		Client: &Client{
+			Retries:            3,
+			RetryWaitMilliSecs: 1,
+		},
 	}
 
 	cli, err := config.New()

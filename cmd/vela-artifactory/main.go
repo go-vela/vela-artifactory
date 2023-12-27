@@ -122,6 +122,41 @@ func main() {
 			Usage:    "user name for communication with the Artifactory instance",
 		},
 
+		// Client Flags
+
+		&cli.IntFlag{
+			EnvVars:  []string{"PARAMETER_HTTP_CLIENT_RETRIES", "ARTIFACTORY_HTTP_CLIENT_RETRIES"},
+			FilePath: "/vela/parameters/artifactory/client/retries,/vela/secrets/artifactory/client/retries",
+			Name:     "client.retries",
+			Usage:    "number of times to retry failed http attempts",
+			Value:    3,
+		},
+		&cli.IntFlag{
+			EnvVars:  []string{"PARAMETER_HTTP_CLIENT_RETRY_WAIT_MILLISECONDS", "ARTIFACTORY_HTTP_CLIENT_RETRY_WAIT_MILLISECONDS"},
+			FilePath: "/vela/parameters/artifactory/client/retry_wait,/vela/secrets/artifactory/client/retry_wait",
+			Name:     "client.retry_wait",
+			Usage:    "amount of milliseconds to wait between failed http attempts",
+			Value:    500,
+		},
+		&cli.StringFlag{
+			EnvVars:  []string{"PARAMETER_HTTP_CLIENT_CERT", "ARTIFACTORY_HTTP_CLIENT_CERT"},
+			FilePath: "/vela/parameters/artifactory/client/cert,/vela/secrets/artifactory/client/cert",
+			Name:     "client.cert",
+			Usage:    "file path to the client certificate to use for TLS communication",
+		},
+		&cli.StringFlag{
+			EnvVars:  []string{"PARAMETER_HTTP_CLIENT_CERT_KEY", "ARTIFACTORY_HTTP_CLIENT_CERT_KEY"},
+			FilePath: "/vela/parameters/artifactory/client/cert_key,/vela/secrets/artifactory/client/cert_key",
+			Name:     "client.cert_key",
+			Usage:    "file path to the client certificate key to use for TLS communication",
+		},
+		&cli.BoolFlag{
+			EnvVars:  []string{"PARAMETER_HTTP_CLIENT_INSECURE_TLS", "ARTIFACTORY_HTTP_CLIENT_INSECURE_TLS"},
+			FilePath: "/vela/parameters/artifactory/client/insecure_tls,/vela/secrets/artifactory/client/insecure_tls",
+			Name:     "client.insecure_tls",
+			Usage:    "enables skipping TLS verification when communicating with the Artifactory instance",
+		},
+
 		// Copy Flags
 
 		&cli.BoolFlag{
@@ -282,6 +317,14 @@ func run(c *cli.Context) error {
 			Password: c.String("config.password"),
 			URL:      c.String("config.url"),
 			Username: c.String("config.username"),
+			// http client configuration
+			Client: &Client{
+				Retries:            c.Int("client.retries"),
+				RetryWaitMilliSecs: c.Int("client.retry_wait"),
+				CertPath:           c.String("client.cert"),
+				CertKeyPath:        c.String("client.cert_key"),
+				InsecureTLS:        c.Bool("client.insecure_tls"),
+			},
 		},
 		// copy configuration
 		Copy: &Copy{

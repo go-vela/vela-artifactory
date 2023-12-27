@@ -19,6 +19,10 @@ func TestArtifactory_Plugin_Exec_InvalidAction(t *testing.T) {
 			URL:      mock.InvalidArtifactoryServerURL,
 			Username: mock.Username,
 			Password: mock.Password,
+			Client: &Client{
+				Retries:            3,
+				RetryWaitMilliSecs: 1,
+			},
 		},
 		Copy:    &Copy{},
 		Delete:  &Delete{},
@@ -43,6 +47,10 @@ func TestArtifactory_Plugin_Validate(t *testing.T) {
 			URL:      mock.InvalidArtifactoryServerURL,
 			Username: mock.Username,
 			Password: mock.Password,
+			Client: &Client{
+				Retries:            3,
+				RetryWaitMilliSecs: 1,
+			},
 		},
 		Copy: &Copy{
 			Flat:      false,
@@ -95,6 +103,10 @@ func TestArtifactory_Plugin_Validate_InvalidAction(t *testing.T) {
 			URL:      mock.InvalidArtifactoryServerURL,
 			Username: mock.Username,
 			Password: mock.Password,
+			Client: &Client{
+				Retries:            3,
+				RetryWaitMilliSecs: 1,
+			},
 		},
 		Copy:          &Copy{},
 		Delete:        &Delete{},
@@ -136,6 +148,10 @@ func TestArtifactory_Plugin_Validate_NoCopy(t *testing.T) {
 			URL:      mock.InvalidArtifactoryServerURL,
 			Username: mock.Username,
 			Password: mock.Password,
+			Client: &Client{
+				Retries:            3,
+				RetryWaitMilliSecs: 1,
+			},
 		},
 		Copy:          &Copy{},
 		Delete:        &Delete{},
@@ -161,6 +177,10 @@ func TestArtifactory_Plugin_Validate_NoDelete(t *testing.T) {
 			URL:      mock.InvalidArtifactoryServerURL,
 			Username: mock.Username,
 			Password: mock.Password,
+			Client: &Client{
+				Retries:            3,
+				RetryWaitMilliSecs: 1,
+			},
 		},
 		Copy:          &Copy{},
 		Delete:        &Delete{},
@@ -186,6 +206,10 @@ func TestArtifactory_Plugin_Validate_NoDockerPromote(t *testing.T) {
 			URL:      mock.InvalidArtifactoryServerURL,
 			Username: mock.Username,
 			Password: mock.Password,
+			Client: &Client{
+				Retries:            3,
+				RetryWaitMilliSecs: 1,
+			},
 		},
 		Copy:          &Copy{},
 		Delete:        &Delete{},
@@ -211,6 +235,10 @@ func TestArtifactory_Plugin_Validate_NoSetProp(t *testing.T) {
 			URL:      mock.InvalidArtifactoryServerURL,
 			Username: mock.Username,
 			Password: mock.Password,
+			Client: &Client{
+				Retries:            3,
+				RetryWaitMilliSecs: 1,
+			},
 		},
 		Copy:          &Copy{},
 		Delete:        &Delete{},
@@ -236,6 +264,10 @@ func TestArtifactory_Plugin_Validate_NoUpload(t *testing.T) {
 			URL:      mock.InvalidArtifactoryServerURL,
 			Username: mock.Username,
 			Password: mock.Password,
+			Client: &Client{
+				Retries:            3,
+				RetryWaitMilliSecs: 1,
+			},
 		},
 		Copy:          &Copy{},
 		Delete:        &Delete{},

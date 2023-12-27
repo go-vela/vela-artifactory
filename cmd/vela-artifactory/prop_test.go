@@ -20,9 +20,13 @@ func TestArtifactory_Prop_Exec(t *testing.T) {
 			Token:    mock.Token,
 			APIKey:   mock.APIKey,
 			DryRun:   false,
-			Password: mock.Password,
 			URL:      s.URL,
 			Username: mock.Username,
+			Password: mock.Password,
+			Client: &Client{
+				Retries:            3,
+				RetryWaitMilliSecs: 1,
+			},
 		},
 		Copy:   &Copy{},
 		Delete: &Delete{},
@@ -150,9 +154,13 @@ func TestArtifactory_SetProp_Exec_Error(t *testing.T) {
 		Action:   "set-prop",
 		APIKey:   mock.APIKey,
 		DryRun:   false,
-		Password: mock.Password,
 		URL:      mock.InvalidArtifactoryServerURL,
 		Username: mock.Username,
+		Password: mock.Password,
+		Client: &Client{
+			Retries:            3,
+			RetryWaitMilliSecs: 1,
+		},
 	}
 
 	cli, err := config.New()
