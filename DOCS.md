@@ -154,9 +154,9 @@ The plugin accepts the following files for authentication:
 
 | Parameter  | File Configuration                                                            |
 | ---------- | ----------------------------------------------------------------------------- |
-| `api_key`  | `/vela/parameters/artifactory/api_key`, `/vela/secrets/artifactory/api_key`   |
-| `password` | `/vela/parameters/artifactory/password`, `/vela/secrets/artifactory/password` |
-| `username` | `/vela/parameters/artifactory/username`, `/vela/secrets/artifactory/username` |
+| `api_key`  | `/vela/parameters/artifactory/api_key`, `/vela/secrets/artifactory/api_key`, `/vela/secrets/managed-auth/api_key`   |
+| `password` | `/vela/parameters/artifactory/password`, `/vela/secrets/artifactory/password`, `/vela/secrets/managed-auth/password` |
+| `username` | `/vela/parameters/artifactory/username`, `/vela/secrets/artifactory/username`, `/vela/secrets/managed-auth/username` |
 
 Users can use [Vela external secrets](https://go-vela.github.io/docs/tour/secrets/) to substitute these sensitive values at runtime:
 

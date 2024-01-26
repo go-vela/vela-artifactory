@@ -93,19 +93,19 @@ func main() {
 		},
 		&cli.StringFlag{
 			EnvVars:  []string{"PARAMETER_API_KEY", "ARTIFACTORY_API_KEY"},
-			FilePath: "/vela/parameters/artifactory/api_key,/vela/secrets/artifactory/api_key",
+			FilePath: "/vela/parameters/artifactory/api_key,/vela/secrets/artifactory/api_key,/vela/secrets/managed-auth/api_key",
 			Name:     "config.api_key",
 			Usage:    "API key for communication with the Artifactory instance",
 		},
 		&cli.StringFlag{
 			EnvVars:  []string{"PARAMETER_TOKEN", "ARTIFACTORY_TOKEN"},
-			FilePath: "/vela/parameters/artifactory/token,/vela/secrets/artifactory/token",
+			FilePath: "/vela/parameters/artifactory/token,/vela/secrets/artifactory/token,/vela/secrets/managed-auth/token",
 			Name:     "config.token",
 			Usage:    "Access/Identity token for communication with the Artifactory instance",
 		},
 		&cli.StringFlag{
 			EnvVars:  []string{"PARAMETER_PASSWORD", "ARTIFACTORY_PASSWORD"},
-			FilePath: "/vela/parameters/artifactory/password,/vela/secrets/artifactory/password",
+			FilePath: "/vela/parameters/artifactory/password,/vela/secrets/artifactory/password,/vela/secrets/managed-auth/password",
 			Name:     "config.password",
 			Usage:    "password for communication with the Artifactory instance",
 		},
@@ -117,7 +117,7 @@ func main() {
 		},
 		&cli.StringFlag{
 			EnvVars:  []string{"PARAMETER_USERNAME", "ARTIFACTORY_USERNAME"},
-			FilePath: "/vela/parameters/artifactory/username,/vela/secrets/artifactory/username",
+			FilePath: "/vela/parameters/artifactory/username,/vela/secrets/artifactory/username,/vela/secrets/managed-auth/username",
 			Name:     "config.username",
 			Usage:    "user name for communication with the Artifactory instance",
 		},
