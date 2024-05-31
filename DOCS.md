@@ -78,6 +78,26 @@ steps:
       url: http://localhost:8081/artifactory
 ```
 
+Sample of uploading an artifact using regexp:
+
+```yaml
+steps:
+  - name: upload_artifacts
+    image: target/vela-artifactory:latest
+    pull: always
+    parameters:
+      action: upload
+      path: libs-snapshot-local/
+      regexp: true
+      sources:
+        - dist/([a-z]+).js
+      url: http://localhost:8081/artifactory
+```
+
+> [!IMPORTANT]
+> As the [JFrog docs](https://docs.jfrog-applications.jfrog.io/jfrog-applications/jfrog-cli/cli-for-jfrog-artifactory/generic-files) call out: If you have specified that you are using regular expressions, then the beginning of the expression must be enclosed in parenthesis. For example: a/b/c/(.*)/file.zip
+
+
 Sample of pretending to upload an artifact:
 
 ```diff
