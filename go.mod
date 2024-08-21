@@ -1,8 +1,6 @@
 module github.com/go-vela/vela-artifactory
 
-go 1.22
-
-toolchain go1.23.0
+go 1.23.0
 
 require (
 	github.com/Masterminds/semver/v3 v3.2.1
