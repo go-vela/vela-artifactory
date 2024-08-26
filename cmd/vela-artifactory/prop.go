@@ -6,13 +6,11 @@ import (
 	"fmt"
 	"strings"
 
+	json "github.com/ghodss/yaml"
 	"github.com/jfrog/jfrog-client-go/artifactory"
 	"github.com/jfrog/jfrog-client-go/artifactory/services"
 	"github.com/jfrog/jfrog-client-go/artifactory/services/utils"
-
 	"github.com/sirupsen/logrus"
-
-	json "github.com/ghodss/yaml"
 )
 
 const setPropAction = "set-prop"

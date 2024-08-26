@@ -17,7 +17,6 @@ import (
 	"github.com/jfrog/jfrog-client-go/config"
 	"github.com/jfrog/jfrog-client-go/http/httpclient"
 	"github.com/jfrog/jfrog-client-go/utils/log"
-
 	"github.com/sirupsen/logrus"
 )
 
