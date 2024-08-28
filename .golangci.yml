@@ -35,6 +35,18 @@ linters-settings:
     lines: 160
     statements: 70
 
+  # https://github.com/daixiang0/gci
+  # ensure import order is consistent
+  # gci write --custom-order -s standard -s default -s blank -s dot -s "prefix(github.com/go-vela)" .
+  gci:
+    custom-order: true
+    sections:
+      - standard
+      - default
+      - blank
+      - dot
+      - prefix(github.com/go-vela)
+
   # https://github.com/denis-tingaikin/go-header
   goheader:
     template: |-
@@ -67,12 +79,12 @@ linters:
     - errorlint # find misuses of errors
     - exportloopref # check for exported loop vars
     - funlen # detects long functions
+    - gci # consistent import ordering
     - goconst # finds repeated strings that could be replaced by a constant
     - gocyclo # computes and checks the cyclomatic complexity of functions
     - godot # checks if comments end in a period
     - gofmt # checks whether code was gofmt-ed
     - goheader # checks is file header matches to pattern
-    - goimports # fixes imports and formats code in same style as gofmt
     - gomoddirectives # manage the use of 'replace', 'retract', and 'excludes' directives in go.mod
     - goprintffuncname # checks that printf-like functions are named with f at the end
     - gosec # inspects code for security problems
@@ -108,13 +120,13 @@ linters:
   # - exhaustivestruct    - style preference
   # - forbidigo           - unused
   # - forcetypeassert     - unused
-  # - gci                 - use goimports
   # - gochecknoinits      - unused
   # - gochecknoglobals    - global variables allowed
   # - gocognit            - unused complexity metric
   # - gocritic            - style preference
   # - godox               - to be used in the future
   # - goerr113            - to be used in the future
+  # - goimports           - use gci
   # - golint              - archived, replaced with revive
   # - gofumpt             - use gofmt
   # - gomnd               - get too many false-positives
@@ -154,3 +166,5 @@ issues:
         - funlen
         - goconst
         - gocyclo
+        - wsl
+

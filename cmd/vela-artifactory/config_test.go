@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	"github.com/gin-gonic/gin"
+
 	"github.com/go-vela/vela-artifactory/cmd/vela-artifactory/mock"
 )
 
