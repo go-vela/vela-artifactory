@@ -288,7 +288,7 @@ The following parameters are used to configure the `upload` action:
 
 | Name           | Description                                           | Required | Default | Environment Variables                                  |
 | -------------- | ----------------------------------------------------- | -------- | ------- | ------------------------------------------------------ |
-| `build_props`  | matrix parameters (build props) to apply              | `false`  | `N/A`   | `PARAMETER_BUILD_PROPS`<br>`ARTIFACTORY_BUILD_PROPS`   |
+| `build_props`  | build props (matrix parameters) to apply              | `false`  | `N/A`   | `PARAMETER_BUILD_PROPS`<br>`ARTIFACTORY_BUILD_PROPS`   |
 | `flat`         | enables removing source directory hierarchy           | `false`  | `false` | `PARAMETER_FLAT`<br>`ARTIFACTORY_FLAT`                 |
 | `include_dirs` | enables including sub-directories for the artifact(s) | `false`  | `false` | `PARAMETER_INCLUDE_DIRS`<br>`ARTIFACTORY_INCLUDE_DIRS` |
 | `path`         | target path to upload artifact(s) to                  | `true`   | `N/A`   | `PARAMETER_PATH`<br>`ARTIFACTORY_PATH`                 |
