@@ -33,7 +33,7 @@ func Handlers() *gin.Engine {
 	e.GET("/api/docker/:registry/v2/docker-dev/tags/list", getTags)
 	e.POST("/api/docker/:registry/v2/promote", promoteImage)
 	e.PUT("/api/storage", setProp)
-	e.PUT("/foo/bar", uploadFiles)
+	e.PUT("/foo/:file", uploadFiles)
 
 	return e
 }

@@ -56,7 +56,6 @@ func main() {
 	// Plugin Flags
 
 	app.Flags = []cli.Flag{
-
 		&cli.StringFlag{
 			EnvVars:  []string{"PARAMETER_LOG_LEVEL", "ARTIFACTORY_LOG_LEVEL"},
 			FilePath: "/vela/parameters/artifactory/log_level,/vela/secrets/artifactory/log_level",
@@ -259,6 +258,12 @@ func main() {
 			Name:     "upload.sources",
 			Usage:    "list of artifact(s) to upload",
 		},
+		&cli.StringSliceFlag{
+			EnvVars:  []string{"PARAMETER_BUILD_PROPS", "ARTIFACTORY_BUILD_PROPS"},
+			FilePath: "/vela/parameters/artifactory/build_props,/vela/secrets/artifactory/build_props",
+			Name:     "upload.build_props",
+			Usage:    "build props to apply",
+		},
 	}
 
 	err = app.Run(os.Args)
@@ -362,6 +367,7 @@ func run(c *cli.Context) error {
 			Regexp:      c.Bool("upload.regexp"),
 			Path:        sanitizedPath,
 			Sources:     c.StringSlice("upload.sources"),
+			BuildProps:  c.String("upload.build_props"),
 		},
 	}
 

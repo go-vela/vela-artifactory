@@ -25,6 +25,8 @@ type Upload struct {
 	Regexp bool
 	// target path to upload artifact(s) to
 	Path string
+	// build props
+	BuildProps string
 	// list of files to upload
 	Sources []string
 }
@@ -38,6 +40,9 @@ func (u *Upload) Exec(cli artifactory.ArtifactoryServicesManager) error {
 		// create new upload parameters
 		p := services.NewUploadParams()
 
+		// apply build props
+		p.BuildProps = u.BuildProps
+
 		// add upload configuration to upload parameters
 		p.CommonParams = &utils.CommonParams{
 			IncludeDirs: u.IncludeDirs,
@@ -46,6 +51,8 @@ func (u *Upload) Exec(cli artifactory.ArtifactoryServicesManager) error {
 			Regexp:      u.Regexp,
 			Target:      u.Path,
 		}
+
+		// upload to exact target path
 		p.Flat = u.Flat
 
 		// send API call to upload artifacts in Artifactory
