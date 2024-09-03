@@ -4,6 +4,7 @@ package main
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/jfrog/jfrog-client-go/artifactory"
 	"github.com/jfrog/jfrog-client-go/artifactory/services"
@@ -34,6 +35,13 @@ type Upload struct {
 // Exec formats and runs the commands for uploading artifacts in Artifactory.
 func (u *Upload) Exec(cli artifactory.ArtifactoryServicesManager) error {
 	logrus.Trace("running upload with provided configuration")
+
+	// very simple check that doesn't account for:
+	// - regex in sources, in which case it's possible that one source could be multiple files
+	// - defining a singular source twice
+	if len(u.Sources) > 1 && !strings.HasSuffix(u.Path, "/") {
+		logrus.Warn("when uploading multiple sources, path should be a directory")
+	}
 
 	// iterate through all sources
 	for _, source := range u.Sources {
