@@ -97,6 +97,21 @@ steps:
 > [!IMPORTANT]
 > As the [JFrog docs](https://docs.jfrog-applications.jfrog.io/jfrog-applications/jfrog-cli/cli-for-jfrog-artifactory/generic-files) call out: If you have specified that you are using regular expressions, then the beginning of the expression must be enclosed in parenthesis. For example: a/b/c/(.*)/file.zip
 
+Sample of uploading an artifact using build props (matrix parameters):
+
+```yaml
+steps:
+  - name: upload_artifacts
+    image: target/vela-artifactory:latest
+    pull: always
+    parameters:
+      action: upload
+      path: libs-snapshot-local/file
+      sources:
+        - file.txt
+      build_props: build.name=buildName;build.number=17;build.timestamp=1600856623553
+      url: http://localhost:8081/artifactory
+```
 
 Sample of pretending to upload an artifact:
 
@@ -273,6 +288,7 @@ The following parameters are used to configure the `upload` action:
 
 | Name           | Description                                           | Required | Default | Environment Variables                                  |
 | -------------- | ----------------------------------------------------- | -------- | ------- | ------------------------------------------------------ |
+| `build_props`  | build props (matrix parameters) to apply              | `false`  | `N/A`   | `PARAMETER_BUILD_PROPS`<br>`ARTIFACTORY_BUILD_PROPS`   |
 | `flat`         | enables removing source directory hierarchy           | `false`  | `false` | `PARAMETER_FLAT`<br>`ARTIFACTORY_FLAT`                 |
 | `include_dirs` | enables including sub-directories for the artifact(s) | `false`  | `false` | `PARAMETER_INCLUDE_DIRS`<br>`ARTIFACTORY_INCLUDE_DIRS` |
 | `path`         | target path to upload artifact(s) to                  | `true`   | `N/A`   | `PARAMETER_PATH`<br>`ARTIFACTORY_PATH`                 |
