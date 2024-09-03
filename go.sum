@@ -103,8 +103,8 @@ github.com/jfrog/build-info-go v1.9.35 h1:P53Ckbuin0GYrq0LWMY0GZSptJcQwiUyW6lqTb
 github.com/jfrog/build-info-go v1.9.35/go.mod h1:6mdtqjREK76bHNODXakqKR/+ksJ9dvfLS7H57BZtnLY=
 github.com/jfrog/gofrog v1.7.5 h1:dFgtEDefJdlq9cqTRoe09RLxS5Bxbe1Ev5+E6SmZHcg=
 github.com/jfrog/gofrog v1.7.5/go.mod h1:jyGiCgiqSSR7k86hcUSu67XVvmvkkgWTmPsH25wI298=
-github.com/jfrog/jfrog-client-go v1.46.0 h1:lyzJCpLN9NIp4raHw48D12+g42/Aa8SHxBbuNp4Yflk=
-github.com/jfrog/jfrog-client-go v1.46.0/go.mod h1:UCu2JNBfMp9rypEmCL84DCooG79xWIHVadZQR3Ab+BQ=
+github.com/jfrog/jfrog-client-go v1.46.1 h1:ExqOF8ClOG9LO3vbm6jTIwQHHhprbu8lxB2RrM6mMI0=
+github.com/jfrog/jfrog-client-go v1.46.1/go.mod h1:UCu2JNBfMp9rypEmCL84DCooG79xWIHVadZQR3Ab+BQ=
 github.com/joho/godotenv v1.5.1 h1:7eLL/+HRGLY0ldzfGMeQkb7vMd0as4CfYvUVzLqw0N0=
 github.com/joho/godotenv v1.5.1/go.mod h1:f4LDr5Voq0i2e/R5DDNOoa2zzDfwtkZa6DnEwAbqwq4=
 github.com/json-iterator/go v1.1.12 h1:PV8peI4a0ysnczrg+LtxykD8LfKY9ML6u2jnxaEnrnM=
