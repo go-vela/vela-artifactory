@@ -258,7 +258,7 @@ func main() {
 			Name:     "upload.sources",
 			Usage:    "list of artifact(s) to upload",
 		},
-		&cli.StringSliceFlag{
+		&cli.StringFlag{
 			EnvVars:  []string{"PARAMETER_BUILD_PROPS", "ARTIFACTORY_BUILD_PROPS"},
 			FilePath: "/vela/parameters/artifactory/build_props,/vela/secrets/artifactory/build_props",
 			Name:     "upload.build_props",
