@@ -4,7 +4,7 @@
 ##    docker build --no-cache --target binary -t vela-artifactory:binary .    ##
 ################################################################################
 
-FROM alpine:3.20.3@sha256:beefdbd8a1da6d2915566fde36db9db0b524eb737fc57cd1367effd16dc0d06d as binary
+FROM alpine:3.21.3@sha256:a8560b36e8b8210634f77d9f7f9efd7ffa463e380b75e2e74aff4511df3ef88c as binary
 
 ARG JFROG_VERSION=1.33.2
 
@@ -17,7 +17,7 @@ RUN chmod -R 777 /tmp
 ##    docker build --no-cache --target certs -t vela-artifactory:certs .    ##
 ##############################################################################
 
-FROM alpine:3.20.3@sha256:beefdbd8a1da6d2915566fde36db9db0b524eb737fc57cd1367effd16dc0d06d as certs
+FROM alpine:3.21.3@sha256:a8560b36e8b8210634f77d9f7f9efd7ffa463e380b75e2e74aff4511df3ef88c as certs
 
 RUN apk add --update --no-cache ca-certificates
 
