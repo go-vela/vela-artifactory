@@ -64,7 +64,7 @@ func (u *Upload) Exec(cli artifactory.ArtifactoryServicesManager) error {
 		p.Flat = u.Flat
 
 		// send API call to upload artifacts in Artifactory
-		_, totalFailed, err := cli.UploadFiles(p)
+		_, totalFailed, err := cli.UploadFiles(artifactory.UploadServiceOptions{FailFast: true}, p)
 		if totalFailed > 0 || err != nil {
 			return err
 		}
