@@ -9,10 +9,10 @@ require (
 	github.com/go-vela/server v0.26.2
 	github.com/hashicorp/go-cleanhttp v0.5.2
 	github.com/hashicorp/go-retryablehttp v0.7.7
-	github.com/jfrog/jfrog-client-go v1.50.0
+	github.com/jfrog/jfrog-client-go v1.51.1
 	github.com/joho/godotenv v1.5.1
 	github.com/sirupsen/logrus v1.9.3
-	github.com/urfave/cli/v2 v2.27.5
+	github.com/urfave/cli/v2 v2.27.6
 )
 
 require (
@@ -45,7 +45,7 @@ require (
 	github.com/gookit/color v1.5.4 // indirect
 	github.com/jbenet/go-context v0.0.0-20150711004518-d14ea06fba99 // indirect
 	github.com/jfrog/archiver/v3 v3.6.1 // indirect
-	github.com/jfrog/build-info-go v1.10.9 // indirect
+	github.com/jfrog/build-info-go v1.10.10 // indirect
 	github.com/jfrog/gofrog v1.7.6 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/kevinburke/ssh_config v1.2.0 // indirect
