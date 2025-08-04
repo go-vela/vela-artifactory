@@ -3,14 +3,15 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
+	"net/mail"
 	"os"
 	"strings"
-	"time"
 
 	"github.com/sirupsen/logrus"
-	"github.com/urfave/cli/v2"
+	"github.com/urfave/cli/v3"
 
 	_ "github.com/joho/godotenv/autoload"
 
@@ -32,248 +33,371 @@ func main() {
 	fmt.Fprintf(os.Stdout, "%s\n", string(bytes))
 
 	// create new CLI application
-	app := cli.NewApp()
+	app := &cli.Command{
 
-	// Plugin Information
+		// Plugin Information
 
-	app.Name = "vela-artifactory"
-	app.HelpName = "vela-artifactory"
-	app.Usage = "Vela Artifactory plugin for managing artifacts"
-	app.Copyright = "Copyright 2019 Target Brands, Inc. All rights reserved."
-	app.Authors = []*cli.Author{
-		{
-			Name:  "Vela Admins",
-			Email: "vela@target.com",
+		Name:      "vela-artifactory",
+		Usage:     "Vela Artifactory plugin for managing artifacts",
+		Copyright: "Copyright 2019 Target Brands, Inc. All rights reserved.",
+		Authors: []any{
+			&mail.Address{
+				Name:    "Vela Admins",
+				Address: "vela@target.com",
+			},
+		},
+
+		// Plugin Metadata
+
+		Action:  run,
+		Version: v.Semantic(),
+
+		// Plugin Flags
+
+		Flags: []cli.Flag{
+			&cli.StringFlag{
+				Name:  "log.level",
+				Value: "info",
+				Usage: "set log level - options: (trace|debug|info|warn|error|fatal|panic)",
+				Sources: cli.NewValueSourceChain(
+					cli.EnvVar("PARAMETER_LOG_LEVEL"),
+					cli.EnvVar("ARTIFACTORY_LOG_LEVEL"),
+					cli.File("/vela/parameters/artifactory/log_level"),
+					cli.File("/vela/secrets/artifactory/log_level"),
+				),
+			},
+			&cli.StringFlag{
+				Name:  "path",
+				Usage: "source/target path to artifact(s) for action",
+				Sources: cli.NewValueSourceChain(
+					cli.EnvVar("PARAMETER_PATH"),
+					cli.EnvVar("ARTIFACTORY_PATH"),
+					cli.File("/vela/parameters/artifactory/path"),
+					cli.File("/vela/secrets/artifactory/path"),
+				),
+			},
+			&cli.BoolFlag{
+				Name:  "recursive",
+				Usage: "enables operating on sub-directories for the source/target path",
+				Sources: cli.NewValueSourceChain(
+					cli.EnvVar("PARAMETER_RECURSIVE"),
+					cli.EnvVar("ARTIFACTORY_RECURSIVE"),
+					cli.File("/vela/parameters/artifactory/recursive"),
+					cli.File("/vela/secrets/artifactory/recursive"),
+				),
+			},
+
+			// Config Flags
+
+			&cli.StringFlag{
+				Name:  "config.action",
+				Usage: "action to perform against the Artifactory instance",
+				Sources: cli.NewValueSourceChain(
+					cli.EnvVar("PARAMETER_ACTION"),
+					cli.EnvVar("ARTIFACTORY_ACTION"),
+					cli.File("/vela/parameters/artifactory/action"),
+					cli.File("/vela/secrets/artifactory/action"),
+				),
+			},
+			&cli.BoolFlag{
+				Name:  "config.dry_run",
+				Usage: "enables pretending to perform the action",
+				Sources: cli.NewValueSourceChain(
+					cli.EnvVar("PARAMETER_DRY_RUN"),
+					cli.EnvVar("ARTIFACTORY_DRY_RUN"),
+					cli.File("/vela/parameters/artifactory/dry_run"),
+					cli.File("/vela/secrets/artifactory/dry_run"),
+				),
+			},
+			&cli.StringFlag{
+				Name:  "config.api_key",
+				Usage: "API key for communication with the Artifactory instance",
+				Sources: cli.NewValueSourceChain(
+					cli.EnvVar("PARAMETER_API_KEY"),
+					cli.EnvVar("ARTIFACTORY_API_KEY"),
+					cli.File("/vela/parameters/artifactory/api_key"),
+					cli.File("/vela/secrets/artifactory/api_key"),
+				),
+			},
+			&cli.StringFlag{
+				Name:  "config.token",
+				Usage: "Access/Identity token for communication with the Artifactory instance",
+				Sources: cli.NewValueSourceChain(
+					cli.EnvVar("PARAMETER_TOKEN"),
+					cli.EnvVar("ARTIFACTORY_TOKEN"),
+					cli.File("/vela/parameters/artifactory/token"),
+					cli.File("/vela/secrets/artifactory/token"),
+				),
+			},
+			&cli.StringFlag{
+				Name:  "config.password",
+				Usage: "password for communication with the Artifactory instance",
+				Sources: cli.NewValueSourceChain(
+					cli.EnvVar("PARAMETER_PASSWORD"),
+					cli.EnvVar("ARTIFACTORY_PASSWORD"),
+					cli.File("/vela/parameters/artifactory/password"),
+					cli.File("/vela/secrets/artifactory/password"),
+				),
+			},
+			&cli.StringFlag{
+				Name:  "config.url",
+				Usage: "Artifactory instance to communicate with",
+				Sources: cli.NewValueSourceChain(
+					cli.EnvVar("PARAMETER_URL"),
+					cli.EnvVar("ARTIFACTORY_URL"),
+					cli.File("/vela/parameters/artifactory/url"),
+					cli.File("/vela/secrets/artifactory/url"),
+				),
+			},
+			&cli.StringFlag{
+				Name:  "config.username",
+				Usage: "user name for communication with the Artifactory instance",
+				Sources: cli.NewValueSourceChain(
+					cli.EnvVar("PARAMETER_USERNAME"),
+					cli.EnvVar("ARTIFACTORY_USERNAME"),
+					cli.File("/vela/parameters/artifactory/username"),
+					cli.File("/vela/secrets/artifactory/username"),
+				),
+			},
+
+			// Client Flags
+
+			&cli.IntFlag{
+				Name:  "client.retries",
+				Value: 3,
+				Usage: "number of times to retry failed http attempts",
+				Sources: cli.NewValueSourceChain(
+					cli.EnvVar("PARAMETER_HTTP_CLIENT_RETRIES"),
+					cli.EnvVar("ARTIFACTORY_HTTP_CLIENT_RETRIES"),
+					cli.File("/vela/parameters/artifactory/http_client_retries"),
+					cli.File("/vela/secrets/artifactory/http_client_retries"),
+				),
+			},
+			&cli.IntFlag{
+				Name:  "client.retry_wait",
+				Value: 500,
+				Usage: "amount of milliseconds to wait between failed http attempts",
+				Sources: cli.NewValueSourceChain(
+					cli.EnvVar("PARAMETER_HTTP_CLIENT_RETRY_WAIT_MILLISECONDS"),
+					cli.EnvVar("ARTIFACTORY_HTTP_CLIENT_RETRY_WAIT_MILLISECONDS"),
+					cli.File("/vela/parameters/artifactory/http_client_retry_wait_milliseconds"),
+					cli.File("/vela/secrets/artifactory/http_client_retry_wait_milliseconds"),
+				),
+			},
+			&cli.StringFlag{
+				Name:  "client.cert",
+				Usage: "file path to the client certificate to use for TLS communication",
+				Sources: cli.NewValueSourceChain(
+					cli.EnvVar("PARAMETER_HTTP_CLIENT_CERT"),
+					cli.EnvVar("ARTIFACTORY_HTTP_CLIENT_CERT"),
+					cli.File("/vela/parameters/artifactory/http_client_cert"),
+					cli.File("/vela/secrets/artifactory/http_client_cert"),
+				),
+			},
+			&cli.StringFlag{
+				Name:  "client.cert_key",
+				Usage: "file path to the client certificate key to use for TLS communication",
+				Sources: cli.NewValueSourceChain(
+					cli.EnvVar("PARAMETER_HTTP_CLIENT_CERT_KEY"),
+					cli.EnvVar("ARTIFACTORY_HTTP_CLIENT_CERT_KEY"),
+					cli.File("/vela/parameters/artifactory/http_client_cert_key"),
+					cli.File("/vela/secrets/artifactory/http_client_cert_key"),
+				),
+			},
+			&cli.BoolFlag{
+				Name:  "client.insecure_tls",
+				Usage: "enables skipping TLS verification when communicating with the Artifactory instance",
+				Sources: cli.NewValueSourceChain(
+					cli.EnvVar("PARAMETER_HTTP_CLIENT_INSECURE_TLS"),
+					cli.EnvVar("ARTIFACTORY_HTTP_CLIENT_INSECURE_TLS"),
+					cli.File("/vela/parameters/artifactory/http_client_insecure_tls"),
+					cli.File("/vela/secrets/artifactory/http_client_insecure_tls"),
+				),
+			},
+
+			// Copy Flags
+
+			&cli.BoolFlag{
+				Name:  "copy.flat",
+				Usage: "enables removing source directory hierarchy",
+				Sources: cli.NewValueSourceChain(
+					cli.EnvVar("PARAMETER_FLAT"),
+					cli.EnvVar("ARTIFACTORY_FLAT"),
+					cli.File("/vela/parameters/artifactory/flat"),
+					cli.File("/vela/secrets/artifactory/flat"),
+				),
+			},
+			&cli.StringFlag{
+				Name:  "copy.target",
+				Usage: "target path to copy artifact(s) to",
+				Sources: cli.NewValueSourceChain(
+					cli.EnvVar("PARAMETER_TARGET"),
+					cli.EnvVar("ARTIFACTORY_TARGET"),
+					cli.File("/vela/parameters/artifactory/target"),
+					cli.File("/vela/secrets/artifactory/target"),
+				),
+			},
+
+			// Docker Promote Flags
+
+			&cli.StringFlag{
+				Name:  "docker_promote.source_repo",
+				Usage: "source Docker repository in Artifactory for the move or copy",
+				Sources: cli.NewValueSourceChain(
+					cli.EnvVar("PARAMETER_SOURCE_REPO"),
+					cli.EnvVar("ARTIFACTORY_SOURCE_REPO"),
+					cli.File("/vela/parameters/artifactory/source_repo"),
+					cli.File("/vela/secrets/artifactory/source_repo"),
+				),
+			},
+			&cli.StringFlag{
+				Name:  "docker_promote.target_repo",
+				Usage: "destination Docker repository in Artifactory for the move or copy",
+				Sources: cli.NewValueSourceChain(
+					cli.EnvVar("PARAMETER_TARGET_REPO"),
+					cli.EnvVar("ARTIFACTORY_TARGET_REPO"),
+					cli.File("/vela/parameters/artifactory/target_repo"),
+					cli.File("/vela/secrets/artifactory/target_repo"),
+				),
+			},
+			&cli.StringFlag{
+				Name:  "docker_promote.docker_registry",
+				Usage: "source Docker registry to promote an image from",
+				Sources: cli.NewValueSourceChain(
+					cli.EnvVar("PARAMETER_DOCKER_REGISTRY"),
+					cli.EnvVar("ARTIFACTORY_DOCKER_REGISTRY"),
+					cli.File("/vela/parameters/artifactory/docker_registry"),
+					cli.File("/vela/secrets/artifactory/docker_registry"),
+				),
+			},
+			&cli.StringFlag{
+				Name:  "docker_promote.target_docker_registry",
+				Usage: "target Docker registry to promote an image to (uses 'docker_registry' if empty)",
+				Sources: cli.NewValueSourceChain(
+					cli.EnvVar("PARAMETER_TARGET_DOCKER_REGISTRY"),
+					cli.EnvVar("ARTIFACTORY_TARGET_DOCKER_REGISTRY"),
+					cli.File("/vela/parameters/artifactory/target_docker_registry"),
+					cli.File("/vela/secrets/artifactory/target_docker_registry"),
+				),
+			},
+			&cli.StringFlag{
+				Name:  "docker_promote.source_tag",
+				Usage: "tag name of image to promote (promotes all tags if empty)",
+				Sources: cli.NewValueSourceChain(
+					cli.EnvVar("PARAMETER_TAG"),
+					cli.EnvVar("ARTIFACTORY_TAG"),
+					cli.File("/vela/parameters/artifactory/tag"),
+					cli.File("/vela/secrets/artifactory/tag"),
+				),
+			},
+			&cli.StringSliceFlag{
+				Name:  "docker_promote.target_tags",
+				Usage: "target tag to assign the image after promotion",
+				Sources: cli.NewValueSourceChain(
+					cli.EnvVar("PARAMETER_TARGET_TAGS"),
+					cli.EnvVar("ARTIFACTORY_TARGET_TAGS"),
+					cli.File("/vela/parameters/artifactory/target_tags"),
+					cli.File("/vela/secrets/artifactory/target_tags"),
+				),
+			},
+			&cli.BoolFlag{
+				Name:  "docker_promote.copy",
+				Value: true,
+				Usage: "set to copy instead of moving the image",
+				Sources: cli.NewValueSourceChain(
+					cli.EnvVar("PARAMETER_COPY"),
+					cli.EnvVar("ARTIFACTORY_COPY"),
+					cli.File("/vela/parameters/artifactory/copy"),
+					cli.File("/vela/secrets/artifactory/copy"),
+				),
+			},
+			&cli.BoolFlag{
+				Name:  "docker_promote.props",
+				Usage: "property to be set on the artifact when it is being promoted",
+				Sources: cli.NewValueSourceChain(
+					cli.EnvVar("PARAMETER_PROMOTE_PROPS"),
+					cli.EnvVar("ARTIFACTORY_PROMOTE_PROPS"),
+					cli.File("/vela/parameters/artifactory/promote_props"),
+					cli.File("/vela/secrets/artifactory/promote_props"),
+				),
+			},
+
+			// Set Prop Flags
+
+			&cli.StringFlag{
+				Name:  "set_prop.props",
+				Usage: "properties to set on the artifact(s)",
+				Sources: cli.NewValueSourceChain(
+					cli.EnvVar("PARAMETER_PROPS"),
+					cli.EnvVar("ARTIFACTORY_PROPS"),
+					cli.File("/vela/parameters/artifactory/props"),
+					cli.File("/vela/secrets/artifactory/props"),
+				),
+			},
+
+			// Upload Flags
+
+			&cli.BoolFlag{
+				Name:  "upload.flat",
+				Usage: "enables uploading artifacts to exact target path (excludes source file hierarchy)",
+				Sources: cli.NewValueSourceChain(
+					cli.EnvVar("PARAMETER_FLAT"),
+					cli.EnvVar("ARTIFACTORY_FLAT"),
+					cli.File("/vela/parameters/artifactory/flat"),
+					cli.File("/vela/secrets/artifactory/flat"),
+				),
+			},
+			&cli.BoolFlag{
+				Name:  "upload.include_dirs",
+				Usage: "enables including directories from sources",
+				Sources: cli.NewValueSourceChain(
+					cli.EnvVar("PARAMETER_INCLUDE_DIRS"),
+					cli.EnvVar("ARTIFACTORY_INCLUDE_DIRS"),
+					cli.File("/vela/parameters/artifactory/include_dirs"),
+					cli.File("/vela/secrets/artifactory/include_dirs"),
+				),
+			},
+			&cli.BoolFlag{
+				Name:  "upload.regexp",
+				Usage: "enables reading the sources as a regular expression",
+				Sources: cli.NewValueSourceChain(
+					cli.EnvVar("PARAMETER_REGEXP"),
+					cli.EnvVar("ARTIFACTORY_REGEXP"),
+					cli.File("/vela/parameters/artifactory/regexp"),
+					cli.File("/vela/secrets/artifactory/regexp"),
+				),
+			},
+			&cli.StringSliceFlag{
+				Name:  "upload.sources",
+				Usage: "list of artifact(s) to upload",
+				Sources: cli.NewValueSourceChain(
+					cli.EnvVar("PARAMETER_SOURCES"),
+					cli.EnvVar("ARTIFACTORY_SOURCES"),
+					cli.File("/vela/parameters/artifactory/sources"),
+					cli.File("/vela/secrets/artifactory/sources"),
+				),
+			},
+			&cli.StringFlag{
+				Name:  "upload.build_props",
+				Usage: "build props to apply",
+				Sources: cli.NewValueSourceChain(
+					cli.EnvVar("PARAMETER_BUILD_PROPS"),
+					cli.EnvVar("ARTIFACTORY_BUILD_PROPS"),
+					cli.File("/vela/parameters/artifactory/build_props"),
+					cli.File("/vela/secrets/artifactory/build_props"),
+				),
+			},
 		},
 	}
 
-	// Plugin Metadata
-
-	app.Action = run
-	app.Compiled = time.Now()
-	app.Version = v.Semantic()
-
-	// Plugin Flags
-
-	app.Flags = []cli.Flag{
-		&cli.StringFlag{
-			EnvVars:  []string{"PARAMETER_LOG_LEVEL", "ARTIFACTORY_LOG_LEVEL"},
-			FilePath: "/vela/parameters/artifactory/log_level,/vela/secrets/artifactory/log_level",
-			Name:     "log.level",
-			Usage:    "set log level - options: (trace|debug|info|warn|error|fatal|panic)",
-			Value:    "info",
-		},
-		&cli.StringFlag{
-			EnvVars:  []string{"PARAMETER_PATH", "ARTIFACTORY_PATH"},
-			FilePath: "/vela/parameters/artifactory/path,/vela/secrets/artifactory/path",
-			Name:     "path",
-			Usage:    "source/target path to artifact(s) for action",
-		},
-		&cli.BoolFlag{
-			EnvVars:  []string{"PARAMETER_RECURSIVE", "ARTIFACTORY_RECURSIVE"},
-			FilePath: "/vela/parameters/artifactory/recursive,/vela/secrets/artifactory/recursive",
-			Name:     "recursive",
-			Usage:    "enables operating on sub-directories for the source/target path",
-		},
-
-		// Config Flags
-
-		&cli.StringFlag{
-			EnvVars:  []string{"PARAMETER_ACTION", "ARTIFACTORY_ACTION"},
-			FilePath: "/vela/parameters/artifactory/action,/vela/secrets/artifactory/action",
-			Name:     "config.action",
-			Usage:    "action to perform against the Artifactory instance",
-		},
-		&cli.BoolFlag{
-			EnvVars:  []string{"PARAMETER_DRY_RUN", "ARTIFACTORY_DRY_RUN"},
-			FilePath: "/vela/parameters/artifactory/dry_run,/vela/secrets/artifactory/dry_run",
-			Name:     "config.dry_run",
-			Usage:    "enables pretending to perform the action",
-		},
-		&cli.StringFlag{
-			EnvVars:  []string{"PARAMETER_API_KEY", "ARTIFACTORY_API_KEY"},
-			FilePath: "/vela/parameters/artifactory/api_key,/vela/secrets/artifactory/api_key,/vela/secrets/managed-auth/api_key",
-			Name:     "config.api_key",
-			Usage:    "API key for communication with the Artifactory instance",
-		},
-		&cli.StringFlag{
-			EnvVars:  []string{"PARAMETER_TOKEN", "ARTIFACTORY_TOKEN"},
-			FilePath: "/vela/parameters/artifactory/token,/vela/secrets/artifactory/token,/vela/secrets/managed-auth/token",
-			Name:     "config.token",
-			Usage:    "Access/Identity token for communication with the Artifactory instance",
-		},
-		&cli.StringFlag{
-			EnvVars:  []string{"PARAMETER_PASSWORD", "ARTIFACTORY_PASSWORD"},
-			FilePath: "/vela/parameters/artifactory/password,/vela/secrets/artifactory/password,/vela/secrets/managed-auth/password",
-			Name:     "config.password",
-			Usage:    "password for communication with the Artifactory instance",
-		},
-		&cli.StringFlag{
-			EnvVars:  []string{"PARAMETER_URL", "ARTIFACTORY_URL"},
-			FilePath: "/vela/parameters/artifactory/url,/vela/secrets/artifactory/url",
-			Name:     "config.url",
-			Usage:    "Artifactory instance to communicate with",
-		},
-		&cli.StringFlag{
-			EnvVars:  []string{"PARAMETER_USERNAME", "ARTIFACTORY_USERNAME"},
-			FilePath: "/vela/parameters/artifactory/username,/vela/secrets/artifactory/username,/vela/secrets/managed-auth/username",
-			Name:     "config.username",
-			Usage:    "user name for communication with the Artifactory instance",
-		},
-
-		// Client Flags
-
-		&cli.IntFlag{
-			EnvVars:  []string{"PARAMETER_HTTP_CLIENT_RETRIES", "ARTIFACTORY_HTTP_CLIENT_RETRIES"},
-			FilePath: "/vela/parameters/artifactory/client/retries,/vela/secrets/artifactory/client/retries",
-			Name:     "client.retries",
-			Usage:    "number of times to retry failed http attempts",
-			Value:    3,
-		},
-		&cli.IntFlag{
-			EnvVars:  []string{"PARAMETER_HTTP_CLIENT_RETRY_WAIT_MILLISECONDS", "ARTIFACTORY_HTTP_CLIENT_RETRY_WAIT_MILLISECONDS"},
-			FilePath: "/vela/parameters/artifactory/client/retry_wait,/vela/secrets/artifactory/client/retry_wait",
-			Name:     "client.retry_wait",
-			Usage:    "amount of milliseconds to wait between failed http attempts",
-			Value:    500,
-		},
-		&cli.StringFlag{
-			EnvVars:  []string{"PARAMETER_HTTP_CLIENT_CERT", "ARTIFACTORY_HTTP_CLIENT_CERT"},
-			FilePath: "/vela/parameters/artifactory/client/cert,/vela/secrets/artifactory/client/cert",
-			Name:     "client.cert",
-			Usage:    "file path to the client certificate to use for TLS communication",
-		},
-		&cli.StringFlag{
-			EnvVars:  []string{"PARAMETER_HTTP_CLIENT_CERT_KEY", "ARTIFACTORY_HTTP_CLIENT_CERT_KEY"},
-			FilePath: "/vela/parameters/artifactory/client/cert_key,/vela/secrets/artifactory/client/cert_key",
-			Name:     "client.cert_key",
-			Usage:    "file path to the client certificate key to use for TLS communication",
-		},
-		&cli.BoolFlag{
-			EnvVars:  []string{"PARAMETER_HTTP_CLIENT_INSECURE_TLS", "ARTIFACTORY_HTTP_CLIENT_INSECURE_TLS"},
-			FilePath: "/vela/parameters/artifactory/client/insecure_tls,/vela/secrets/artifactory/client/insecure_tls",
-			Name:     "client.insecure_tls",
-			Usage:    "enables skipping TLS verification when communicating with the Artifactory instance",
-		},
-
-		// Copy Flags
-
-		&cli.BoolFlag{
-			EnvVars:  []string{"PARAMETER_FLAT", "ARTIFACTORY_FLAT"},
-			FilePath: "/vela/parameters/artifactory/flat,/vela/secrets/artifactory/flat",
-			Name:     "copy.flat",
-			Usage:    "enables removing source directory hierarchy",
-		},
-		&cli.StringFlag{
-			EnvVars:  []string{"PARAMETER_TARGET", "ARTIFACTORY_TARGET"},
-			FilePath: "/vela/parameters/artifactory/target,/vela/secrets/artifactory/target",
-			Name:     "copy.target",
-			Usage:    "target path to copy artifact(s) to",
-		},
-
-		// Docker Promote Flags
-
-		&cli.StringFlag{
-			EnvVars:  []string{"PARAMETER_SOURCE_REPO", "ARTIFACTORY_SOURCE_REPO"},
-			FilePath: "/vela/parameters/artifactory/source_repo,/vela/secrets/artifactory/source_repo",
-			Name:     "docker_promote.source_repo",
-			Usage:    "source Docker repository in Artifactory for the move or copy",
-		},
-		&cli.StringFlag{
-			EnvVars:  []string{"PARAMETER_TARGET_REPO", "ARTIFACTORY_TARGET_REPO"},
-			FilePath: "/vela/parameters/artifactory/target_repo,/vela/secrets/artifactory/target_repo",
-			Name:     "docker_promote.target_repo",
-			Usage:    "destination Docker repository in Artifactory for the move or copy",
-		},
-		&cli.StringFlag{
-			EnvVars:  []string{"PARAMETER_DOCKER_REGISTRY", "ARTIFACTORY_DOCKER_REGISTRY"},
-			FilePath: "/vela/parameters/artifactory/docker_registry,/vela/secrets/artifactory/docker_registry",
-			Name:     "docker_promote.docker_registry",
-			Usage:    "source Docker registry to promote an image from",
-		},
-		&cli.StringFlag{
-			EnvVars:  []string{"PARAMETER_TARGET_DOCKER_REGISTRY", "ARTIFACTORY_TARGET_DOCKER_REGISTRY"},
-			FilePath: "/vela/parameters/artifactory/target_docker_registry,/vela/secrets/artifactory/target_docker_registry",
-			Name:     "docker_promote.target_docker_registry",
-			Usage:    "target Docker registry to promote an image to (uses 'docker_registry' if empty)",
-		},
-		&cli.StringFlag{
-			EnvVars:  []string{"PARAMETER_TAG", "ARTIFACTORY_TAG"},
-			FilePath: "/vela/parameters/artifactory/tag,/vela/secrets/artifactory/tag",
-			Name:     "docker_promote.source_tag",
-			Usage:    "tag name of image to promote (promotes all tags if empty)",
-		},
-		&cli.StringSliceFlag{
-			EnvVars:  []string{"PARAMETER_TARGET_TAGS", "ARTIFACTORY_TARGET_TAGS"},
-			FilePath: "/vela/parameters/artifactory/target_tags,/vela/secrets/artifactory/target_tags",
-			Name:     "docker_promote.target_tags",
-			Usage:    "target tag to assign the image after promotion",
-		},
-		&cli.BoolFlag{
-			EnvVars:  []string{"PARAMETER_COPY", "ARTIFACTORY_COPY"},
-			FilePath: "/vela/parameters/artifactory/copy,/vela/secrets/artifactory/copy",
-			Name:     "docker_promote.copy",
-			Usage:    "set to copy instead of moving the image",
-			Value:    true,
-		},
-		&cli.BoolFlag{
-			EnvVars:  []string{"PARAMETER_PROMOTE_PROPS", "ARTIFACTORY_PROMOTE_PROPS"},
-			FilePath: "/vela/parameters/artifactory/promote,/vela/secrets/artifactory/promote",
-			Name:     "docker_promote.props",
-			Usage:    "property to be set on the artifact when it is being promoted",
-		},
-
-		// Set Prop Flags
-
-		&cli.StringFlag{
-			EnvVars:  []string{"PARAMETER_PROPS", "ARTIFACTORY_PROPS"},
-			FilePath: "/vela/parameters/artifactory/props,/vela/secrets/artifactory/props",
-			Name:     "set_prop.props",
-			Usage:    "properties to set on the artifact(s)",
-		},
-
-		// Upload Flags
-
-		&cli.BoolFlag{
-			EnvVars:  []string{"PARAMETER_FLAT", "ARTIFACTORY_FLAT"},
-			FilePath: "/vela/parameters/artifactory/flat,/vela/secrets/artifactory/flat",
-			Name:     "upload.flat",
-			Usage:    "enables uploading artifacts to exact target path (excludes source file hierarchy)",
-		},
-		&cli.BoolFlag{
-			EnvVars:  []string{"PARAMETER_INCLUDE_DIRS", "ARTIFACTORY_INCLUDE_DIRS"},
-			FilePath: "/vela/parameters/artifactory/include_dirs,/vela/secrets/artifactory/include_dirs",
-			Name:     "upload.include_dirs",
-			Usage:    "enables including directories from sources",
-		},
-		&cli.BoolFlag{
-			EnvVars:  []string{"PARAMETER_REGEXP", "ARTIFACTORY_REGEXP"},
-			FilePath: "/vela/parameters/artifactory/regexp,/vela/secrets/artifactory/regexp",
-			Name:     "upload.regexp",
-			Usage:    "enables reading the sources as a regular expression",
-		},
-		&cli.StringSliceFlag{
-			EnvVars:  []string{"PARAMETER_SOURCES", "ARTIFACTORY_SOURCES"},
-			FilePath: "/vela/parameters/artifactory/sources,/vela/secrets/artifactory/sources",
-			Name:     "upload.sources",
-			Usage:    "list of artifact(s) to upload",
-		},
-		&cli.StringFlag{
-			EnvVars:  []string{"PARAMETER_BUILD_PROPS", "ARTIFACTORY_BUILD_PROPS"},
-			FilePath: "/vela/parameters/artifactory/build_props,/vela/secrets/artifactory/build_props",
-			Name:     "upload.build_props",
-			Usage:    "build props to apply",
-		},
-	}
-
-	err = app.Run(os.Args)
+	err = app.Run(context.Background(), os.Args)
 	if err != nil {
 		logrus.Fatal(err)
 	}
 }
 
 // run executes the plugin based off the configuration provided.
-func run(c *cli.Context) error {
+func run(_ context.Context, c *cli.Command) error {
 	// set the log level for the plugin
 	switch c.String("log.level") {
 	case "t", "trace", "Trace", "TRACE":
