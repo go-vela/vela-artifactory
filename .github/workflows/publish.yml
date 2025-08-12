@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: clone
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4.3.0
         with:
           # ensures we fetch tag history for the repository
           fetch-depth: 0
@@ -33,7 +33,7 @@ jobs:
           make build-static-ci
 
       - name: publish
-        uses: elgohr/Publish-Docker-Github-Action@eb53b3ec07136a6ebaed78d8135806da64f7c7e2 # v5
+        uses: elgohr/Publish-Docker-Github-Action@4feac4d53e4e55dcc5d3e2ad0ed2e0a76028ff7a # v5
         with:
           name: target/vela-artifactory
           cache: true
