@@ -6,7 +6,7 @@
 
 FROM alpine:3.23.3@sha256:25109184c71bdad752c8312a8623239686a9a2071e8825f20acb8f2198c3f659 as binary
 
-ARG JFROG_VERSION=1.33.2
+ARG JFROG_VERSION=1.54.1
 
 ADD https://releases.jfrog.io/artifactory/jfrog-cli/v1/${JFROG_VERSION}/jfrog-cli-linux-amd64/jfrog /bin/jfrog
 
