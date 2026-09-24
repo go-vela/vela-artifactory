@@ -59,8 +59,8 @@ func setProp(c *gin.Context) {
 }
 
 func uploadFiles(c *gin.Context) {
-	c.JSON(200, map[string]interface{}{
-		"checksums": map[string]interface{}{"checksum": "abcxyz123"},
+	c.JSON(200, map[string]any{
+		"checksums": map[string]any{"checksum": "abcxyz123"},
 	})
 }
 
